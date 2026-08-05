@@ -11,6 +11,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Fixed
 
 ### Changed
+- Write LAUNCH.md runbook for taking the survey live (#17)
+- Verify local Playwright screenshots after sandbox hole (#16)
+- Commit impeccable install (skill, agents, hooks) to repo (#15)
+- Complete DESIGN.md type ramp so hook matches shipped sizes (resume) (#14)
+- Complete DESIGN.md type ramp so hook matches shipped sizes (#13)
 - Build buildtreat survey (Full-Bleed Feed) (#5)
 - Finish: detector, reviewer, documenter, DESIGN.md (#12)
 - ATProto auth + allowlist + response storage (#11)

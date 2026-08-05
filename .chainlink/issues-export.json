@@ -1,12 +1,27 @@
 {
   "version": 1,
-  "exported_at": "2026-08-05T22:30:24.740522+00:00",
+  "exported_at": "2026-08-05T22:47:35.373582+00:00",
   "issues": [
+    {
+      "id": 18,
+      "title": "Provision Cloudflare and deploy the survey to workers.dev",
+      "description": null,
+      "status": "open",
+      "priority": "high",
+      "parent_id": null,
+      "labels": [
+        "deploy"
+      ],
+      "comments": [],
+      "created_at": "2026-08-05T22:39:08.219460+00:00",
+      "updated_at": "2026-08-05T22:39:08.219460+00:00",
+      "closed_at": null
+    },
     {
       "id": 17,
       "title": "Write LAUNCH.md runbook for taking the survey live",
       "description": null,
-      "status": "open",
+      "status": "closed",
       "priority": "high",
       "parent_id": null,
       "labels": [
@@ -14,8 +29,8 @@
       ],
       "comments": [],
       "created_at": "2026-08-05T22:29:14.922766+00:00",
-      "updated_at": "2026-08-05T22:29:14.922766+00:00",
-      "closed_at": null
+      "updated_at": "2026-08-05T22:30:28.527657+00:00",
+      "closed_at": "2026-08-05T22:30:28.527657+00:00"
     },
     {
       "id": 16,

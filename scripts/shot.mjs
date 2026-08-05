@@ -1,7 +1,7 @@
 import { chromium } from 'playwright';
 
 const [, , url, out, w, h, fullPage] = process.argv;
-const browser = await chromium.launch({ channel: 'chromium' });
+const browser = await chromium.launch({ channel: 'chromium', args: ['--no-sandbox'] });
 const page = await browser.newPage({
 	viewport: { width: Number(w) || 393, height: Number(h) || 852 },
 	deviceScaleFactor: 2,
