@@ -1,7 +1,7 @@
 <script lang="ts">
 	import Icon from '$lib/components/Icon.svelte';
 	import { datesQuestion, retreat, type AvailabilityRange, type DayPortion } from '$lib/content';
-	import { formatRange, inRange, portionLabel, rangeNights, windowMonths } from '$lib/dates';
+	import { formatDay, formatRange, inRange, portionLabel, rangeNights, windowMonths } from '$lib/dates';
 	import type { SurveyState } from '$lib/survey.svelte';
 
 	let {
@@ -76,6 +76,9 @@
 		survey.saveLocal();
 	}
 
+	/** Announced to assistive tech as the keyboard flow progresses. */
+	let anchorMessage = $state('');
+
 	/** Keyboard flow on day cells: first Enter anchors, second completes. */
 	function dayKey(day: string, e: KeyboardEvent) {
 		if (!signedIn) return;
@@ -89,10 +92,12 @@
 		if (dragStart === null) {
 			dragStart = day;
 			dragEnd = day;
+			anchorMessage = `Range starts ${formatDay(day)}. Choose an end date and press Enter again.`;
 		} else {
 			const lo = dragStart < day ? dragStart : day;
 			const hi = dragStart < day ? day : dragStart;
 			commitRange(lo, hi);
+			anchorMessage = `Added ${formatDay(lo)} to ${formatDay(hi)}.`;
 			dragStart = null;
 			dragEnd = null;
 		}
@@ -152,6 +157,8 @@
 	];
 </script>
 
+<svelte:window onpointerup={pointerUp} onpointercancel={pointerUp} />
+
 <div class="dates">
 	<h2 id="dates-title" class="display title">{datesQuestion.title}</h2>
 	<p class="prompt">{datesQuestion.prompt}</p>
@@ -163,18 +170,12 @@
 		</button>
 	{/if}
 
-	<div
-		class="calendar"
-		class:locked={!signedIn}
-		role="application"
-		aria-label="Availability calendar, September 1 to November 15"
-		onpointerup={pointerUp}
-		onpointercancel={pointerUp}
-	>
+	<div class="calendar" class:locked={!signedIn}>
+		<p class="visually-hidden" aria-live="polite">{anchorMessage}</p>
 		{#each months as month (month.month)}
-			<div class="month">
-				<h3 class="kicker month-name">{month.name}</h3>
-				<div class="grid" role="grid">
+			<div class="month" role="group" aria-labelledby="month-{month.month}">
+				<h3 class="kicker month-name" id="month-{month.month}">{month.name}</h3>
+				<div class="grid">
 					{#each weekdays as wd, i (i)}
 						<span class="wd" aria-hidden="true">{wd}</span>
 					{/each}
@@ -197,7 +198,7 @@
 								aria-label="{month.name} {day.day}{s.selected ? ', available' + (s.portion === 'full' ? '' : ', ' + portionLabel(s.portion, 'start')) : ''}"
 								disabled={!signedIn}
 							>
-								{day.day}
+								<span class="num">{day.day}</span>
 							</button>
 						{:else}
 							<span class="day out" aria-hidden="true">{day.day}</span>
@@ -255,22 +256,23 @@
 					</div>
 					<p class="hint">{datesQuestion.halfDayHint}</p>
 				</div>
-			{:else if survey.ranges.length > 0}
-				<ul class="chips" aria-label="Your available ranges">
-					{#each survey.ranges as range, i (range.start)}
-						<li>
-							<button class="chip" onclick={() => (editing = i)}>
-								{formatRange(range)}
-								{#if range.startPortion !== 'full' || range.endPortion !== 'full'}
-									<span class="half-dot" aria-hidden="true"></span>
-								{/if}
-							</button>
-						</li>
-					{/each}
-				</ul>
 			{:else}
+				{#if survey.ranges.length > 0}
+					<ul class="chips" aria-label="Your available ranges">
+						{#each survey.ranges as range, i (range.start)}
+							<li>
+								<button class="chip" onclick={() => (editing = i)}>
+									{formatRange(range)}
+									{#if range.startPortion !== 'full' || range.endPortion !== 'full'}
+										<span class="half-dot" aria-hidden="true"></span>
+									{/if}
+								</button>
+							</li>
+						{/each}
+					</ul>
+				{/if}
 				<details class="typed">
-					<summary>Prefer to type your dates?</summary>
+					<summary>{survey.ranges.length > 0 ? 'Add another range by typing' : 'Prefer to type your dates?'}</summary>
 					<div class="typed-row">
 						<label>
 							<span class="kicker">From</span>
@@ -381,12 +383,18 @@
 
 	.day.sel.first-half {
 		background: linear-gradient(to bottom, var(--ink) 50%, var(--ink-12) 50%);
-		color: var(--ink);
 	}
 
 	.day.sel.second-half {
 		background: linear-gradient(to top, var(--ink) 50%, var(--ink-12) 50%);
-		color: var(--ink);
+	}
+
+	/* On half-filled cells the numeral crosses white and dark halves;
+	   difference-blend keeps it legible over both. */
+	.day.sel.first-half .num,
+	.day.sel.second-half .num {
+		color: #fff;
+		mix-blend-mode: difference;
 	}
 
 	.day.active {

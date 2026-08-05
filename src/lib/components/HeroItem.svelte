@@ -34,9 +34,15 @@
 			<li>
 				<span class="fact-label">{fact.label}</span>
 				<span class="fact-value">
-					{fact.value}
 					{#if 'bluesky' in fact && fact.bluesky}
-						<Icon name="butterfly" size={15} label="Bluesky" />
+						<!-- Keep the mark glued to the last word so it never wraps alone. -->
+						{fact.value.split(' ').slice(0, -1).join(' ')}
+						<span class="keep">
+							{fact.value.split(' ').at(-1)}
+							<Icon name="butterfly" size={15} label="Bluesky" />
+						</span>
+					{:else}
+						{fact.value}
 					{/if}
 				</span>
 			</li>
@@ -105,10 +111,17 @@
 	}
 
 	.fact-value {
-		display: inline-flex;
-		align-items: center;
-		gap: 0.45rem;
 		text-align: right;
+		text-wrap: balance;
+	}
+
+	.keep {
+		white-space: nowrap;
+	}
+
+	.keep :global(svg) {
+		vertical-align: -0.15em;
+		margin-left: 0.2rem;
 	}
 
 	.author {

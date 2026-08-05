@@ -81,7 +81,7 @@
 					{#if row.value}
 						<span class="row-value">{row.value}</span>
 					{:else}
-						<span class="row-missing">not answered — tap to go to {itemTitles[row.id]}</span>
+						<span class="row-missing">not answered yet</span>
 					{/if}
 				</button>
 			</li>

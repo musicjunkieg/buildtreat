@@ -15,7 +15,7 @@ file deployed or move the credits into a visible colophon before launch.
 
 ## Generated imagery (synthetic, labeled)
 
-`hero-portrait.png`, `hero-landscape.png`, `item-you.png`, `item-interest.png`,
+`hero-portrait.png`, `hero-landscape.png`, `item-you.png`, `item-interest.png`, `item-dates.png`, `item-location.png`,
 `item-travel.png`, `item-review.png`, `grain.png` — AI-generated atmosphere
 (gpt-image-2), prompts embedded in each file and in `.png.json` sidecars.
 These are illustrative desert-modern scenes, not photographs of any real venue.

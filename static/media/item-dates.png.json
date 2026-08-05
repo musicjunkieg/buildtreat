@@ -1,0 +1,6 @@
+{
+  "prompt": "Photograph, vertical composition. A Southern California desert night sky at late dusk seen from a dark valley floor: deep indigo-to-black gradient sky filling most of the frame, a thin band of last pink-orange afterglow on the horizon behind low black mountain silhouettes, a few faint stars high up. The bottom two thirds of the frame are nearly black, extremely quiet and empty — this is a calm backdrop for a calendar interface. No moon, no clouds detail, no foreground objects, no text, no people, no UI. Subtle 35mm film grain, flat matte finish.",
+  "createdAt": "2026-08-05T01:47:27.362Z",
+  "tool": "generate-image.mjs",
+  "model": "gpt-image-2"
+}

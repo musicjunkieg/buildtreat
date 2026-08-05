@@ -172,11 +172,11 @@
 		/>
 	</FeedItem>
 
-	<FeedItem id="dates" darker labelledby="dates-title">
+	<FeedItem id="dates" media="/media/item-dates.png" darker labelledby="dates-title">
 		<DatesItem {survey} {signedIn} onsignin={openSignIn} />
 	</FeedItem>
 
-	<FeedItem id="location" darker labelledby="location-title">
+	<FeedItem id="location" media="/media/item-location.png" darker labelledby="location-title">
 		<LocationItem {survey} {signedIn} onsignin={openSignIn} />
 	</FeedItem>
 
@@ -195,7 +195,7 @@
 	</FeedItem>
 </main>
 
-<Rail {current} completion={survey.completion} onjump={jump} />
+<Rail {current} completion={{ ...survey.completion, review: submitted }} onjump={jump} />
 <Dots {current} onjump={jump} />
 <SignInSheet bind:open={sheetOpen} error={data.authError} />
 

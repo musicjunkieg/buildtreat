@@ -98,13 +98,21 @@ export function rangesOverlap(a: AvailabilityRange, b: AvailabilityRange): boole
 	return a.start <= b.end && b.start <= a.end;
 }
 
-/** Merge overlapping/adjacent ranges, keeping edge portions of the outermost edges. */
+/**
+ * Merge overlapping ranges, keeping edge portions of the outermost edges.
+ * Adjacent (touching) ranges merge ONLY when both touching edges are full
+ * days — "leaving midday Sept 5" next to "arriving midday Sept 6" is real
+ * signal and must survive as two ranges.
+ */
 export function normalizeRanges(ranges: AvailabilityRange[]): AvailabilityRange[] {
 	const sorted = [...ranges].sort((a, b) => compareIso(a.start, b.start));
 	const out: AvailabilityRange[] = [];
 	for (const r of sorted) {
 		const last = out[out.length - 1];
-		if (last && (rangesOverlap(last, r) || diffDays(last.end, r.start) === 1)) {
+		const overlaps = last && rangesOverlap(last, r);
+		const cleanlyAdjacent =
+			last && diffDays(last.end, r.start) === 1 && last.endPortion === 'full' && r.startPortion === 'full';
+		if (last && (overlaps || cleanlyAdjacent)) {
 			if (r.end > last.end) {
 				last.end = r.end;
 				last.endPortion = r.endPortion;
