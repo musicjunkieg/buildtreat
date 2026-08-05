@@ -131,6 +131,17 @@
       "created_at": "2026-08-04T17:52:09.013402-07:00",
       "updated_at": "2026-08-04T17:52:09.013402-07:00",
       "metadata_json": "{\"branch\":\"feature/survey\",\"confidence\":95,\"files\":[\".impeccable/mocks/hero-h.png\"]}"
+    },
+    {
+      "id": 13,
+      "change_id": "0dabd694-ec9d-4cdc-b5c4-e77cdcc0a96e",
+      "node_type": "decision",
+      "title": "Kicker kept by Bryan's explicit call (craft-floor ban overridden by approved comp + user decision)",
+      "description": null,
+      "status": "pending",
+      "created_at": "2026-08-04T18:54:44.363734-07:00",
+      "updated_at": "2026-08-04T18:54:44.363734-07:00",
+      "metadata_json": "{\"branch\":\"feature/survey\",\"confidence\":95}"
     }
   ],
   "edges": [
@@ -265,6 +276,17 @@
       "weight": 1.0,
       "rationale": "Comp approval after two naming rerolls",
       "created_at": "2026-08-04T17:52:09.020456-07:00"
+    },
+    {
+      "id": 13,
+      "from_node_id": 5,
+      "to_node_id": 13,
+      "from_change_id": "d1f88760-dd08-4d07-b3cc-3e87ef5c21d9",
+      "to_change_id": "0dabd694-ec9d-4cdc-b5c4-e77cdcc0a96e",
+      "edge_type": "leads_to",
+      "weight": 1.0,
+      "rationale": "Finish-review conflict resolved by user",
+      "created_at": "2026-08-04T18:54:44.369793-07:00"
     }
   ]
 }
