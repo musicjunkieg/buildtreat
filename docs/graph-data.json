@@ -153,6 +153,17 @@
       "created_at": "2026-08-04T19:02:30.051694-07:00",
       "updated_at": "2026-08-04T19:02:30.051694-07:00",
       "metadata_json": "{\"branch\":\"feature/survey\",\"confidence\":95}"
+    },
+    {
+      "id": 15,
+      "change_id": "d4503cba-5f24-4f81-98cb-9a1a6bdbfdcf",
+      "node_type": "outcome",
+      "title": "PR #1 opened: complete survey shipped through impeccable finish (pass verdict, DESIGN.md recorded)",
+      "description": null,
+      "status": "pending",
+      "created_at": "2026-08-04T19:06:58.591270-07:00",
+      "updated_at": "2026-08-04T19:06:58.591270-07:00",
+      "metadata_json": "{\"branch\":\"feature/survey\",\"commit\":\"c847a8e\",\"confidence\":95}"
     }
   ],
   "edges": [
@@ -309,6 +320,17 @@
       "weight": 1.0,
       "rationale": "Build executed and verified against approved comp",
       "created_at": "2026-08-04T19:02:30.058462-07:00"
+    },
+    {
+      "id": 15,
+      "from_node_id": 14,
+      "to_node_id": 15,
+      "from_change_id": "078cb710-471a-4f22-87de-ac56ce1984b8",
+      "to_change_id": "d4503cba-5f24-4f81-98cb-9a1a6bdbfdcf",
+      "edge_type": "leads_to",
+      "weight": 1.0,
+      "rationale": "Shipped",
+      "created_at": "2026-08-04T19:06:58.598784-07:00"
     }
   ]
 }

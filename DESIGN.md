@@ -38,6 +38,43 @@ typography:
     fontSize: "0.6875rem"
     fontWeight: 500
     letterSpacing: "0.18em"
+  place:
+    fontFamily: "Big Shoulders Variable, Arial Narrow, sans-serif"
+    fontSize: "clamp(1.35rem, 4.2vw, 1.9rem)"
+    fontWeight: 650
+    letterSpacing: "0.01em"
+  input:
+    fontFamily: "Hanken Grotesk Variable, system-ui, sans-serif"
+    fontSize: "1.125rem"
+    fontWeight: 400
+  control:
+    fontFamily: "Hanken Grotesk Variable, system-ui, sans-serif"
+    fontSize: "1.0625rem"
+    fontWeight: 650
+  compact:
+    fontFamily: "Hanken Grotesk Variable, system-ui, sans-serif"
+    fontSize: "0.9375rem"
+    fontWeight: 400
+    lineHeight: 1.45
+  numeral:
+    fontFamily: "Hanken Grotesk Variable, system-ui, sans-serif"
+    fontSize: "0.875rem"
+    fontWeight: 500
+  fact:
+    fontFamily: "Hanken Grotesk Variable, system-ui, sans-serif"
+    fontSize: "0.8125rem"
+    fontWeight: 500
+    letterSpacing: "0.14em"
+  fact-mobile:
+    fontFamily: "Hanken Grotesk Variable, system-ui, sans-serif"
+    fontSize: "0.75rem"
+    fontWeight: 500
+    letterSpacing: "0.1em"
+  micro:
+    fontFamily: "Hanken Grotesk Variable, system-ui, sans-serif"
+    fontSize: "0.625rem"
+    fontWeight: 500
+    letterSpacing: "0.12em"
 rounded:
   pill: "999px"
   sheet: "14px"
@@ -120,6 +157,7 @@ The palette is one ink over photography: every UI tone is white at an opacity st
 - **Fact/Ledger** (500, 0.8125rem, tracking 0.14em, uppercase; 0.75rem / 0.1em under 900px): ledger row text (`--text-fact`, `--track-fact`).
 - **Label/Kicker** (500, 0.6875rem, tracking 0.18em, uppercase): the `.kicker` atom — hero eyebrow, sheet headings, field labels.
 - **Author** (400–550, 0.8125rem, `--text-author`): bylines, hints, error text.
+- **Interim steps** (Hanken Grotesk): Input 1.125rem; Control 1.0625rem/650 (pill and option labels); Compact 0.9375rem (dense prompts, review values); Numeral 0.875rem tabular (calendar days); Fact-mobile 0.75rem/0.1em (ledger under 900px); Micro 0.625rem/0.12em (calendar weekday letters).
 
 ### Named Rules
 **The Stacked Caps Rule.** Display type is always uppercase, always `line-height: 0.92`, and multi-line titles stack as separate spans that may differ in size. Never letter-space display caps beyond 0.005em.
