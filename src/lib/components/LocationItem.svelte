@@ -1,16 +1,19 @@
 <script lang="ts">
 	import Icon from '$lib/components/Icon.svelte';
+	import NextChip from '$lib/components/NextChip.svelte';
 	import { locationQuestion, locations } from '$lib/content';
 	import type { SurveyState } from '$lib/survey.svelte';
 
 	let {
 		survey,
 		signedIn,
-		onsignin
+		onsignin,
+		onnext
 	}: {
 		survey: SurveyState;
 		signedIn: boolean;
 		onsignin: () => void;
+		onnext?: () => void;
 	} = $props();
 </script>
 
@@ -62,6 +65,9 @@
 			Top three set. Tap any to change your mind.
 		{/if}
 	</p>
+	{#if signedIn && onnext}
+		<NextChip label="Review answers" show={survey.ranking.length > 0} {onnext} />
+	{/if}
 </div>
 
 <style>

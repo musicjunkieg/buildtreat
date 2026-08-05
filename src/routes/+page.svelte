@@ -63,6 +63,11 @@
 	});
 
 	function jump(id: FeedItemId) {
+		// Pre-auth the feed is sealed: the survey isn't browsable until sign-in.
+		if (!signedIn && id !== 'hero') {
+			openSignIn();
+			return;
+		}
 		document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
 	}
 
@@ -78,14 +83,21 @@
 
 	function onkeydown(e: KeyboardEvent) {
 		if (sheetOpen) return;
+		if (!signedIn) return;
 		const t = e.target as HTMLElement;
-		if (t.closest('input, select, textarea, [role="application"], details')) return;
+		if (t.closest('input, select, textarea, details, .calendar')) return;
 		if (e.key === 'ArrowDown' || e.key === 'PageDown') {
 			e.preventDefault();
 			next();
 		} else if (e.key === 'ArrowUp' || e.key === 'PageUp') {
 			e.preventDefault();
 			prev();
+		} else if (e.key === 'Enter' && !t.closest('button, a, [role="radio"]')) {
+			// Enter advances once the current item is answered.
+			if (survey.completion[current] || current === 'hero') {
+				e.preventDefault();
+				next();
+			}
 		}
 	}
 
@@ -123,7 +135,7 @@
 
 <svelte:window {onkeydown} />
 
-<main class="feed" bind:this={feed}>
+<main class="feed" class:locked={!signedIn} bind:this={feed}>
 	<FeedItem
 		id="hero"
 		media="/media/hero-portrait.png"
@@ -135,7 +147,7 @@
 	</FeedItem>
 
 	<FeedItem id="you" media="/media/item-you.png" labelledby="you-title">
-		<YouItem {survey} {signedIn} {handle} onsignin={openSignIn} />
+		<YouItem {survey} {signedIn} {handle} onsignin={openSignIn} onnext={() => jump('interest')} />
 	</FeedItem>
 
 	<FeedItem id="interest" media="/media/item-interest.png" labelledby="interest-title">
@@ -152,6 +164,7 @@
 				survey.interest = v as InterestValue;
 				survey.saveLocal();
 			}}
+			onnext={() => jump('travel')}
 		/>
 	</FeedItem>
 
@@ -169,15 +182,16 @@
 				survey.travel = v as TravelValue;
 				survey.saveLocal();
 			}}
+			onnext={() => jump('dates')}
 		/>
 	</FeedItem>
 
 	<FeedItem id="dates" media="/media/item-dates.png" darker labelledby="dates-title">
-		<DatesItem {survey} {signedIn} onsignin={openSignIn} />
+		<DatesItem {survey} {signedIn} onsignin={openSignIn} onnext={() => jump('location')} />
 	</FeedItem>
 
 	<FeedItem id="location" media="/media/item-location.png" darker labelledby="location-title">
-		<LocationItem {survey} {signedIn} onsignin={openSignIn} />
+		<LocationItem {survey} {signedIn} onsignin={openSignIn} onnext={() => jump('review')} />
 	</FeedItem>
 
 	<FeedItem id="review" media="/media/item-review.png" labelledby="review-title">
@@ -195,9 +209,11 @@
 	</FeedItem>
 </main>
 
-<Rail {current} completion={{ ...survey.completion, review: submitted }} onjump={jump} />
-<Dots {current} onjump={jump} />
-<SignInSheet bind:open={sheetOpen} error={data.authError} />
+<Rail {current} completion={{ ...survey.completion, review: submitted }} dimmed={!signedIn} onjump={jump} />
+{#if signedIn}
+	<Dots {current} onjump={jump} />
+{/if}
+<SignInSheet bind:open={sheetOpen} error={data.authError} knownUser={data.knownUser} />
 
 <style>
 	.feed {
@@ -205,6 +221,11 @@
 		overflow-y: auto;
 		scroll-snap-type: y mandatory;
 		scroll-behavior: smooth;
+	}
+
+	/* Signed-out: the hero is the whole page — nothing to peek at below. */
+	.feed.locked {
+		overflow: hidden;
 	}
 
 	@media (prefers-reduced-motion: reduce) {

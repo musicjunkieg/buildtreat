@@ -1,5 +1,6 @@
 <script lang="ts">
 	import Icon from '$lib/components/Icon.svelte';
+	import NextChip from '$lib/components/NextChip.svelte';
 	import type { Snippet } from 'svelte';
 
 	let {
@@ -7,14 +8,18 @@
 		title,
 		prompt,
 		signedIn,
+		complete = false,
 		onsignin,
+		onnext,
 		children
 	}: {
 		titleId: string;
 		title: string;
 		prompt: string;
 		signedIn: boolean;
+		complete?: boolean;
 		onsignin: () => void;
+		onnext?: () => void;
 		children: Snippet;
 	} = $props();
 </script>
@@ -27,6 +32,9 @@
 		<div class="controls">
 			{@render children()}
 		</div>
+		{#if onnext}
+			<NextChip show={complete} {onnext} />
+		{/if}
 	{:else}
 		<button class="pill gate" onclick={onsignin}>
 			Sign in with Atmosphere to answer

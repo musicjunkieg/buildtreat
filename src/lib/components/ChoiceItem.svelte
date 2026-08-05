@@ -10,7 +10,8 @@
 		value,
 		signedIn,
 		onsignin,
-		onchange
+		onchange,
+		onnext
 	}: {
 		titleId: string;
 		title: string;
@@ -21,10 +22,11 @@
 		signedIn: boolean;
 		onsignin: () => void;
 		onchange: (value: string) => void;
+		onnext?: () => void;
 	} = $props();
 </script>
 
-<QuestionScaffold {titleId} {title} {prompt} {signedIn} {onsignin}>
+<QuestionScaffold {titleId} {title} {prompt} {signedIn} {onsignin} complete={value !== null} {onnext}>
 	<fieldset class="options" aria-labelledby={titleId}>
 		{#each options as option (option.value)}
 			<label class="option" class:on={value === option.value}>

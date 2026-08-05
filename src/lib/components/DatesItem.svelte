@@ -1,5 +1,6 @@
 <script lang="ts">
 	import Icon from '$lib/components/Icon.svelte';
+	import NextChip from '$lib/components/NextChip.svelte';
 	import { datesQuestion, retreat, type AvailabilityRange, type DayPortion } from '$lib/content';
 	import { formatDay, formatRange, inRange, portionLabel, rangeNights, windowMonths } from '$lib/dates';
 	import type { SurveyState } from '$lib/survey.svelte';
@@ -7,11 +8,13 @@
 	let {
 		survey,
 		signedIn,
-		onsignin
+		onsignin,
+		onnext
 	}: {
 		survey: SurveyState;
 		signedIn: boolean;
 		onsignin: () => void;
+		onnext?: () => void;
 	} = $props();
 
 	const months = windowMonths();
@@ -290,6 +293,9 @@
 						<p class="hint" role="alert">{typedError}</p>
 					{/if}
 				</details>
+				{#if onnext}
+					<NextChip show={survey.ranges.length > 0} {onnext} />
+				{/if}
 			{/if}
 		</div>
 	{/if}

@@ -1,21 +1,107 @@
 {
   "version": 1,
-  "exported_at": "2026-08-05T23:05:55.151580+00:00",
+  "exported_at": "2026-08-05T23:29:23.323216+00:00",
   "issues": [
     {
-      "id": 19,
-      "title": "Analyze smoke-test HAR from deployed survey",
+      "id": 25,
+      "title": "Favicon: numeric globe in world style",
+      "description": null,
+      "status": "open",
+      "priority": "medium",
+      "parent_id": 20,
+      "labels": [],
+      "comments": [],
+      "created_at": "2026-08-05T23:17:24.676842+00:00",
+      "updated_at": "2026-08-05T23:17:24.676842+00:00",
+      "closed_at": null
+    },
+    {
+      "id": 24,
+      "title": "Handle typeahead (typeahead.waow.tech) + welcome-back cookie",
+      "description": null,
+      "status": "open",
+      "priority": "medium",
+      "parent_id": 20,
+      "labels": [],
+      "comments": [],
+      "created_at": "2026-08-05T23:17:24.672057+00:00",
+      "updated_at": "2026-08-05T23:17:24.672057+00:00",
+      "closed_at": null
+    },
+    {
+      "id": 23,
+      "title": "Location field: ZIP/city lookup",
+      "description": null,
+      "status": "open",
+      "priority": "medium",
+      "parent_id": 20,
+      "labels": [],
+      "comments": [],
+      "created_at": "2026-08-05T23:17:24.666395+00:00",
+      "updated_at": "2026-08-05T23:17:24.666395+00:00",
+      "closed_at": null
+    },
+    {
+      "id": 22,
+      "title": "Next affordance + Enter-to-advance per item",
+      "description": null,
+      "status": "open",
+      "priority": "medium",
+      "parent_id": 20,
+      "labels": [],
+      "comments": [],
+      "created_at": "2026-08-05T23:17:24.661887+00:00",
+      "updated_at": "2026-08-05T23:17:24.661887+00:00",
+      "closed_at": null
+    },
+    {
+      "id": 21,
+      "title": "Lock feed pre-auth: hero only, dimmed rail, unlock on sign-in",
+      "description": null,
+      "status": "open",
+      "priority": "medium",
+      "parent_id": 20,
+      "labels": [],
+      "comments": [],
+      "created_at": "2026-08-05T23:17:24.656636+00:00",
+      "updated_at": "2026-08-05T23:17:24.656636+00:00",
+      "closed_at": null
+    },
+    {
+      "id": 20,
+      "title": "Post-smoke-test notes from Bryan",
       "description": null,
       "status": "open",
       "priority": "high",
       "parent_id": null,
       "labels": [
-        "bug"
+        "feedback"
       ],
       "comments": [],
-      "created_at": "2026-08-05T22:54:53.738511+00:00",
-      "updated_at": "2026-08-05T22:54:53.738511+00:00",
+      "created_at": "2026-08-05T23:11:51.418887+00:00",
+      "updated_at": "2026-08-05T23:11:51.418887+00:00",
       "closed_at": null
+    },
+    {
+      "id": 19,
+      "title": "Analyze smoke-test HAR from deployed survey",
+      "description": null,
+      "status": "closed",
+      "priority": "high",
+      "parent_id": null,
+      "labels": [
+        "bug"
+      ],
+      "comments": [
+        {
+          "content": "[action] OAuth login fixed (workerd export conditions in vite ssr); deployed + verified; awaiting Bryan phone retest",
+          "created_at": "2026-08-05T23:05:59.831927+00:00",
+          "kind": "note"
+        }
+      ],
+      "created_at": "2026-08-05T22:54:53.738511+00:00",
+      "updated_at": "2026-08-05T23:05:59.819165+00:00",
+      "closed_at": "2026-08-05T23:05:59.819165+00:00"
     },
     {
       "id": 18,

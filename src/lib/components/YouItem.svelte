@@ -7,22 +7,66 @@
 		survey,
 		signedIn,
 		handle,
-		onsignin
+		onsignin,
+		onnext
 	}: {
 		survey: SurveyState;
 		signedIn: boolean;
 		handle: string | null;
 		onsignin: () => void;
+		onnext?: () => void;
 	} = $props();
+
+	function fieldEnter(e: KeyboardEvent, nextId: string | null) {
+		if (e.key !== 'Enter') return;
+		e.preventDefault();
+		if (nextId) {
+			document.getElementById(nextId)?.focus();
+		} else if (survey.youComplete) {
+			onnext?.();
+		}
+	}
+
+	/** ZIP lookup: five digits resolve to "City, ST" via zippopotam.us. */
+	let zipStatus = $state<'idle' | 'looking' | 'notfound'>('idle');
+	let lastLookedUp = '';
+
+	async function maybeResolveZip() {
+		const raw = survey.homeLocation.trim();
+		if (!/^\d{5}$/.test(raw) || raw === lastLookedUp) return;
+		lastLookedUp = raw;
+		zipStatus = 'looking';
+		try {
+			const res = await fetch(`https://api.zippopotam.us/us/${raw}`);
+			if (!res.ok) throw new Error(String(res.status));
+			const data = (await res.json()) as { places?: { 'place name': string; 'state abbreviation': string }[] };
+			const place = data.places?.[0];
+			if (place) {
+				survey.homeLocation = `${place['place name']}, ${place['state abbreviation']}`;
+				zipStatus = 'idle';
+				survey.saveLocal();
+			} else {
+				zipStatus = 'notfound';
+			}
+		} catch {
+			// Offline or unknown ZIP — leave what they typed; it's still an answer.
+			zipStatus = 'notfound';
+		}
+	}
+
+	function locationInput() {
+		if (zipStatus === 'notfound') zipStatus = 'idle';
+		if (/^\d{5}$/.test(survey.homeLocation.trim())) void maybeResolveZip();
+	}
 </script>
 
-<QuestionScaffold titleId="you-title" title={youQuestion.title} prompt={youQuestion.prompt} {signedIn} {onsignin}>
+<QuestionScaffold titleId="you-title" title={youQuestion.title} prompt={youQuestion.prompt} {signedIn} {onsignin} complete={survey.youComplete} {onnext}>
 	{#if handle}
 		<p class="signed">answering as <span class="handle">@{handle}</span></p>
 	{/if}
 	<div class="field">
 		<label class="kicker" for="you-name">Name</label>
-		<input id="you-name" type="text" autocomplete="name" bind:value={survey.name} onblur={() => survey.saveLocal()} />
+		<input id="you-name" type="text" autocomplete="name" bind:value={survey.name} onblur={() => survey.saveLocal()} onkeydown={(e) => fieldEnter(e, 'you-email')} />
 	</div>
 	<div class="field">
 		<label class="kicker" for="you-email">Email</label>
@@ -32,6 +76,7 @@
 			autocomplete="email"
 			bind:value={survey.email}
 			onblur={() => survey.saveLocal()}
+			onkeydown={(e) => fieldEnter(e, 'you-location')}
 			aria-invalid={!survey.emailValid}
 			aria-describedby={survey.emailValid ? undefined : 'you-email-error'}
 		/>
@@ -44,10 +89,20 @@
 		<input
 			id="you-location"
 			type="text"
-			placeholder="City, region, or timezone"
+			placeholder="City, state — or ZIP code"
 			bind:value={survey.homeLocation}
-			onblur={() => survey.saveLocal()}
+			oninput={locationInput}
+			onblur={() => {
+				void maybeResolveZip();
+				survey.saveLocal();
+			}}
+			onkeydown={(e) => fieldEnter(e, null)}
 		/>
+		{#if zipStatus === 'looking'}
+			<p class="zip-hint">Looking up that ZIP…</p>
+		{:else if zipStatus === 'notfound'}
+			<p class="zip-hint">Couldn’t match that ZIP — city and state works too.</p>
+		{/if}
 	</div>
 </QuestionScaffold>
 
@@ -100,5 +155,10 @@
 	.error {
 		font-size: var(--text-author);
 		color: var(--ink);
+	}
+
+	.zip-hint {
+		font-size: var(--text-author);
+		color: var(--ink-70);
 	}
 </style>

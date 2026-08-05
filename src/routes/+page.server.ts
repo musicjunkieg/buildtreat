@@ -19,6 +19,30 @@ export interface Organizer {
 	avatar: string | null;
 }
 
+/** Non-auth identity hint so returning visitors get a one-tap sign-in. */
+export interface KnownUser {
+	handle: string;
+	displayName: string | null;
+	avatar: string | null;
+}
+
+const KNOWN_COOKIE = 'abr_known';
+
+function readKnownUser(raw: string | undefined): KnownUser | null {
+	if (!raw) return null;
+	try {
+		const parsed = JSON.parse(raw) as Record<string, unknown>;
+		if (typeof parsed.handle !== 'string' || !parsed.handle) return null;
+		return {
+			handle: parsed.handle,
+			displayName: typeof parsed.displayName === 'string' ? parsed.displayName : null,
+			avatar: typeof parsed.avatar === 'string' ? parsed.avatar : null
+		};
+	} catch {
+		return null;
+	}
+}
+
 /** The organizer's avatar, resolved from the public appview and cached. */
 async function loadOrganizer(profileCache: ReturnType<typeof cloudflareKV> | undefined): Promise<Organizer> {
 	try {
@@ -31,7 +55,7 @@ async function loadOrganizer(profileCache: ReturnType<typeof cloudflareKV> | und
 	}
 }
 
-export const load: PageServerLoad = async ({ locals, platform, url }) => {
+export const load: PageServerLoad = async ({ locals, platform, url, cookies }) => {
 	// The OAuth library redirects back with ?error=... when a login fails.
 	const authError = url.searchParams.get('error');
 
@@ -40,6 +64,7 @@ export const load: PageServerLoad = async ({ locals, platform, url }) => {
 		: undefined;
 
 	const organizer = await loadOrganizer(profileCache);
+	const knownUser = readKnownUser(cookies.get(KNOWN_COOKIE));
 
 	// Dev-only design preview of the signed-in state; `dev` is compile-time
 	// false in production builds, so this path cannot ship.
@@ -54,6 +79,7 @@ export const load: PageServerLoad = async ({ locals, platform, url }) => {
 			answers: null as SurveyDraft | null,
 			existingResponse: false,
 			organizer,
+			knownUser,
 			authError
 		};
 	}
@@ -64,6 +90,7 @@ export const load: PageServerLoad = async ({ locals, platform, url }) => {
 			answers: null as SurveyDraft | null,
 			existingResponse: false,
 			organizer,
+			knownUser,
 			authError
 		};
 	}
@@ -77,6 +104,16 @@ export const load: PageServerLoad = async ({ locals, platform, url }) => {
 		avatar: profile?.avatar ?? null
 	};
 
+	// Remember who signed in (identity hint only, no credentials) so a
+	// returning visitor — even after logout — gets a one-tap re-entry.
+	if (user.handle) {
+		cookies.set(
+			KNOWN_COOKIE,
+			JSON.stringify({ handle: user.handle, displayName: user.displayName, avatar: user.avatar }),
+			{ path: '/', maxAge: 60 * 60 * 24 * 180, httpOnly: true, sameSite: 'lax', secure: !dev }
+		);
+	}
+
 	const db = platform?.env?.DB;
 	const stored = db ? await getResponse(db, locals.did).catch(() => null) : null;
 
@@ -85,6 +122,7 @@ export const load: PageServerLoad = async ({ locals, platform, url }) => {
 		answers: stored?.draft ?? null,
 		existingResponse: stored !== null,
 		organizer,
+		knownUser,
 		authError
 	};
 };
