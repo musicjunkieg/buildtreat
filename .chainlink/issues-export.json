@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "exported_at": "2026-08-05T00:32:52.130904+00:00",
+  "exported_at": "2026-08-05T00:52:09.107855+00:00",
   "issues": [
     {
       "id": 12,
@@ -23,7 +23,18 @@
       "priority": "medium",
       "parent_id": 5,
       "labels": [],
-      "comments": [],
+      "comments": [
+        {
+          "content": "AUTH ARCHITECTURE (researched, verified Aug 2026): ATProto OAuth, scope 'atproto' only (identity-only; consent reads 'wants to uniquely identify you'). Primary package @svelte-atproto/oauth 0.3.0 (SvelteKit-native, atcute-based, Cloudflare KV adapter, mounts /oauth-client-metadata.json + /oauth/{login,callback,logout} via hooks.server.ts, locals.did). Fallback: atproto-oauth-client-cloudflare-workers (patched NodeOAuthClient; stock @atproto/oauth-client-node does NOT run on workerd — issue #3292 open). Flow: PAR+DPoP+PKCE all mandatory; client-metadata.json served at client_id URL, token_endpoint_auth_method none, dpop_bound_access_tokens true, grant_types [authorization_code] only. Storage: KV namespace for state/session (TTL); DISCARD oauth session at callback — mint our own signed HTTP-only cookie {did, handle, displayName, avatar}. Profile: GET public.api.bsky.app/xrpc/app.bsky.actor.getProfile?actor=<did> — UNAUTHENTICATED, returns displayName + avatar CDN URL. Survey responses in D1 keyed by DID. nodejs_compat flag required. Do NOT use transition:* scopes. Dev: localhost client_id special-case via buildAtprotoLoopbackClientMetadata().",
+          "created_at": "2026-08-05T00:39:29.435663+00:00",
+          "kind": "note"
+        },
+        {
+          "content": "D1 SCHEMA (draft): table responses (did TEXT PK, handle TEXT, display_name TEXT, avatar_url TEXT, name TEXT NOT NULL, email TEXT NOT NULL, home_location TEXT NOT NULL, interest TEXT CHECK in yes/no/maybe, travel TEXT CHECK in yes/partial/no, location_ranking TEXT (JSON array of up to 3 of: palm-springs, coachella-valley, joshua-tree, san-diego, la-metro), submitted_at TEXT, updated_at TEXT). Table availability_ranges (id INTEGER PK, did TEXT REFERENCES responses ON DELETE CASCADE, start_date TEXT (ISO, within 2026-09-01..2026-11-15), end_date TEXT, start_portion TEXT CHECK in full/first_half/second_half, end_portion TEXT same — portions express half-day availability on a range's first and last day. Table allowlist (handle TEXT PK, did TEXT NULL — filled on first login). Config table or env for deadline date (TBD from Bryan).",
+          "created_at": "2026-08-05T00:39:48.198589+00:00",
+          "kind": "note"
+        }
+      ],
       "created_at": "2026-08-05T00:29:21.755381+00:00",
       "updated_at": "2026-08-05T00:29:21.755381+00:00",
       "closed_at": null
@@ -84,14 +95,14 @@
       "id": 6,
       "title": "North-star comps + approval",
       "description": null,
-      "status": "open",
+      "status": "closed",
       "priority": "medium",
       "parent_id": 5,
       "labels": [],
       "comments": [],
       "created_at": "2026-08-05T00:29:21.730535+00:00",
-      "updated_at": "2026-08-05T00:29:21.730535+00:00",
-      "closed_at": null
+      "updated_at": "2026-08-05T00:52:09.025616+00:00",
+      "closed_at": "2026-08-05T00:52:09.025616+00:00"
     },
     {
       "id": 5,

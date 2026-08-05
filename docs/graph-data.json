@@ -98,6 +98,39 @@
       "created_at": "2026-08-04T17:15:12.217792-07:00",
       "updated_at": "2026-08-04T17:15:12.217792-07:00",
       "metadata_json": "{\"branch\":\"main\",\"confidence\":95}"
+    },
+    {
+      "id": 10,
+      "change_id": "935ee38b-6780-4279-a2ff-05be879f56c1",
+      "node_type": "observation",
+      "title": "Round-1 comps rerolled: retreat is named Taproot (anagram of atproto), CTA is 'Sign in with Atmosphere', confirmation copy softened (interested, not booked)",
+      "description": null,
+      "status": "pending",
+      "created_at": "2026-08-04T17:39:29.448354-07:00",
+      "updated_at": "2026-08-04T17:39:29.448354-07:00",
+      "metadata_json": "{\"branch\":\"feature/survey\",\"confidence\":95}"
+    },
+    {
+      "id": 11,
+      "change_id": "fbc87f0e-c392-4aa1-92b9-f130a537f0b1",
+      "node_type": "observation",
+      "title": "Name settled: the Atmospheric Builders' Retreat (taproot was a typo for atproto)",
+      "description": null,
+      "status": "pending",
+      "created_at": "2026-08-04T17:44:42.891479-07:00",
+      "updated_at": "2026-08-04T17:44:42.891479-07:00",
+      "metadata_json": "{\"branch\":\"feature/survey\",\"confidence\":95}"
+    },
+    {
+      "id": 12,
+      "change_id": "05e0a931-acbd-4f52-be7c-fcf60ac4a829",
+      "node_type": "decision",
+      "title": "Approved comp H 'Rooted Ledger' as north star (breeze-block courtyard, stacked display name, ledger fact rows)",
+      "description": null,
+      "status": "pending",
+      "created_at": "2026-08-04T17:52:09.013402-07:00",
+      "updated_at": "2026-08-04T17:52:09.013402-07:00",
+      "metadata_json": "{\"branch\":\"feature/survey\",\"confidence\":95,\"files\":[\".impeccable/mocks/hero-h.png\"]}"
     }
   ],
   "edges": [
@@ -199,6 +232,39 @@
       "weight": 1.0,
       "rationale": "Decision resolved into confirmed brief",
       "created_at": "2026-08-04T17:15:12.224408-07:00"
+    },
+    {
+      "id": 10,
+      "from_node_id": 5,
+      "to_node_id": 10,
+      "from_change_id": "d1f88760-dd08-4d07-b3cc-3e87ef5c21d9",
+      "to_change_id": "935ee38b-6780-4279-a2ff-05be879f56c1",
+      "edge_type": "leads_to",
+      "weight": 1.0,
+      "rationale": "Comp round feedback corrected product naming",
+      "created_at": "2026-08-04T17:39:29.456200-07:00"
+    },
+    {
+      "id": 11,
+      "from_node_id": 5,
+      "to_node_id": 11,
+      "from_change_id": "d1f88760-dd08-4d07-b3cc-3e87ef5c21d9",
+      "to_change_id": "fbc87f0e-c392-4aa1-92b9-f130a537f0b1",
+      "edge_type": "leads_to",
+      "weight": 1.0,
+      "rationale": "Second comp-round steer settled naming",
+      "created_at": "2026-08-04T17:44:42.898418-07:00"
+    },
+    {
+      "id": 12,
+      "from_node_id": 5,
+      "to_node_id": 12,
+      "from_change_id": "d1f88760-dd08-4d07-b3cc-3e87ef5c21d9",
+      "to_change_id": "05e0a931-acbd-4f52-be7c-fcf60ac4a829",
+      "edge_type": "leads_to",
+      "weight": 1.0,
+      "rationale": "Comp approval after two naming rerolls",
+      "created_at": "2026-08-04T17:52:09.020456-07:00"
     }
   ]
 }
