@@ -1,1 +1,204 @@
-{"nodes":[],"edges":[]}
+{
+  "nodes": [
+    {
+      "id": 1,
+      "change_id": "8a61ba10-3997-4d59-a55b-089884a7b92a",
+      "node_type": "goal",
+      "title": "Capture buildtreat product context (impeccable init)",
+      "description": null,
+      "status": "pending",
+      "created_at": "2026-08-04T15:44:24.822429-07:00",
+      "updated_at": "2026-08-04T15:44:24.822429-07:00",
+      "metadata_json": "{\"branch\":\"main\",\"confidence\":95,\"prompt\":\"/impeccable init — interview established: bespoke one-off survey tool for ATProto builders attending a SoCal retreat; ATProto login; date-range availability with morning/evening granularity on first/last days; SvelteKit + Cloudflare\"}"
+    },
+    {
+      "id": 2,
+      "change_id": "1a2e9185-2868-48a9-9cb6-70eab3c5d656",
+      "node_type": "action",
+      "title": "Interviewed Bryan and wrote PRODUCT.md",
+      "description": null,
+      "status": "pending",
+      "created_at": "2026-08-04T15:44:24.835865-07:00",
+      "updated_at": "2026-08-04T15:44:24.835865-07:00",
+      "metadata_json": "{\"branch\":\"main\",\"confidence\":95,\"files\":[\"PRODUCT.md\"]}"
+    },
+    {
+      "id": 3,
+      "change_id": "89152abc-3929-44dc-a487-81f5a8964afe",
+      "node_type": "outcome",
+      "title": "PRODUCT.md created with confirmed product truth; date windows and SoCal location list still pending from Bryan",
+      "description": null,
+      "status": "pending",
+      "created_at": "2026-08-04T15:44:24.845213-07:00",
+      "updated_at": "2026-08-04T15:44:24.845213-07:00",
+      "metadata_json": "{\"branch\":\"main\",\"confidence\":90}"
+    },
+    {
+      "id": 4,
+      "change_id": "aa77a763-6b49-4aeb-9bab-cca6bdcd1d13",
+      "node_type": "action",
+      "title": "Recorded Bryan's prepared survey content in PRODUCT.md",
+      "description": null,
+      "status": "pending",
+      "created_at": "2026-08-04T15:46:48.727902-07:00",
+      "updated_at": "2026-08-04T15:46:48.727902-07:00",
+      "metadata_json": "{\"branch\":\"main\",\"confidence\":95,\"files\":[\"PRODUCT.md\"]}"
+    },
+    {
+      "id": 5,
+      "change_id": "d1f88760-dd08-4d07-b3cc-3e87ef5c21d9",
+      "node_type": "goal",
+      "title": "Shape the buildtreat survey surface",
+      "description": null,
+      "status": "pending",
+      "created_at": "2026-08-04T17:06:58.528552-07:00",
+      "updated_at": "2026-08-04T17:06:58.528552-07:00",
+      "metadata_json": "{\"branch\":\"main\",\"confidence\":95,\"prompt\":\"/impeccable shape survey\"}"
+    },
+    {
+      "id": 6,
+      "change_id": "2ed10a3a-a911-4946-b391-2210f00e427f",
+      "node_type": "option",
+      "title": "Desert Modern world (assigned by concept roll)",
+      "description": null,
+      "status": "pending",
+      "created_at": "2026-08-04T17:06:58.540310-07:00",
+      "updated_at": "2026-08-04T17:06:58.540310-07:00",
+      "metadata_json": "{\"branch\":\"main\",\"confidence\":80}"
+    },
+    {
+      "id": 7,
+      "change_id": "1e5da569-58ae-4887-8d99-153b970ae0a3",
+      "node_type": "option",
+      "title": "Full-Bleed Feed world (challenger: one question owns each viewport)",
+      "description": null,
+      "status": "pending",
+      "created_at": "2026-08-04T17:06:58.550387-07:00",
+      "updated_at": "2026-08-04T17:06:58.550387-07:00",
+      "metadata_json": "{\"branch\":\"main\",\"confidence\":80}"
+    },
+    {
+      "id": 8,
+      "change_id": "1c33c2f1-a548-4cfe-986f-c72a7144ab6c",
+      "node_type": "decision",
+      "title": "Bryan chose the Full-Bleed Feed world on the decision page",
+      "description": null,
+      "status": "pending",
+      "created_at": "2026-08-04T17:06:58.560265-07:00",
+      "updated_at": "2026-08-04T17:06:58.560265-07:00",
+      "metadata_json": "{\"branch\":\"main\",\"confidence\":95}"
+    },
+    {
+      "id": 9,
+      "change_id": "b2ea7614-1be0-4147-8ee3-55811836cecd",
+      "node_type": "outcome",
+      "title": "Design brief confirmed by Bryan: Full-Bleed Feed survey, 7-item sequence, Bluesky sponsorship named in hero",
+      "description": null,
+      "status": "pending",
+      "created_at": "2026-08-04T17:15:12.217792-07:00",
+      "updated_at": "2026-08-04T17:15:12.217792-07:00",
+      "metadata_json": "{\"branch\":\"main\",\"confidence\":95}"
+    }
+  ],
+  "edges": [
+    {
+      "id": 1,
+      "from_node_id": 1,
+      "to_node_id": 2,
+      "from_change_id": "8a61ba10-3997-4d59-a55b-089884a7b92a",
+      "to_change_id": "1a2e9185-2868-48a9-9cb6-70eab3c5d656",
+      "edge_type": "leads_to",
+      "weight": 1.0,
+      "rationale": "Implementation of init",
+      "created_at": "2026-08-04T15:44:28.082903-07:00"
+    },
+    {
+      "id": 2,
+      "from_node_id": 2,
+      "to_node_id": 3,
+      "from_change_id": "1a2e9185-2868-48a9-9cb6-70eab3c5d656",
+      "to_change_id": "89152abc-3929-44dc-a487-81f5a8964afe",
+      "edge_type": "leads_to",
+      "weight": 1.0,
+      "rationale": "Result of writing PRODUCT.md",
+      "created_at": "2026-08-04T15:44:28.089762-07:00"
+    },
+    {
+      "id": 3,
+      "from_node_id": 1,
+      "to_node_id": 4,
+      "from_change_id": "8a61ba10-3997-4d59-a55b-089884a7b92a",
+      "to_change_id": "aa77a763-6b49-4aeb-9bab-cca6bdcd1d13",
+      "edge_type": "leads_to",
+      "weight": 1.0,
+      "rationale": "Product truth completed with real survey content",
+      "created_at": "2026-08-04T15:46:48.735490-07:00"
+    },
+    {
+      "id": 4,
+      "from_node_id": 5,
+      "to_node_id": 6,
+      "from_change_id": "d1f88760-dd08-4d07-b3cc-3e87ef5c21d9",
+      "to_change_id": "2ed10a3a-a911-4946-b391-2210f00e427f",
+      "edge_type": "leads_to",
+      "weight": 1.0,
+      "rationale": "Grounded direction assigned by roll",
+      "created_at": "2026-08-04T17:06:58.566353-07:00"
+    },
+    {
+      "id": 5,
+      "from_node_id": 5,
+      "to_node_id": 7,
+      "from_change_id": "d1f88760-dd08-4d07-b3cc-3e87ef5c21d9",
+      "to_change_id": "1e5da569-58ae-4887-8d99-153b970ae0a3",
+      "edge_type": "leads_to",
+      "weight": 1.0,
+      "rationale": "Challenger presented as alternate",
+      "created_at": "2026-08-04T17:06:58.572555-07:00"
+    },
+    {
+      "id": 6,
+      "from_node_id": 6,
+      "to_node_id": 8,
+      "from_change_id": "2ed10a3a-a911-4946-b391-2210f00e427f",
+      "to_change_id": "1c33c2f1-a548-4cfe-986f-c72a7144ab6c",
+      "edge_type": "leads_to",
+      "weight": 1.0,
+      "rationale": "Weighed and declined by user",
+      "created_at": "2026-08-04T17:06:58.578938-07:00"
+    },
+    {
+      "id": 7,
+      "from_node_id": 7,
+      "to_node_id": 8,
+      "from_change_id": "1e5da569-58ae-4887-8d99-153b970ae0a3",
+      "to_change_id": "1c33c2f1-a548-4cfe-986f-c72a7144ab6c",
+      "edge_type": "leads_to",
+      "weight": 1.0,
+      "rationale": "User's pick",
+      "created_at": "2026-08-04T17:06:58.584808-07:00"
+    },
+    {
+      "id": 8,
+      "from_node_id": 1,
+      "to_node_id": 5,
+      "from_change_id": "8a61ba10-3997-4d59-a55b-089884a7b92a",
+      "to_change_id": "d1f88760-dd08-4d07-b3cc-3e87ef5c21d9",
+      "edge_type": "leads_to",
+      "weight": 1.0,
+      "rationale": "Shape follows init",
+      "created_at": "2026-08-04T17:06:58.590276-07:00"
+    },
+    {
+      "id": 9,
+      "from_node_id": 8,
+      "to_node_id": 9,
+      "from_change_id": "1c33c2f1-a548-4cfe-986f-c72a7144ab6c",
+      "to_change_id": "b2ea7614-1be0-4147-8ee3-55811836cecd",
+      "edge_type": "leads_to",
+      "weight": 1.0,
+      "rationale": "Decision resolved into confirmed brief",
+      "created_at": "2026-08-04T17:15:12.224408-07:00"
+    }
+  ]
+}
