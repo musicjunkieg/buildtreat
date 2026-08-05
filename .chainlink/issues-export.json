@@ -1,21 +1,42 @@
 {
   "version": 1,
-  "exported_at": "2026-08-05T22:47:35.373582+00:00",
+  "exported_at": "2026-08-05T23:05:55.151580+00:00",
   "issues": [
     {
-      "id": 18,
-      "title": "Provision Cloudflare and deploy the survey to workers.dev",
+      "id": 19,
+      "title": "Analyze smoke-test HAR from deployed survey",
       "description": null,
       "status": "open",
       "priority": "high",
       "parent_id": null,
       "labels": [
-        "deploy"
+        "bug"
       ],
       "comments": [],
-      "created_at": "2026-08-05T22:39:08.219460+00:00",
-      "updated_at": "2026-08-05T22:39:08.219460+00:00",
+      "created_at": "2026-08-05T22:54:53.738511+00:00",
+      "updated_at": "2026-08-05T22:54:53.738511+00:00",
       "closed_at": null
+    },
+    {
+      "id": 18,
+      "title": "Provision Cloudflare and deploy the survey to workers.dev",
+      "description": null,
+      "status": "closed",
+      "priority": "high",
+      "parent_id": null,
+      "labels": [
+        "deploy"
+      ],
+      "comments": [
+        {
+          "content": "[action] Deployed live to atmospheric-builders-retreat.bryan-78d.workers.dev; OAuth healthy; awaiting Bryan's smoke test + allowlist + deadline",
+          "created_at": "2026-08-05T22:47:40.952763+00:00",
+          "kind": "note"
+        }
+      ],
+      "created_at": "2026-08-05T22:39:08.219460+00:00",
+      "updated_at": "2026-08-05T22:47:40.939874+00:00",
+      "closed_at": "2026-08-05T22:47:40.939874+00:00"
     },
     {
       "id": 17,
