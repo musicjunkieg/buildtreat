@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { logout } from '@svelte-atproto/oauth/client';
 	import QuestionScaffold from '$lib/components/QuestionScaffold.svelte';
 	import { youQuestion } from '$lib/content';
 	import type { SurveyState } from '$lib/survey.svelte';
@@ -62,7 +63,10 @@
 
 <QuestionScaffold titleId="you-title" title={youQuestion.title} prompt={youQuestion.prompt} {signedIn} {onsignin} complete={survey.youComplete} {onnext}>
 	{#if handle}
-		<p class="signed">answering as <span class="handle">@{handle}</span></p>
+		<p class="signed">
+			answering as <span class="handle">@{handle}</span>
+			<button class="signout" onclick={() => void logout()}>not you? sign out</button>
+		</p>
 	{/if}
 	<div class="field">
 		<label class="kicker" for="you-name">Name</label>
@@ -110,6 +114,18 @@
 	.signed {
 		font-size: var(--text-author);
 		color: var(--ink-70);
+	}
+
+	.signout {
+		margin-left: 0.5rem;
+		font-size: var(--text-author);
+		color: var(--ink-45);
+		text-decoration: underline;
+		text-underline-offset: 3px;
+	}
+
+	.signout:hover {
+		color: var(--ink);
 	}
 
 	.handle {

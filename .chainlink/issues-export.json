@@ -1,86 +1,107 @@
 {
   "version": 1,
-  "exported_at": "2026-08-05T23:29:23.323216+00:00",
+  "exported_at": "2026-08-05T23:36:26.214213+00:00",
   "issues": [
     {
-      "id": 25,
-      "title": "Favicon: numeric globe in world style",
-      "description": null,
-      "status": "open",
-      "priority": "medium",
-      "parent_id": 20,
-      "labels": [],
-      "comments": [],
-      "created_at": "2026-08-05T23:17:24.676842+00:00",
-      "updated_at": "2026-08-05T23:17:24.676842+00:00",
-      "closed_at": null
-    },
-    {
-      "id": 24,
-      "title": "Handle typeahead (typeahead.waow.tech) + welcome-back cookie",
-      "description": null,
-      "status": "open",
-      "priority": "medium",
-      "parent_id": 20,
-      "labels": [],
-      "comments": [],
-      "created_at": "2026-08-05T23:17:24.672057+00:00",
-      "updated_at": "2026-08-05T23:17:24.672057+00:00",
-      "closed_at": null
-    },
-    {
-      "id": 23,
-      "title": "Location field: ZIP/city lookup",
-      "description": null,
-      "status": "open",
-      "priority": "medium",
-      "parent_id": 20,
-      "labels": [],
-      "comments": [],
-      "created_at": "2026-08-05T23:17:24.666395+00:00",
-      "updated_at": "2026-08-05T23:17:24.666395+00:00",
-      "closed_at": null
-    },
-    {
-      "id": 22,
-      "title": "Next affordance + Enter-to-advance per item",
-      "description": null,
-      "status": "open",
-      "priority": "medium",
-      "parent_id": 20,
-      "labels": [],
-      "comments": [],
-      "created_at": "2026-08-05T23:17:24.661887+00:00",
-      "updated_at": "2026-08-05T23:17:24.661887+00:00",
-      "closed_at": null
-    },
-    {
-      "id": 21,
-      "title": "Lock feed pre-auth: hero only, dimmed rail, unlock on sign-in",
-      "description": null,
-      "status": "open",
-      "priority": "medium",
-      "parent_id": 20,
-      "labels": [],
-      "comments": [],
-      "created_at": "2026-08-05T23:17:24.656636+00:00",
-      "updated_at": "2026-08-05T23:17:24.656636+00:00",
-      "closed_at": null
-    },
-    {
-      "id": 20,
-      "title": "Post-smoke-test notes from Bryan",
+      "id": 26,
+      "title": "Bluesky-organized attribution + logout affordance",
       "description": null,
       "status": "open",
       "priority": "high",
       "parent_id": null,
       "labels": [
-        "feedback"
+        "design"
       ],
       "comments": [],
-      "created_at": "2026-08-05T23:11:51.418887+00:00",
-      "updated_at": "2026-08-05T23:11:51.418887+00:00",
+      "created_at": "2026-08-05T23:33:55.024689+00:00",
+      "updated_at": "2026-08-05T23:33:55.024689+00:00",
       "closed_at": null
+    },
+    {
+      "id": 25,
+      "title": "Favicon: numeric globe in world style",
+      "description": null,
+      "status": "closed",
+      "priority": "medium",
+      "parent_id": 20,
+      "labels": [],
+      "comments": [],
+      "created_at": "2026-08-05T23:17:24.676842+00:00",
+      "updated_at": "2026-08-05T23:29:50.959224+00:00",
+      "closed_at": "2026-08-05T23:29:50.959224+00:00"
+    },
+    {
+      "id": 24,
+      "title": "Handle typeahead (typeahead.waow.tech) + welcome-back cookie",
+      "description": null,
+      "status": "closed",
+      "priority": "medium",
+      "parent_id": 20,
+      "labels": [],
+      "comments": [],
+      "created_at": "2026-08-05T23:17:24.672057+00:00",
+      "updated_at": "2026-08-05T23:29:50.953188+00:00",
+      "closed_at": "2026-08-05T23:29:50.953188+00:00"
+    },
+    {
+      "id": 23,
+      "title": "Location field: ZIP/city lookup",
+      "description": null,
+      "status": "closed",
+      "priority": "medium",
+      "parent_id": 20,
+      "labels": [],
+      "comments": [],
+      "created_at": "2026-08-05T23:17:24.666395+00:00",
+      "updated_at": "2026-08-05T23:29:50.946365+00:00",
+      "closed_at": "2026-08-05T23:29:50.946365+00:00"
+    },
+    {
+      "id": 22,
+      "title": "Next affordance + Enter-to-advance per item",
+      "description": null,
+      "status": "closed",
+      "priority": "medium",
+      "parent_id": 20,
+      "labels": [],
+      "comments": [],
+      "created_at": "2026-08-05T23:17:24.661887+00:00",
+      "updated_at": "2026-08-05T23:29:50.937006+00:00",
+      "closed_at": "2026-08-05T23:29:50.937006+00:00"
+    },
+    {
+      "id": 21,
+      "title": "Lock feed pre-auth: hero only, dimmed rail, unlock on sign-in",
+      "description": null,
+      "status": "closed",
+      "priority": "medium",
+      "parent_id": 20,
+      "labels": [],
+      "comments": [],
+      "created_at": "2026-08-05T23:17:24.656636+00:00",
+      "updated_at": "2026-08-05T23:29:50.922641+00:00",
+      "closed_at": "2026-08-05T23:29:50.922641+00:00"
+    },
+    {
+      "id": 20,
+      "title": "Post-smoke-test notes from Bryan",
+      "description": null,
+      "status": "closed",
+      "priority": "high",
+      "parent_id": null,
+      "labels": [
+        "feedback"
+      ],
+      "comments": [
+        {
+          "content": "[action] Feedback round shipped: PR 3 open, deployed to production",
+          "created_at": "2026-08-05T23:29:50.970055+00:00",
+          "kind": "note"
+        }
+      ],
+      "created_at": "2026-08-05T23:11:51.418887+00:00",
+      "updated_at": "2026-08-05T23:29:50.964592+00:00",
+      "closed_at": "2026-08-05T23:29:50.964592+00:00"
     },
     {
       "id": 19,

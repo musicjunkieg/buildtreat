@@ -15,10 +15,10 @@ export const retreat = {
 		{ label: 'What', value: '3 nights · 2 full days' },
 		{ label: 'Where', value: 'Southern California' },
 		{ label: 'When', value: 'Sometime between Sept 1 – Nov 15' },
-		{ label: 'Covered', value: 'Lodging & food — sponsored by Bluesky', bluesky: true }
+		{ label: 'Covered', value: 'Lodging & food — all taken care of' }
 	],
 	signIn: 'Sign in with Atmosphere',
-	organizerLabel: 'organized by',
+	organizerLine: 'Organized by Bluesky, in partnership with',
 	organizerHandle: 'chaosgreml.in',
 	/** Window the availability calendar covers (inclusive). */
 	window: { start: '2026-09-01', end: '2026-11-15' }

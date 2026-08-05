@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { logout } from '@svelte-atproto/oauth/client';
 	import Icon from '$lib/components/Icon.svelte';
 	import { retreat } from '$lib/content';
 
@@ -16,7 +17,12 @@
 </script>
 
 <div class="hero">
-	<p class="kicker">{retreat.kicker}</p>
+	<div class="topline">
+		<p class="kicker">{retreat.kicker}</p>
+		{#if signedIn}
+			<button class="signout" onclick={() => void logout()}>sign out</button>
+		{/if}
+	</div>
 
 	<div class="breathe" aria-hidden="true"></div>
 
@@ -59,12 +65,17 @@
 	{/if}
 
 	<p class="author">
-		{#if organizerAvatar}
-			<img class="avatar" src={organizerAvatar} alt="" />
-		{:else}
-			<span class="avatar" aria-hidden="true"><Icon name="person" size={14} /></span>
-		{/if}
-		{retreat.organizerLabel} <span class="handle">@{retreat.organizerHandle}</span>
+		<span class="avatars" aria-hidden="true">
+			<span class="avatar mark"><Icon name="butterfly" size={15} /></span>
+			{#if organizerAvatar}
+				<img class="avatar overlap" src={organizerAvatar} alt="" />
+			{:else}
+				<span class="avatar overlap"><Icon name="person" size={14} /></span>
+			{/if}
+		</span>
+		<span class="author-text">
+			{retreat.organizerLine} <span class="handle">@{retreat.organizerHandle}</span>
+		</span>
 	</p>
 </div>
 
@@ -74,6 +85,27 @@
 		flex-direction: column;
 		height: 100%;
 		gap: var(--space-3);
+	}
+
+	.topline {
+		display: flex;
+		align-items: baseline;
+		justify-content: space-between;
+		gap: var(--space-3);
+	}
+
+	.signout {
+		flex: 0 0 auto;
+		font-size: var(--text-kicker);
+		letter-spacing: var(--track-caps);
+		text-transform: uppercase;
+		color: var(--ink-70);
+		text-decoration: underline;
+		text-underline-offset: 3px;
+	}
+
+	.signout:hover {
+		color: var(--ink);
 	}
 
 	.breathe {
@@ -127,10 +159,15 @@
 	.author {
 		display: flex;
 		align-items: center;
-		gap: 0.55rem;
+		gap: 0.65rem;
 		margin-top: var(--space-2);
 		font-size: var(--text-author);
 		color: var(--ink-70);
+	}
+
+	.avatars {
+		display: flex;
+		flex: 0 0 auto;
 	}
 
 	.avatar {
@@ -142,6 +179,21 @@
 		border: 1px solid var(--ink-45);
 		color: var(--ink-70);
 		object-fit: cover;
+	}
+
+	.avatar.mark {
+		color: var(--ink);
+		background: var(--ground);
+	}
+
+	.avatar.overlap {
+		margin-left: -0.55rem;
+		background: var(--ground);
+	}
+
+	.author-text {
+		line-height: 1.35;
+		text-wrap: balance;
 	}
 
 	.handle {
