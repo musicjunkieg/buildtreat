@@ -1,19 +1,19 @@
 {
   "version": 1,
-  "exported_at": "2026-08-05T02:05:58.146748+00:00",
+  "exported_at": "2026-08-05T02:06:10.933476+00:00",
   "issues": [
     {
       "id": 12,
       "title": "Finish: detector, reviewer, documenter, DESIGN.md",
       "description": null,
-      "status": "open",
+      "status": "closed",
       "priority": "medium",
       "parent_id": 5,
       "labels": [],
       "comments": [],
       "created_at": "2026-08-05T00:29:21.760276+00:00",
-      "updated_at": "2026-08-05T00:29:21.760276+00:00",
-      "closed_at": null
+      "updated_at": "2026-08-05T02:06:00.156703+00:00",
+      "closed_at": "2026-08-05T02:06:00.156703+00:00"
     },
     {
       "id": 11,
@@ -108,7 +108,7 @@
       "id": 5,
       "title": "Build buildtreat survey (Full-Bleed Feed)",
       "description": null,
-      "status": "open",
+      "status": "closed",
       "priority": "high",
       "parent_id": null,
       "labels": [],
@@ -130,8 +130,8 @@
         }
       ],
       "created_at": "2026-08-05T00:29:12.877448+00:00",
-      "updated_at": "2026-08-05T00:29:12.877448+00:00",
-      "closed_at": null
+      "updated_at": "2026-08-05T02:06:00.161387+00:00",
+      "closed_at": "2026-08-05T02:06:00.161387+00:00"
     },
     {
       "id": 4,

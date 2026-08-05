@@ -11,6 +11,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Fixed
 
 ### Changed
+- Build buildtreat survey (Full-Bleed Feed) (#5)
+- Finish: detector, reviewer, documenter, DESIGN.md (#12)
 - ATProto auth + allowlist + response storage (#11)
 - Availability calendar (focal item) (#10)
 - Survey items 1-4 + 6-7 (hero, identity, interest, travel, ranking, review) (#9)
