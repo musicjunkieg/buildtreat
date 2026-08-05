@@ -19,6 +19,7 @@ export const retreat = {
 	],
 	signIn: 'Sign in with Atmosphere',
 	organizerLabel: 'organized by',
+	organizerHandle: 'chaosgreml.in',
 	/** Window the availability calendar covers (inclusive). */
 	window: { start: '2026-09-01', end: '2026-11-15' }
 } as const;

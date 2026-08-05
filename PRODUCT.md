@@ -51,7 +51,7 @@ Undecided / not yet provided (do not invent):
 - **The sign-in action is worded "Sign in with Atmosphere"** — the community's name for the ATProto ecosystem — never "Sign in with ATProto".
 - **Sponsored by Bluesky** — confirmed fact, and the survey is the first artifact that names it publicly to the invitees. The sponsorship explains why lodging and food are covered.
 - **Tone: interested, not booked.** Respondents raised their hands; they have not committed. Confirmation copy acknowledges their interest without presuming attendance ("You said you were in" is too forward).
-- **Organizer credit is minimal:** at most a small mention of Bryan as organizer. No personal branding beyond that.
+- **Organizer credit is minimal:** at most a small mention of Bryan as organizer ("organized by @chaosgreml.in" — his real handle, confirmed 2026-08-04). No personal branding beyond that.
 - No logo, palette, or other visual constraints exist yet.
 
 ## Evidence on Hand

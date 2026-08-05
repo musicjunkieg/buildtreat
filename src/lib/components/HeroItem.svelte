@@ -4,10 +4,12 @@
 
 	let {
 		signedIn,
+		organizerAvatar = null,
 		onsignin,
 		oncontinue
 	}: {
 		signedIn: boolean;
+		organizerAvatar?: string | null;
 		onsignin: () => void;
 		oncontinue: () => void;
 	} = $props();
@@ -51,8 +53,12 @@
 	{/if}
 
 	<p class="author">
-		<span class="avatar" aria-hidden="true"><Icon name="person" size={14} /></span>
-		{retreat.organizerLabel} <span class="handle">@bryan</span>
+		{#if organizerAvatar}
+			<img class="avatar" src={organizerAvatar} alt="" />
+		{:else}
+			<span class="avatar" aria-hidden="true"><Icon name="person" size={14} /></span>
+		{/if}
+		{retreat.organizerLabel} <span class="handle">@{retreat.organizerHandle}</span>
 	</p>
 </div>
 
@@ -122,6 +128,7 @@
 		border-radius: 999px;
 		border: 1px solid var(--ink-45);
 		color: var(--ink-70);
+		object-fit: cover;
 	}
 
 	.handle {

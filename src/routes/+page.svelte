@@ -131,7 +131,7 @@
 		eager
 		labelledby="hero-title"
 	>
-		<HeroItem {signedIn} onsignin={openSignIn} oncontinue={() => jump('you')} />
+		<HeroItem {signedIn} organizerAvatar={data.organizer.avatar} onsignin={openSignIn} oncontinue={() => jump('you')} />
 	</FeedItem>
 
 	<FeedItem id="you" media="/media/item-you.png" labelledby="you-title">
