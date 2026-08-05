@@ -20,9 +20,32 @@
 		labelledby?: string;
 		children: Snippet;
 	} = $props();
+
+	// The feed's one authored moment: when an item snaps in, its caption
+	// content settles upward like a post landing in frame.
+	let section = $state<HTMLElement | null>(null);
+	// svelte-ignore state_referenced_locally -- eager is a static prop; initial value is intended
+	let settled = $state(eager);
+
+	$effect(() => {
+		if (!section || settled) return;
+		const observer = new IntersectionObserver(
+			(entries) => {
+				for (const entry of entries) {
+					if (entry.isIntersecting) {
+						settled = true;
+						observer.disconnect();
+					}
+				}
+			},
+			{ threshold: 0.4 }
+		);
+		observer.observe(section);
+		return () => observer.disconnect();
+	});
 </script>
 
-<section class="item" {id} aria-labelledby={labelledby} class:darker>
+<section class="item" {id} aria-labelledby={labelledby} class:darker class:settled bind:this={section}>
 	{#if media}
 		<picture>
 			{#if mediaWide}
@@ -101,6 +124,26 @@
 			calc(env(safe-area-inset-bottom) + var(--space-5));
 		/* Keep text clear of the fixed glyph rail on the right. */
 		padding-right: calc(var(--gutter) + 2.4rem);
+	}
+
+	/* Settle-in only when JS is present (html.js), so content is never hidden
+	   from non-JS clients. */
+	:global(html.js) .item:not(.settled) .content {
+		opacity: 0;
+		translate: 0 28px;
+	}
+
+	.settled .content {
+		transition:
+			opacity 0.7s var(--ease-out),
+			translate 0.7s var(--ease-out);
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		:global(html.js) .item:not(.settled) .content {
+			opacity: 1;
+			translate: 0 0;
+		}
 	}
 
 	@media (min-width: 900px) {

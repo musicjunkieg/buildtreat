@@ -1,4 +1,5 @@
 import type { PageServerLoad } from './$types';
+import { dev } from '$app/environment';
 import { loadBskyProfile } from '@svelte-atproto/oauth/bsky';
 import { cloudflareKV } from '@svelte-atproto/oauth/server/stores/cloudflare';
 import { getResponse } from '$lib/server/db';
@@ -14,6 +15,22 @@ export interface PageUser {
 export const load: PageServerLoad = async ({ locals, platform, url }) => {
 	// The OAuth library redirects back with ?error=... when a login fails.
 	const authError = url.searchParams.get('error');
+
+	// Dev-only design preview of the signed-in state; `dev` is compile-time
+	// false in production builds, so this path cannot ship.
+	if (dev && url.searchParams.has('preview')) {
+		return {
+			user: {
+				did: 'did:plc:preview',
+				handle: 'preview.bsky.social',
+				displayName: 'Preview Builder',
+				avatar: null
+			} as PageUser,
+			answers: null as SurveyDraft | null,
+			existingResponse: false,
+			authError
+		};
+	}
 
 	if (!locals.did) {
 		return {

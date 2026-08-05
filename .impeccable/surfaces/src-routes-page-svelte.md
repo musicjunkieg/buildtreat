@@ -28,3 +28,39 @@ Constraints: SvelteKit on Cloudflare; ATProto OAuth; server-side allowlist + res
 Unresolved (do not invent): respond-by deadline date; allowlist of handles; final location-photo approval.
 
 Naming: the retreat is "the Atmospheric Builders' Retreat" (pairs with the "Sign in with Atmosphere" CTA). "buildtreat" is the repo codename only and never appears on-surface.
+
+## Approved comp (north star)
+
+`.impeccable/mocks/hero-h.png` (sidecar approved:true). "Rooted Ledger": kicker top-left → breathing photo (~30%) → acknowledgment line → stacked ATMOSPHERIC / BUILDERS' RETREAT display (terminal period) → four hairline-ruled fact rows → full-width white pill CTA → author line → right glyph rail (4 outline glyphs, no counts) → 7 progress dots bottom-center.
+
+## Design system read from the comp
+
+- Ground: full-bleed photograph edge-to-edge; scrim gradient from ~45% height to near-black at bottom; subtle film grain over everything.
+- Palette: pure white UI on photographic dusk (pink-orange sky, amber interior light, deep near-black base). No second UI color anywhere.
+- Type ramp: (1) kicker — small caps, ~0.2em tracking, ~11px; (2) acknowledgment — neutral humanist sans, sentence case, ~20px; (3) display — ultra-condensed tall grotesque caps, tight leading, two stacked lines filling width; (4) ledger rows — small caps, tracked, ~12–13px; (5) button label — semibold sans, black on white; (6) author line ~13px.
+- Components: fully-rounded pill button (the only container); 1px hairline rules at ~35% white; 1.5–2px outline glyph rail; avatar circle; 8px dots (active solid, inactive 35%).
+- Corner language: pill = fully round; everything else uncontained. No cards, borders, or shadows — legibility comes from the scrim.
+- Elevation: flat. Motion native to the form: hard vertical snap, one soft settle per item (authored in build phase 2).
+
+## Asset inventory (region → medium)
+
+| Region | Medium |
+|---|---|
+| Hero courtyard dusk photo | raster, generated (regenerate clean from comp ref, no UI text; portrait + landscape). Synthetic atmosphere, on Bryan's replacement list for a real venue photo |
+| Scrim gradient | CSS |
+| Film grain | tiling raster tile or SVG turbulence |
+| Display/kicker/ledger/acknowledgment type | HTML text + webfont (concession: closest obtainable condensed grotesque) |
+| Hairline rules, dots | CSS |
+| Primary action (full-width white pill "Sign in with Atmosphere") | HTML/CSS button; no physical treatment in comp; butterfly = real Bluesky logo SVG (factual sponsorship mark) |
+| Rail glyphs (heart/comment/send/bookmark) | authored inline SVG; repurposed as jump-map/actions; NEVER render fake engagement counts |
+| Avatars | real ATProto profile images at runtime (organizer + respondent); neutral circle fallback |
+| Item 2–4, 7 backgrounds | generated atmosphere in same world (synthetic, replaceable) |
+| Item 5 calendar | rendered UI (HTML/CSS/SVG) over quiet ground — the calendar IS the media |
+| Item 6 location photos ×5 | REAL sourced photography only (evidence rule), needs Bryan approval — open |
+
+Do-not-literalize from comp: no engagement counts; dot count = 7 exactly; photo is replaceable atmosphere, not a venue claim.
+
+## User-directed copy deviations from the comp (Bryan, 2026-08-04)
+
+- The WHEN fact must read as a window, not event dates: "Sometime between Sept 1 – Nov 15".
+- The acknowledgment couplet must state that respondents' answers drive the outcome: second line becomes "Help us pick the dates — and the place." (replaces "Now we find the dates." / "It's happening." stays as line 1 tone).
