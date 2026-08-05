@@ -1,0 +1,6 @@
+{
+  "prompt": "Photograph, vertical composition. An empty two-lane desert highway at golden hour in Southern California, heading straight toward dark mountains on the horizon, warm low sun casting long shadows across the desert scrub, joshua trees and cacti at the roadsides, glowing pink-gold sky. The bright golden light sits in the upper portion of the frame on the mountains and sky; the road surface in the foreground falls into deep near-black shadow across the entire lower half of the frame, quiet and empty. Subtle 35mm film grain, flat matte finish, no gloss. Clean photographic scene only: no vehicles, no people, no faces, no road signs, no text, no lettering, no UI elements, no watermark.",
+  "createdAt": "2026-08-05T00:57:20.196Z",
+  "tool": "generate-image.mjs",
+  "model": "gpt-image-2"
+}

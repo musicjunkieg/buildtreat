@@ -1,0 +1,6 @@
+{
+  "prompt": "Seamless tileable texture: monochrome 35mm analog film grain on a flat uniform mid-gray background. Extremely fine, even, randomly distributed grain particles, identical density edge to edge, perfectly repeatable as a tile. Grayscale only. No vignette, no gradient, no scratches, no dust, no hairs, no light leaks, no shapes, no objects, no text, no borders, no visible seams. Pure flat noise field, like a macro scan of blank exposed film stock.",
+  "createdAt": "2026-08-05T00:58:01.493Z",
+  "tool": "generate-image.mjs",
+  "model": "gpt-image-2"
+}
