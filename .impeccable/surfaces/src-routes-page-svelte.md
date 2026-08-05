@@ -64,3 +64,5 @@ Do-not-literalize from comp: no engagement counts; dot count = 7 exactly; photo 
 
 - The WHEN fact must read as a window, not event dates: "Sometime between Sept 1 – Nov 15".
 - The acknowledgment couplet must state that respondents' answers drive the outcome: second line becomes "Help us pick the dates — and the place." (replaces "Now we find the dates." / "It's happening." stays as line 1 tone).
+
+Kicker ruling: the hero kicker ("For the builders of the Atmosphere") is KEPT by Bryan's explicit decision (2026-08-04), overriding the craft-floor kicker ban; the approved comp carries it.
