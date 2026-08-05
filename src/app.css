@@ -1,0 +1,191 @@
+/* ── the Atmospheric Builders' Retreat — global tokens & base ─────────── */
+
+:root {
+	/* Palette: pure white UI over photographic dusk. No second UI color. */
+	--ink: #ffffff;
+	--ink-70: rgba(255, 255, 255, 0.7);
+	--ink-45: rgba(255, 255, 255, 0.45);
+	--ink-35: rgba(255, 255, 255, 0.35);
+	--ink-12: rgba(255, 255, 255, 0.12);
+	--ground: #0b0908;
+	--on-pill: #0b0908;
+
+	/* Type */
+	--font-display: 'Big Shoulders Variable', 'Arial Narrow', sans-serif;
+	--font-body: 'Hanken Grotesk Variable', system-ui, sans-serif;
+
+	/* Ramp (mobile-first; desktop scales via clamp) */
+	--text-kicker: 0.6875rem; /* 11px */
+	--text-author: 0.8125rem; /* 13px */
+	--text-fact: 0.8125rem;
+	--text-body: 1rem;
+	--text-ack: clamp(1rem, 1.6vw + 0.7rem, 1.375rem);
+	--display-l1: clamp(3.4rem, 13.5vw, 6rem);
+	--display-l2: clamp(2.55rem, 10vw, 4.5rem);
+
+	--track-caps: 0.18em;
+	--track-fact: 0.14em;
+
+	/* Rhythm */
+	--space-1: 0.375rem;
+	--space-2: 0.75rem;
+	--space-3: 1.125rem;
+	--space-4: 1.75rem;
+	--space-5: 2.75rem;
+	--gutter: clamp(1.125rem, 4.5vw, 2.5rem);
+
+	/* Chrome */
+	--rail-gap: 1.6rem;
+	--hairline: 1px solid var(--ink-35);
+	--pill-h: 3.25rem;
+
+	--ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+* {
+	box-sizing: border-box;
+	margin: 0;
+	padding: 0;
+}
+
+html {
+	background: var(--ground);
+	color: var(--ink);
+	font-family: var(--font-body);
+	font-size: 16px;
+	-webkit-font-smoothing: antialiased;
+	text-size-adjust: 100%;
+}
+
+html,
+body {
+	height: 100%;
+	overscroll-behavior-y: none;
+}
+
+img {
+	display: block;
+	max-width: 100%;
+}
+
+button,
+input,
+select {
+	font: inherit;
+	color: inherit;
+}
+
+button {
+	background: none;
+	border: none;
+	cursor: pointer;
+}
+
+:focus-visible {
+	outline: 2px solid var(--ink);
+	outline-offset: 3px;
+	border-radius: 2px;
+}
+
+::selection {
+	background: rgba(255, 255, 255, 0.85);
+	color: #0b0908;
+}
+
+/* Reusable atoms of the world */
+
+.kicker {
+	font-size: var(--text-kicker);
+	font-weight: 500;
+	letter-spacing: var(--track-caps);
+	text-transform: uppercase;
+	color: var(--ink);
+}
+
+.display {
+	font-family: var(--font-display);
+	font-weight: 700;
+	line-height: 0.92;
+	text-transform: uppercase;
+	letter-spacing: 0.005em;
+}
+
+.pill {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 0.6rem;
+	width: 100%;
+	min-height: var(--pill-h);
+	padding: 0.7rem 1.5rem;
+	border-radius: 999px;
+	background: var(--ink);
+	color: var(--on-pill);
+	font-weight: 650;
+	font-size: 1.0625rem;
+	transition:
+		transform 0.35s var(--ease-out),
+		opacity 0.35s var(--ease-out);
+}
+
+.pill:hover {
+	transform: scale(1.015);
+}
+
+.pill:active {
+	transform: scale(0.985);
+}
+
+.pill:disabled {
+	opacity: 0.55;
+	cursor: not-allowed;
+	transform: none;
+}
+
+.ledger {
+	list-style: none;
+}
+
+.ledger > li {
+	display: flex;
+	align-items: baseline;
+	justify-content: space-between;
+	gap: var(--space-3);
+	padding: 0.65rem 0;
+	border-top: var(--hairline);
+	font-size: 0.75rem;
+	letter-spacing: 0.1em;
+	text-transform: uppercase;
+	font-weight: 500;
+}
+
+@media (min-width: 900px) {
+	.ledger > li {
+		font-size: var(--text-fact);
+		letter-spacing: var(--track-fact);
+	}
+}
+
+.ledger > li:last-child {
+	border-bottom: var(--hairline);
+}
+
+.visually-hidden {
+	position: absolute;
+	width: 1px;
+	height: 1px;
+	overflow: hidden;
+	clip-path: inset(50%);
+	white-space: nowrap;
+}
+
+@media (prefers-reduced-motion: reduce) {
+	*,
+	*::before,
+	*::after {
+		animation-duration: 0.01ms !important;
+		animation-iteration-count: 1 !important;
+		transition-duration: 0.01ms !important;
+		scroll-behavior: auto !important;
+	}
+}

@@ -1,0 +1,6 @@
+{
+  "prompt": "Photograph, vertical composition. A very dark Southern California desert plain at last light, seen from above at a slight angle: faint warm horizon glow at the very top of the frame over distant black mountains, sparse creosote bushes as barely-visible silhouettes scattered across a deep near-black desert floor that fills most of the frame, extremely quiet and empty — a calm dark backdrop for a list interface. No roads, no buildings, no text, no people, no UI. Subtle 35mm film grain, flat matte finish.",
+  "createdAt": "2026-08-05T01:47:42.403Z",
+  "tool": "generate-image.mjs",
+  "model": "gpt-image-2"
+}

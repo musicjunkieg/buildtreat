@@ -1,0 +1,10 @@
+[
+  {
+    "hash": "c847a8e154e2a700eead8f4aa11aa2dd75334105",
+    "short_hash": "c847a8e",
+    "author": "Bryan Guffey",
+    "date": "2026-08-04T19:06:10-07:00",
+    "message": "chore: changelog updates from issue tracking\n\nCo-Authored-By: Claude Fable 5 <noreply@anthropic.com>\nClaude-Session: https://claude.ai/code/session_01XFGCtqAaDnhNsZDkybtFRB",
+    "files_changed": 2
+  }
+]

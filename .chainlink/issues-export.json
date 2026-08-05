@@ -1,0 +1,323 @@
+{
+  "version": 1,
+  "exported_at": "2026-08-05T22:30:24.740522+00:00",
+  "issues": [
+    {
+      "id": 17,
+      "title": "Write LAUNCH.md runbook for taking the survey live",
+      "description": null,
+      "status": "open",
+      "priority": "high",
+      "parent_id": null,
+      "labels": [
+        "docs"
+      ],
+      "comments": [],
+      "created_at": "2026-08-05T22:29:14.922766+00:00",
+      "updated_at": "2026-08-05T22:29:14.922766+00:00",
+      "closed_at": null
+    },
+    {
+      "id": 16,
+      "title": "Verify local Playwright screenshots after sandbox hole",
+      "description": null,
+      "status": "closed",
+      "priority": "medium",
+      "parent_id": null,
+      "labels": [
+        "chore"
+      ],
+      "comments": [
+        {
+          "content": "[action] Playwright verified working through sandbox hole; local screenshot pipeline restored",
+          "created_at": "2026-08-05T22:26:45.363396+00:00",
+          "kind": "note"
+        }
+      ],
+      "created_at": "2026-08-05T22:25:18.754833+00:00",
+      "updated_at": "2026-08-05T22:26:45.357467+00:00",
+      "closed_at": "2026-08-05T22:26:45.357467+00:00"
+    },
+    {
+      "id": 15,
+      "title": "Commit impeccable install (skill, agents, hooks) to repo",
+      "description": null,
+      "status": "closed",
+      "priority": "medium",
+      "parent_id": null,
+      "labels": [
+        "chore"
+      ],
+      "comments": [],
+      "created_at": "2026-08-05T02:25:14.344393+00:00",
+      "updated_at": "2026-08-05T02:26:06.597768+00:00",
+      "closed_at": "2026-08-05T02:26:06.597768+00:00"
+    },
+    {
+      "id": 14,
+      "title": "Complete DESIGN.md type ramp so hook matches shipped sizes (resume)",
+      "description": null,
+      "status": "closed",
+      "priority": "medium",
+      "parent_id": null,
+      "labels": [
+        "docs"
+      ],
+      "comments": [
+        {
+          "content": "[action] Hook findings cleared by completing DESIGN.md ramp (0 findings); impeccable agents registered in .claude/agents/",
+          "created_at": "2026-08-05T02:12:54.190346+00:00",
+          "kind": "note"
+        }
+      ],
+      "created_at": "2026-08-05T02:08:27.121396+00:00",
+      "updated_at": "2026-08-05T02:12:54.183656+00:00",
+      "closed_at": "2026-08-05T02:12:54.183656+00:00"
+    },
+    {
+      "id": 13,
+      "title": "Complete DESIGN.md type ramp so hook matches shipped sizes",
+      "description": null,
+      "status": "closed",
+      "priority": "medium",
+      "parent_id": null,
+      "labels": [
+        "docs"
+      ],
+      "comments": [],
+      "created_at": "2026-08-05T02:07:59.491290+00:00",
+      "updated_at": "2026-08-05T02:09:42.506053+00:00",
+      "closed_at": "2026-08-05T02:09:42.506053+00:00"
+    },
+    {
+      "id": 12,
+      "title": "Finish: detector, reviewer, documenter, DESIGN.md",
+      "description": null,
+      "status": "closed",
+      "priority": "medium",
+      "parent_id": 5,
+      "labels": [],
+      "comments": [],
+      "created_at": "2026-08-05T00:29:21.760276+00:00",
+      "updated_at": "2026-08-05T02:06:00.156703+00:00",
+      "closed_at": "2026-08-05T02:06:00.156703+00:00"
+    },
+    {
+      "id": 11,
+      "title": "ATProto auth + allowlist + response storage",
+      "description": null,
+      "status": "closed",
+      "priority": "medium",
+      "parent_id": 5,
+      "labels": [],
+      "comments": [
+        {
+          "content": "AUTH ARCHITECTURE (researched, verified Aug 2026): ATProto OAuth, scope 'atproto' only (identity-only; consent reads 'wants to uniquely identify you'). Primary package @svelte-atproto/oauth 0.3.0 (SvelteKit-native, atcute-based, Cloudflare KV adapter, mounts /oauth-client-metadata.json + /oauth/{login,callback,logout} via hooks.server.ts, locals.did). Fallback: atproto-oauth-client-cloudflare-workers (patched NodeOAuthClient; stock @atproto/oauth-client-node does NOT run on workerd — issue #3292 open). Flow: PAR+DPoP+PKCE all mandatory; client-metadata.json served at client_id URL, token_endpoint_auth_method none, dpop_bound_access_tokens true, grant_types [authorization_code] only. Storage: KV namespace for state/session (TTL); DISCARD oauth session at callback — mint our own signed HTTP-only cookie {did, handle, displayName, avatar}. Profile: GET public.api.bsky.app/xrpc/app.bsky.actor.getProfile?actor=<did> — UNAUTHENTICATED, returns displayName + avatar CDN URL. Survey responses in D1 keyed by DID. nodejs_compat flag required. Do NOT use transition:* scopes. Dev: localhost client_id special-case via buildAtprotoLoopbackClientMetadata().",
+          "created_at": "2026-08-05T00:39:29.435663+00:00",
+          "kind": "note"
+        },
+        {
+          "content": "D1 SCHEMA (draft): table responses (did TEXT PK, handle TEXT, display_name TEXT, avatar_url TEXT, name TEXT NOT NULL, email TEXT NOT NULL, home_location TEXT NOT NULL, interest TEXT CHECK in yes/no/maybe, travel TEXT CHECK in yes/partial/no, location_ranking TEXT (JSON array of up to 3 of: palm-springs, coachella-valley, joshua-tree, san-diego, la-metro), submitted_at TEXT, updated_at TEXT). Table availability_ranges (id INTEGER PK, did TEXT REFERENCES responses ON DELETE CASCADE, start_date TEXT (ISO, within 2026-09-01..2026-11-15), end_date TEXT, start_portion TEXT CHECK in full/first_half/second_half, end_portion TEXT same — portions express half-day availability on a range's first and last day. Table allowlist (handle TEXT PK, did TEXT NULL — filled on first login). Config table or env for deadline date (TBD from Bryan).",
+          "created_at": "2026-08-05T00:39:48.198589+00:00",
+          "kind": "note"
+        }
+      ],
+      "created_at": "2026-08-05T00:29:21.755381+00:00",
+      "updated_at": "2026-08-05T01:38:28.239096+00:00",
+      "closed_at": "2026-08-05T01:38:28.239096+00:00"
+    },
+    {
+      "id": 10,
+      "title": "Availability calendar (focal item)",
+      "description": null,
+      "status": "closed",
+      "priority": "medium",
+      "parent_id": 5,
+      "labels": [],
+      "comments": [],
+      "created_at": "2026-08-05T00:29:21.750283+00:00",
+      "updated_at": "2026-08-05T01:38:28.233153+00:00",
+      "closed_at": "2026-08-05T01:38:28.233153+00:00"
+    },
+    {
+      "id": 9,
+      "title": "Survey items 1-4 + 6-7 (hero, identity, interest, travel, ranking, review)",
+      "description": null,
+      "status": "closed",
+      "priority": "medium",
+      "parent_id": 5,
+      "labels": [],
+      "comments": [],
+      "created_at": "2026-08-05T00:29:21.745661+00:00",
+      "updated_at": "2026-08-05T01:38:28.227024+00:00",
+      "closed_at": "2026-08-05T01:38:28.227024+00:00"
+    },
+    {
+      "id": 8,
+      "title": "Feed shell: snap paging, rail, item dots",
+      "description": null,
+      "status": "closed",
+      "priority": "medium",
+      "parent_id": 5,
+      "labels": [],
+      "comments": [],
+      "created_at": "2026-08-05T00:29:21.741094+00:00",
+      "updated_at": "2026-08-05T01:24:15.517670+00:00",
+      "closed_at": "2026-08-05T01:24:15.517670+00:00"
+    },
+    {
+      "id": 7,
+      "title": "SvelteKit + Cloudflare scaffold",
+      "description": null,
+      "status": "closed",
+      "priority": "medium",
+      "parent_id": 5,
+      "labels": [],
+      "comments": [],
+      "created_at": "2026-08-05T00:29:21.735214+00:00",
+      "updated_at": "2026-08-05T01:24:15.512608+00:00",
+      "closed_at": "2026-08-05T01:24:15.512608+00:00"
+    },
+    {
+      "id": 6,
+      "title": "North-star comps + approval",
+      "description": null,
+      "status": "closed",
+      "priority": "medium",
+      "parent_id": 5,
+      "labels": [],
+      "comments": [],
+      "created_at": "2026-08-05T00:29:21.730535+00:00",
+      "updated_at": "2026-08-05T00:52:09.025616+00:00",
+      "closed_at": "2026-08-05T00:52:09.025616+00:00"
+    },
+    {
+      "id": 5,
+      "title": "Build buildtreat survey (Full-Bleed Feed)",
+      "description": null,
+      "status": "closed",
+      "priority": "high",
+      "parent_id": null,
+      "labels": [],
+      "comments": [
+        {
+          "content": "[action] Feed UI + auth + D1 built; hero proven against comp; sourcing location photos next",
+          "created_at": "2026-08-05T01:24:15.522562+00:00",
+          "kind": "note"
+        },
+        {
+          "content": "[action] Build complete through round-2 inspection; spawning finish reviewer",
+          "created_at": "2026-08-05T01:38:28.245082+00:00",
+          "kind": "note"
+        },
+        {
+          "content": "[action] Verdict pass running on final three items; asset fix committed",
+          "created_at": "2026-08-05T01:59:20.513859+00:00",
+          "kind": "note"
+        }
+      ],
+      "created_at": "2026-08-05T00:29:12.877448+00:00",
+      "updated_at": "2026-08-05T02:06:00.161387+00:00",
+      "closed_at": "2026-08-05T02:06:00.161387+00:00"
+    },
+    {
+      "id": 4,
+      "title": "Verify OPENAI_API_KEY wiring for impeccable image generation",
+      "description": null,
+      "status": "closed",
+      "priority": "medium",
+      "parent_id": null,
+      "labels": [
+        "chore"
+      ],
+      "comments": [
+        {
+          "content": "[action] OPENAI_API_KEY verified in .env; image generation available (gpt-image-2 fallback). Ready to build on Bryan's go.",
+          "created_at": "2026-08-05T00:27:05.588900+00:00",
+          "kind": "note"
+        }
+      ],
+      "created_at": "2026-08-05T00:26:49.197228+00:00",
+      "updated_at": "2026-08-05T00:27:05.582662+00:00",
+      "closed_at": "2026-08-05T00:27:05.582662+00:00"
+    },
+    {
+      "id": 3,
+      "title": "Shape the buildtreat survey surface: discovery, visual world, design brief",
+      "description": null,
+      "status": "closed",
+      "priority": "high",
+      "parent_id": null,
+      "labels": [
+        "design"
+      ],
+      "comments": [
+        {
+          "content": "[auto] Session resumed after context compression. Last action: PRODUCT.md updated with full survey spec: 7 questions, Sept 1-Nov 15 window, SoCal top-3 location ranking, half-day edge availability",
+          "created_at": "2026-08-04T23:58:39.759309+00:00",
+          "kind": "note"
+        },
+        {
+          "content": "[auto] Session resumed after context compression. Last action: PRODUCT.md updated with full survey spec: 7 questions, Sept 1-Nov 15 window, SoCal top-3 location ranking, half-day edge availability",
+          "created_at": "2026-08-04T23:58:47.058405+00:00",
+          "kind": "note"
+        },
+        {
+          "content": "Brief CONFIRMED by Bryan. World: Full-Bleed Feed (one question per viewport, snap paging, white glyphs, bottom scrim, author line low-left). 7 feed items: 1) hero — confirmation energy, first public naming of Bluesky sponsorship, small 'organized by @bryan' credit, Sign in with ATProto; 2) name/email/location prefilled from ATProto profile; 3) interest Y/N/Maybe; 4) travel affordability verbatim; 5) full-viewport calendar Sept1–Nov15, multi-range, half-day edge toggles — focal moment; 6) top-3 ranking of 5 SoCal locations as full-bleed photos; 7) review+submit. States: not-on-allowlist, returning/editable, deadline-passed, success, error. Semantic form under the grammar, keyboard+reduced-motion. Stack SvelteKit+Cloudflare, ATProto OAuth. Open: deadline date (decide later), allowlist handles, photo approval. Audience arrives already excited (responded to Bryan's Bluesky post).",
+          "created_at": "2026-08-05T00:15:12.207450+00:00",
+          "kind": "note"
+        },
+        {
+          "content": "[action] Shape complete: brief confirmed (Full-Bleed Feed world). Next: build on Bryan's go.",
+          "created_at": "2026-08-05T00:15:12.234417+00:00",
+          "kind": "note"
+        }
+      ],
+      "created_at": "2026-08-04T22:50:33.822671+00:00",
+      "updated_at": "2026-08-05T00:15:12.229197+00:00",
+      "closed_at": "2026-08-05T00:15:12.229197+00:00"
+    },
+    {
+      "id": 2,
+      "title": "Fold Bryan's prepared survey content into PRODUCT.md",
+      "description": null,
+      "status": "closed",
+      "priority": "high",
+      "parent_id": null,
+      "labels": [
+        "docs"
+      ],
+      "comments": [
+        {
+          "content": "[action] PRODUCT.md updated with full survey spec: 7 questions, Sept 1-Nov 15 window, SoCal top-3 location ranking, half-day edge availability",
+          "created_at": "2026-08-04T22:46:48.745729+00:00",
+          "kind": "note"
+        }
+      ],
+      "created_at": "2026-08-04T22:46:16.371902+00:00",
+      "updated_at": "2026-08-04T22:46:48.740519+00:00",
+      "closed_at": "2026-08-04T22:46:48.740519+00:00"
+    },
+    {
+      "id": 1,
+      "title": "Run /impeccable init: capture product context in PRODUCT.md",
+      "description": null,
+      "status": "closed",
+      "priority": "high",
+      "parent_id": null,
+      "labels": [
+        "docs"
+      ],
+      "comments": [
+        {
+          "content": "[action] Completed /impeccable init: PRODUCT.md written; awaiting Bryan's prepared survey materials",
+          "created_at": "2026-08-04T22:44:28.101194+00:00",
+          "kind": "note"
+        }
+      ],
+      "created_at": "2026-08-04T22:37:05.651518+00:00",
+      "updated_at": "2026-08-04T22:44:28.095792+00:00",
+      "closed_at": "2026-08-04T22:44:28.095792+00:00"
+    }
+  ]
+}
