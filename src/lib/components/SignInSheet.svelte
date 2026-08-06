@@ -113,6 +113,22 @@
 		localError = null;
 		dropdownOpen = false;
 		try {
+			// Pre-flight invite check: an uninvited handle finds out here, not
+			// after the whole PDS auth dance. Any hiccup fails open — the server
+			// re-checks after auth regardless.
+			try {
+				const res = await fetch(`/api/invited?handle=${encodeURIComponent(clean)}`);
+				if (res.ok) {
+					const { invited } = (await res.json()) as { invited: boolean };
+					if (!invited) {
+						localError = `This survey is invite-only — @${clean} isn’t on the list. DM @chaosgreml.in if that seems wrong.`;
+						busy = false;
+						return;
+					}
+				}
+			} catch {
+				// Unreachable check service: proceed to login.
+			}
 			await login(clean);
 		} catch (err) {
 			localError = err instanceof Error ? err.message : 'Sign-in failed — try again';

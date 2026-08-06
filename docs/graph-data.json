@@ -296,6 +296,28 @@
       "created_at": "2026-08-06T00:00:00-07:00",
       "updated_at": "2026-08-06T00:00:00-07:00",
       "metadata_json": "{\"branch\":\"feature/feedback-round\",\"confidence\":90}"
+    },
+    {
+      "id": 28,
+      "change_id": "1b286f25-5d53-4513-a4f0-39a97618c0f8",
+      "node_type": "action",
+      "title": "Gate allowlist at sign-in — sealed feed + invite-only hero note for non-invited accounts",
+      "description": null,
+      "status": "pending",
+      "created_at": "2026-08-06T06:12:30.938515-07:00",
+      "updated_at": "2026-08-06T06:12:30.938515-07:00",
+      "metadata_json": "{\"branch\":\"feature/feedback-round\",\"commit\":\"3b49b97\",\"confidence\":95}"
+    },
+    {
+      "id": 29,
+      "change_id": "5e1d7f33-a21f-4878-8f12-55ba2d25f575",
+      "node_type": "observation",
+      "title": "Bryan signed in with atproto.la (not allowlisted) and could browse the survey; D1 confirmed no response row landed — submit gate held, but sign-in was ungated",
+      "description": null,
+      "status": "pending",
+      "created_at": "2026-08-06T06:12:30.953915-07:00",
+      "updated_at": "2026-08-06T06:12:30.953915-07:00",
+      "metadata_json": "{\"branch\":\"feature/feedback-round\",\"confidence\":100}"
     }
   ],
   "edges": [
@@ -606,6 +628,17 @@
       "weight": 1.0,
       "rationale": "DNS blocker resolved; cutover complete",
       "created_at": "2026-08-05T23:48:45.705693-07:00"
+    },
+    {
+      "id": 29,
+      "from_node_id": 28,
+      "to_node_id": 29,
+      "from_change_id": "1b286f25-5d53-4513-a4f0-39a97618c0f8",
+      "to_change_id": "5e1d7f33-a21f-4878-8f12-55ba2d25f575",
+      "edge_type": "leads_to",
+      "weight": 1.0,
+      "rationale": "Observation motivated the fix",
+      "created_at": "2026-08-06T06:12:30.960092-07:00"
     }
   ]
 }

@@ -1,5 +1,13 @@
 [
   {
+    "hash": "3b49b971c4b3c6c73c3624b71beb26b260425550",
+    "short_hash": "3b49b97",
+    "author": "Bryan Guffey",
+    "date": "2026-08-06T06:12:20-07:00",
+    "message": "fix: enforce allowlist at sign-in, not just submit\n\nA non-invited account (e.g. atproto.la) could sign in and browse the whole\nsurvey, only hitting the allowlist 403 at final submit. The page load now\nchecks the allowlist too: non-invited sign-ins keep the feed sealed and see\nthe polite invite-only note on the hero (with sign-out). The API still\nenforces on write as defense in depth.\n\nCo-Authored-By: Claude Fable 5 <noreply@anthropic.com>\nClaude-Session: https://claude.ai/code/session_01KvMrEJy2nWjYvgkPqQ26eD",
+    "files_changed": 5
+  },
+  {
     "hash": "4ae0d7de5e31428c9f4adc880d97451dc0dcce13",
     "short_hash": "4ae0d7d",
     "author": "Bryan Guffey",

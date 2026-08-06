@@ -191,6 +191,27 @@ export async function getResponse(db: D1Database, did: string): Promise<StoredRe
  * Matching is by handle (case-insensitive) or DID; on first login the DID is
  * recorded next to the handle so later handle changes don't lock anyone out.
  */
+/**
+ * Read-only allowlist lookup for the pre-auth sign-in check. Unlike
+ * checkAllowlist it never pins a DID — the caller may only have an
+ * unauthenticated handle typed into the sign-in sheet.
+ */
+export async function peekAllowlist(
+	db: D1Database,
+	who: { did: string | null; handle: string | null }
+): Promise<boolean> {
+	const count = await db.prepare(`SELECT COUNT(*) AS n FROM allowlist`).first<{ n: number }>();
+	if (!count || count.n === 0) return true;
+
+	const row = await db
+		.prepare(
+			`SELECT 1 AS hit FROM allowlist WHERE (?1 IS NOT NULL AND did = ?1) OR lower(handle) = lower(?2) LIMIT 1`
+		)
+		.bind(who.did, who.handle ?? '')
+		.first();
+	return row !== null;
+}
+
 export async function checkAllowlist(
 	db: D1Database,
 	who: { did: string; handle: string | null }
