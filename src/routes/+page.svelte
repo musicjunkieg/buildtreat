@@ -98,15 +98,20 @@
 		if (sheetOpen) return;
 		if (!signedIn) return;
 		const t = e.target as HTMLElement;
-		if (t.closest('input, select, textarea, details, .calendar')) return;
+		if (t.closest('input:not([type="radio"]), select, textarea, details, .calendar')) return;
 		if (e.key === 'ArrowDown' || e.key === 'PageDown') {
 			e.preventDefault();
 			next();
 		} else if (e.key === 'ArrowUp' || e.key === 'PageUp') {
 			e.preventDefault();
 			prev();
-		} else if (e.key === 'Enter' && !t.closest('button, a, [role="radio"]')) {
-			// Enter advances once the current item is answered.
+		} else if (e.key === 'Enter') {
+			// Enter advances once the current item is answered — including when
+			// focus sits on an answer control (place card, radio), where the
+			// browser default would re-activate it and undo the answer. Links
+			// and non-answer buttons keep their native Enter.
+			const answerControl = t.closest('.place, input[type="radio"], [role="radio"]');
+			if (!answerControl && t.closest('button, a')) return;
 			if (survey.completion[current] || current === 'hero') {
 				e.preventDefault();
 				next();
@@ -166,11 +171,11 @@
 		<HeroItem {signedIn} {notInvited} deniedHandle={data.user?.handle ?? null} {closed} {deadlineDisplay} organizerAvatar={data.organizer.avatar} onsignin={openSignIn} oncontinue={() => jump('you')} />
 	</FeedItem>
 
-	<FeedItem id="you" media="/media/item-you.png" labelledby="you-title">
+	<FeedItem id="you" inert={!signedIn} media="/media/item-you.png" labelledby="you-title">
 		<YouItem {survey} {signedIn} {handle} onsignin={openSignIn} onnext={() => jump('interest')} />
 	</FeedItem>
 
-	<FeedItem id="interest" media="/media/item-interest.png" labelledby="interest-title">
+	<FeedItem id="interest" inert={!signedIn} media="/media/item-interest.png" labelledby="interest-title">
 		<ChoiceItem
 			titleId="interest-title"
 			title={interestQuestion.title}
@@ -188,7 +193,7 @@
 		/>
 	</FeedItem>
 
-	<FeedItem id="travel" media="/media/item-travel.png" labelledby="travel-title">
+	<FeedItem id="travel" inert={!signedIn} media="/media/item-travel.png" labelledby="travel-title">
 		<ChoiceItem
 			titleId="travel-title"
 			title={travelQuestion.title}
@@ -206,15 +211,15 @@
 		/>
 	</FeedItem>
 
-	<FeedItem id="dates" media="/media/item-dates.png" darker labelledby="dates-title">
+	<FeedItem id="dates" inert={!signedIn} media="/media/item-dates.png" darker labelledby="dates-title">
 		<DatesItem {survey} {signedIn} onsignin={openSignIn} onnext={() => jump('location')} />
 	</FeedItem>
 
-	<FeedItem id="location" media="/media/item-location.png" darker labelledby="location-title">
+	<FeedItem id="location" inert={!signedIn} media="/media/item-location.png" darker labelledby="location-title">
 		<LocationItem {survey} {signedIn} onsignin={openSignIn} onnext={() => jump('review')} />
 	</FeedItem>
 
-	<FeedItem id="review" media="/media/item-review.png" labelledby="review-title">
+	<FeedItem id="review" inert={!signedIn} media="/media/item-review.png" labelledby="review-title">
 		<ReviewItem
 			{survey}
 			{signedIn}

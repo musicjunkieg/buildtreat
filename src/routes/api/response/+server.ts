@@ -9,9 +9,13 @@ export const PUT: RequestHandler = async ({ request, locals, platform }) => {
 	}
 	const deadline = platform?.env?.DEADLINE;
 	if (deadline && Date.now() > Date.parse(deadline)) {
+		const display = new Date(deadline).toLocaleDateString('en-US', {
+			timeZone: 'America/Los_Angeles',
+			month: 'long',
+			day: 'numeric'
+		});
 		error(403, {
-			message:
-				'The survey closed on August 15 — answers are locked. Ping @chaosgreml.in if something needs fixing.'
+			message: `The survey closed on ${display} — answers are locked. Ping @chaosgreml.in if something needs fixing.`
 		});
 	}
 	const db = platform?.env?.DB;

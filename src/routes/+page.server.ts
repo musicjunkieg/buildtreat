@@ -28,15 +28,22 @@ export interface KnownUser {
 
 const KNOWN_COOKIE = 'abr_known';
 
+/** Strict shape check: the cookie value renders in the sheet and seeds login(),
+ * and a sibling-subdomain page could plant a non-httpOnly copy. */
+const KNOWN_HANDLE_RE = /^[a-z0-9.:-]{1,253}$/i;
+
 function readKnownUser(raw: string | undefined): KnownUser | null {
 	if (!raw) return null;
 	try {
 		const parsed = JSON.parse(raw) as Record<string, unknown>;
-		if (typeof parsed.handle !== 'string' || !parsed.handle) return null;
+		if (typeof parsed.handle !== 'string' || !KNOWN_HANDLE_RE.test(parsed.handle)) return null;
 		return {
 			handle: parsed.handle,
-			displayName: typeof parsed.displayName === 'string' ? parsed.displayName : null,
-			avatar: typeof parsed.avatar === 'string' ? parsed.avatar : null
+			displayName: typeof parsed.displayName === 'string' ? parsed.displayName.slice(0, 64) : null,
+			avatar:
+				typeof parsed.avatar === 'string' && parsed.avatar.startsWith('https://') && parsed.avatar.length <= 512
+					? parsed.avatar
+					: null
 		};
 	} catch {
 		return null;
@@ -116,16 +123,6 @@ export const load: PageServerLoad = async ({ locals, platform, url, cookies }) =
 		avatar: profile?.avatar ?? null
 	};
 
-	// Remember who signed in (identity hint only, no credentials) so a
-	// returning visitor — even after logout — gets a one-tap re-entry.
-	if (user.handle) {
-		cookies.set(
-			KNOWN_COOKIE,
-			JSON.stringify({ handle: user.handle, displayName: user.displayName, avatar: user.avatar }),
-			{ path: '/', maxAge: 60 * 60 * 24 * 180, httpOnly: true, sameSite: 'lax', secure: !dev }
-		);
-	}
-
 	const db = platform?.env?.DB;
 
 	// The allowlist gates the whole survey, not just submission: a signed-in
@@ -147,6 +144,18 @@ export const load: PageServerLoad = async ({ locals, platform, url, cookies }) =
 		} catch (e) {
 			console.error('allowlist check failed for', locals.did, e);
 		}
+	}
+
+	// Remember who signed in (identity hint only, no credentials) so a
+	// returning visitor — even after logout — gets a one-tap re-entry. Only
+	// for allowed users: a denied account shouldn't be greeted back into a
+	// login that will be denied again.
+	if (user.handle && allowed) {
+		cookies.set(
+			KNOWN_COOKIE,
+			JSON.stringify({ handle: user.handle, displayName: user.displayName, avatar: user.avatar }),
+			{ path: '/', maxAge: 60 * 60 * 24 * 180, httpOnly: true, sameSite: 'lax', secure: !dev }
+		);
 	}
 
 	const stored =

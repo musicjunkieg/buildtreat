@@ -59,7 +59,12 @@
 				if (!res.ok) throw new Error(String(res.status));
 				const data = (await res.json()) as { actors?: Actor[] };
 				if (seq !== searchSeq) return; // a newer query superseded this one
-				results = data.actors ?? [];
+				// Dedupe by handle: the keyed each would crash on duplicates.
+				results = [
+					...new Map(
+						(data.actors ?? []).filter((a) => typeof a.handle === 'string').map((a) => [a.handle, a])
+					).values()
+				];
 				highlighted = -1;
 				dropdownOpen = results.length > 0;
 			} catch {
@@ -109,6 +114,15 @@
 
 	$effect(() => {
 		if (open && !welcomeBack) input?.focus();
+	});
+
+	$effect(() => {
+		if (!open) {
+			// A stale open dropdown would block window-level Escape forever.
+			dropdownOpen = false;
+			results = [];
+			highlighted = -1;
+		}
 	});
 
 	async function go(withHandle?: string) {
@@ -205,7 +219,13 @@
 			</p>
 			<div class="field">
 				<label class="kicker" for="signin-handle">Your handle</label>
-				<div class="combo">
+				<div
+					class="combo"
+					onfocusout={(e) => {
+						const combo = e.currentTarget as HTMLElement;
+						if (!combo.contains(e.relatedTarget as Node)) dropdownOpen = false;
+					}}
+				>
 					<input
 						id="signin-handle"
 						bind:this={input}

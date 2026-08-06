@@ -1,5 +1,13 @@
 [
   {
+    "hash": "1a4180cad77cf9e66c780573e4b4a49b44ffe6ce",
+    "short_hash": "1a4180c",
+    "author": "Bryan Guffey",
+    "date": "2026-08-06T13:39:27-07:00",
+    "message": "fix: review findings — never falsely deny invited users, log swallowed errors\n\nSilent-failure review of the branch found that infrastructure hiccups\ncould masquerade as 'you're not on the list':\n- page gate now fails OPEN on D1 errors or unresolved identity (the\n  response API re-enforces authoritatively on write) and logs every\n  swallowed error to Workers observability\n- /api/invited answers the non-answer (invited:true) when handle\n  resolution fails, instead of a confident wrong denial from a\n  handle-only match against a possibly-stale stored handle\n- restoreLocal's catch uses clearLocal so a storage SecurityError can't\n  rethrow and abort onMount (killing scroll-spy + keyboard nav)\n\nData-side (already live): all 19 allowlist rows now have DIDs pre-pinned,\nso DID-only matching works even when profile/handle resolution is down.\n\nCo-Authored-By: Claude Fable 5 <noreply@anthropic.com>\nClaude-Session: https://claude.ai/code/session_01KvMrEJy2nWjYvgkPqQ26eD",
+    "files_changed": 7
+  },
+  {
     "hash": "8b92cb7f2c60b601e046513a9474e43eeb5bf440",
     "short_hash": "8b92cb7",
     "author": "Bryan Guffey",

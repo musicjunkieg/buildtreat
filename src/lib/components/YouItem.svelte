@@ -30,17 +30,20 @@
 
 	/** ZIP lookup: five digits resolve to "City, ST" via zippopotam.us. */
 	let zipStatus = $state<'idle' | 'looking' | 'notfound'>('idle');
-	let lastLookedUp = '';
+	let zipTimer: ReturnType<typeof setTimeout> | undefined;
+	let zipSeq = 0;
 
-	async function maybeResolveZip() {
-		const raw = survey.homeLocation.trim();
-		if (!/^\d{5}$/.test(raw) || raw === lastLookedUp) return;
-		lastLookedUp = raw;
+	async function resolveZip(raw: string) {
+		const seq = ++zipSeq;
 		zipStatus = 'looking';
 		try {
 			const res = await fetch(`https://api.zippopotam.us/us/${raw}`);
 			if (!res.ok) throw new Error(String(res.status));
 			const data = (await res.json()) as { places?: { 'place name': string; 'state abbreviation': string }[] };
+			if (seq !== zipSeq) return; // a newer lookup superseded this one
+			// Only apply if the field still holds exactly what we looked up —
+			// never clobber text the user kept typing (e.g. a ZIP+4).
+			if (survey.homeLocation.trim() !== raw) return;
 			const place = data.places?.[0];
 			if (place) {
 				survey.homeLocation = `${place['place name']}, ${place['state abbreviation']}`;
@@ -51,13 +54,20 @@
 			}
 		} catch {
 			// Offline or unknown ZIP — leave what they typed; it's still an answer.
-			zipStatus = 'notfound';
+			if (seq === zipSeq) zipStatus = 'notfound';
 		}
+	}
+
+	function scheduleZip(delay: number) {
+		clearTimeout(zipTimer);
+		const raw = survey.homeLocation.trim();
+		if (!/^\d{5}$/.test(raw)) return;
+		zipTimer = setTimeout(() => void resolveZip(raw), delay);
 	}
 
 	function locationInput() {
 		if (zipStatus === 'notfound') zipStatus = 'idle';
-		if (/^\d{5}$/.test(survey.homeLocation.trim())) void maybeResolveZip();
+		scheduleZip(400);
 	}
 </script>
 
@@ -97,7 +107,7 @@
 			bind:value={survey.homeLocation}
 			oninput={locationInput}
 			onblur={() => {
-				void maybeResolveZip();
+				scheduleZip(0);
 				survey.saveLocal();
 			}}
 			onkeydown={(e) => fieldEnter(e, null)}
