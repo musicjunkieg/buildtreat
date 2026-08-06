@@ -7,11 +7,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## [Unreleased]
 
 ### Added
+- Deadline: Aug 15 2026 23:59:59 PT — display + enforcement (#31)
 
 ### Fixed
 - Analyze smoke-test HAR from deployed survey (#19)
 
 ### Changed
+- Load allowlist: 16 invitee handles + organizer (#32)
+- Rebuild and deploy Bryan's manual tweaks (#30)
 - Desktop (16-inch MBP) reviewer snapshots (#29)
 - Copy reviewer pack into project folder (#28)
 - Reviewer snapshot pack: high-res captures of all seven items (#27)

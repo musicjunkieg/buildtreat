@@ -164,6 +164,127 @@
       "created_at": "2026-08-04T19:06:58.591270-07:00",
       "updated_at": "2026-08-04T19:06:58.591270-07:00",
       "metadata_json": "{\"branch\":\"feature/survey\",\"commit\":\"c847a8e\",\"confidence\":95}"
+    },
+    {
+      "id": 16,
+      "change_id": "e16f4eb8-4580-4779-bbe1-fd498b33e0c1",
+      "node_type": "goal",
+      "title": "Ship the survey to production and iterate on smoke-test feedback",
+      "description": null,
+      "status": "pending",
+      "created_at": "2026-08-05T00:00:00-07:00",
+      "updated_at": "2026-08-05T00:00:00-07:00",
+      "metadata_json": "{\"branch\":\"feature/feedback-round\",\"confidence\":95,\"prompt\":\"merged, ran wrangler login. let's do workers.dev for now [...] + five post-smoke-test notes: lock pre-auth feed, next/Enter affordances, ZIP lookup, handle typeahead + welcome-back cookie, numeric-globe favicon\"}"
+    },
+    {
+      "id": 17,
+      "change_id": "75c78453-2b84-4931-9f07-cbff4d69a1f9",
+      "node_type": "action",
+      "title": "Provisioned Cloudflare (3 KV, D1, secrets) and deployed to atmospheric-builders-retreat.bryan-78d.workers.dev",
+      "description": null,
+      "status": "pending",
+      "created_at": "2026-08-05T00:00:00-07:00",
+      "updated_at": "2026-08-05T00:00:00-07:00",
+      "metadata_json": "{\"branch\":\"feature/feedback-round\",\"confidence\":95}"
+    },
+    {
+      "id": 18,
+      "change_id": "c9da7823-9c98-41c8-9e18-1e53b143f30a",
+      "node_type": "observation",
+      "title": "First real OAuth login failed: 'start argument must be number' — HAR from Bryan + local workerd repro",
+      "description": null,
+      "status": "pending",
+      "created_at": "2026-08-05T00:00:00-07:00",
+      "updated_at": "2026-08-05T00:00:00-07:00",
+      "metadata_json": "{\"branch\":\"feature/feedback-round\",\"confidence\":95}"
+    },
+    {
+      "id": 19,
+      "change_id": "2cfa26c5-ec33-4300-b4e2-34ab3801c6c9",
+      "node_type": "option",
+      "title": "Patch @atcute packages (pnpm patch) to pass explicit Buffer args",
+      "description": null,
+      "status": "pending",
+      "created_at": "2026-08-05T00:00:00-07:00",
+      "updated_at": "2026-08-05T00:00:00-07:00",
+      "metadata_json": "{\"branch\":\"feature/feedback-round\",\"confidence\":60}"
+    },
+    {
+      "id": 20,
+      "change_id": "f10585ed-74f7-4014-ad26-d6d65f8c064a",
+      "node_type": "option",
+      "title": "Resolve workerd/worker export conditions in Vite SSR so pure-JS builds ship",
+      "description": null,
+      "status": "pending",
+      "created_at": "2026-08-05T00:00:00-07:00",
+      "updated_at": "2026-08-05T00:00:00-07:00",
+      "metadata_json": "{\"branch\":\"feature/feedback-round\",\"confidence\":90}"
+    },
+    {
+      "id": 21,
+      "change_id": "32667a33-0db9-4777-8f92-5ff3b7b330b9",
+      "node_type": "decision",
+      "title": "Chose vite ssr.resolve.conditions=['workerd','worker'] — fixes at the resolver, no vendored patches",
+      "description": null,
+      "status": "pending",
+      "created_at": "2026-08-05T00:00:00-07:00",
+      "updated_at": "2026-08-05T00:00:00-07:00",
+      "metadata_json": "{\"branch\":\"feature/feedback-round\",\"confidence\":95}"
+    },
+    {
+      "id": 22,
+      "change_id": "ae480c96-2992-451b-8d05-4f85dd40e4a4",
+      "node_type": "outcome",
+      "title": "OAuth login works end-to-end in production; Bryan submitted first real response",
+      "description": null,
+      "status": "pending",
+      "created_at": "2026-08-05T00:00:00-07:00",
+      "updated_at": "2026-08-05T00:00:00-07:00",
+      "metadata_json": "{\"branch\":\"feature/feedback-round\",\"commit\":\"c60faa5\",\"confidence\":95}"
+    },
+    {
+      "id": 23,
+      "change_id": "e787efc0-f504-431c-bc4e-56d7e4221d32",
+      "node_type": "action",
+      "title": "Feedback round shipped: locked pre-auth feed, Next/Enter affordances, ZIP lookup, typeahead + welcome-back, favicon (PR #3)",
+      "description": null,
+      "status": "pending",
+      "created_at": "2026-08-06T00:00:00-07:00",
+      "updated_at": "2026-08-06T00:00:00-07:00",
+      "metadata_json": "{\"branch\":\"feature/feedback-round\",\"commit\":\"b93d14c\",\"confidence\":95}"
+    },
+    {
+      "id": 24,
+      "change_id": "16f44a51-34c7-4d4f-9fdd-1739413cb644",
+      "node_type": "action",
+      "title": "Bluesky organizer attribution + sign-out; Bryan's copy tweaks; deadline Aug 15 11:59:59 PM PT (display + server enforcement)",
+      "description": null,
+      "status": "pending",
+      "created_at": "2026-08-06T00:00:00-07:00",
+      "updated_at": "2026-08-06T00:00:00-07:00",
+      "metadata_json": "{\"branch\":\"feature/feedback-round\",\"commit\":\"4ae0d7d\",\"confidence\":95}"
+    },
+    {
+      "id": 25,
+      "change_id": "bc4f0764-2b80-41b8-ab3c-b8f3439406d7",
+      "node_type": "action",
+      "title": "Allowlist loaded: 18 handles, all DID-verified; enforcement active",
+      "description": null,
+      "status": "pending",
+      "created_at": "2026-08-06T00:00:00-07:00",
+      "updated_at": "2026-08-06T00:00:00-07:00",
+      "metadata_json": "{\"branch\":\"feature/feedback-round\",\"confidence\":95}"
+    },
+    {
+      "id": 26,
+      "change_id": "5cf01b5e-4c12-43ea-bf4d-58caa814a03a",
+      "node_type": "observation",
+      "title": "buildersretre.at registered via Marque; at.marque.dns zone record written and network-propagated, but Marque ingestion stuck (SOA serial frozen at registration; dashboard empty) — support email drafted, OPEN",
+      "description": null,
+      "status": "pending",
+      "created_at": "2026-08-06T00:00:00-07:00",
+      "updated_at": "2026-08-06T00:00:00-07:00",
+      "metadata_json": "{\"branch\":\"feature/feedback-round\",\"confidence\":90}"
     }
   ],
   "edges": [
@@ -331,6 +452,138 @@
       "weight": 1.0,
       "rationale": "Shipped",
       "created_at": "2026-08-04T19:06:58.598784-07:00"
+    },
+    {
+      "id": 16,
+      "from_node_id": 15,
+      "to_node_id": 16,
+      "from_change_id": "d4503cba-5f24-4f81-98cb-9a1a6bdbfdcf",
+      "to_change_id": "e16f4eb8-4580-4779-bbe1-fd498b33e0c1",
+      "edge_type": "leads_to",
+      "weight": 1.0,
+      "rationale": "Ship enabled iteration",
+      "created_at": "2026-08-05T20:55:10.279340-07:00"
+    },
+    {
+      "id": 17,
+      "from_node_id": 16,
+      "to_node_id": 17,
+      "from_change_id": "e16f4eb8-4580-4779-bbe1-fd498b33e0c1",
+      "to_change_id": "75c78453-2b84-4931-9f07-cbff4d69a1f9",
+      "edge_type": "leads_to",
+      "weight": 1.0,
+      "rationale": "Deploy",
+      "created_at": "2026-08-05T20:55:10.296923-07:00"
+    },
+    {
+      "id": 18,
+      "from_node_id": 17,
+      "to_node_id": 18,
+      "from_change_id": "75c78453-2b84-4931-9f07-cbff4d69a1f9",
+      "to_change_id": "c9da7823-9c98-41c8-9e18-1e53b143f30a",
+      "edge_type": "leads_to",
+      "weight": 1.0,
+      "rationale": "Smoke test surfaced bug",
+      "created_at": "2026-08-05T20:55:10.314054-07:00"
+    },
+    {
+      "id": 19,
+      "from_node_id": 18,
+      "to_node_id": 19,
+      "from_change_id": "c9da7823-9c98-41c8-9e18-1e53b143f30a",
+      "to_change_id": "2cfa26c5-ec33-4300-b4e2-34ab3801c6c9",
+      "edge_type": "leads_to",
+      "weight": 1.0,
+      "rationale": "Candidate fix",
+      "created_at": "2026-08-05T20:55:26.113097-07:00"
+    },
+    {
+      "id": 20,
+      "from_node_id": 18,
+      "to_node_id": 20,
+      "from_change_id": "c9da7823-9c98-41c8-9e18-1e53b143f30a",
+      "to_change_id": "f10585ed-74f7-4014-ad26-d6d65f8c064a",
+      "edge_type": "leads_to",
+      "weight": 1.0,
+      "rationale": "Candidate fix",
+      "created_at": "2026-08-05T20:55:26.119307-07:00"
+    },
+    {
+      "id": 21,
+      "from_node_id": 19,
+      "to_node_id": 21,
+      "from_change_id": "2cfa26c5-ec33-4300-b4e2-34ab3801c6c9",
+      "to_change_id": "32667a33-0db9-4777-8f92-5ff3b7b330b9",
+      "edge_type": "leads_to",
+      "weight": 1.0,
+      "rationale": "Rejected: maintenance burden",
+      "created_at": "2026-08-05T20:55:26.125916-07:00"
+    },
+    {
+      "id": 22,
+      "from_node_id": 20,
+      "to_node_id": 21,
+      "from_change_id": "f10585ed-74f7-4014-ad26-d6d65f8c064a",
+      "to_change_id": "32667a33-0db9-4777-8f92-5ff3b7b330b9",
+      "edge_type": "leads_to",
+      "weight": 1.0,
+      "rationale": "Chosen",
+      "created_at": "2026-08-05T20:55:26.132781-07:00"
+    },
+    {
+      "id": 23,
+      "from_node_id": 21,
+      "to_node_id": 22,
+      "from_change_id": "32667a33-0db9-4777-8f92-5ff3b7b330b9",
+      "to_change_id": "ae480c96-2992-451b-8d05-4f85dd40e4a4",
+      "edge_type": "leads_to",
+      "weight": 1.0,
+      "rationale": "Verified live",
+      "created_at": "2026-08-05T20:55:26.150691-07:00"
+    },
+    {
+      "id": 24,
+      "from_node_id": 16,
+      "to_node_id": 23,
+      "from_change_id": "e16f4eb8-4580-4779-bbe1-fd498b33e0c1",
+      "to_change_id": "e787efc0-f504-431c-bc4e-56d7e4221d32",
+      "edge_type": "leads_to",
+      "weight": 1.0,
+      "rationale": "Five smoke-test notes implemented",
+      "created_at": "2026-08-05T20:55:43.330422-07:00"
+    },
+    {
+      "id": 25,
+      "from_node_id": 16,
+      "to_node_id": 24,
+      "from_change_id": "e16f4eb8-4580-4779-bbe1-fd498b33e0c1",
+      "to_change_id": "16f44a51-34c7-4d4f-9fdd-1739413cb644",
+      "edge_type": "leads_to",
+      "weight": 1.0,
+      "rationale": "Follow-on refinements",
+      "created_at": "2026-08-05T20:55:43.347948-07:00"
+    },
+    {
+      "id": 26,
+      "from_node_id": 16,
+      "to_node_id": 25,
+      "from_change_id": "e16f4eb8-4580-4779-bbe1-fd498b33e0c1",
+      "to_change_id": "bc4f0764-2b80-41b8-ab3c-b8f3439406d7",
+      "edge_type": "leads_to",
+      "weight": 1.0,
+      "rationale": "Invite gating armed",
+      "created_at": "2026-08-05T20:55:43.365017-07:00"
+    },
+    {
+      "id": 27,
+      "from_node_id": 16,
+      "to_node_id": 26,
+      "from_change_id": "e16f4eb8-4580-4779-bbe1-fd498b33e0c1",
+      "to_change_id": "5cf01b5e-4c12-43ea-bf4d-58caa814a03a",
+      "edge_type": "leads_to",
+      "weight": 1.0,
+      "rationale": "Custom-domain cutover blocked on Marque",
+      "created_at": "2026-08-05T20:55:43.381970-07:00"
     }
   ]
 }

@@ -1,5 +1,29 @@
 [
   {
+    "hash": "4ae0d7de5e31428c9f4adc880d97451dc0dcce13",
+    "short_hash": "4ae0d7d",
+    "author": "Bryan Guffey",
+    "date": "2026-08-05T18:06:00-07:00",
+    "message": "feat: respond-by deadline — Aug 15 2026 11:59:59 PM PT\n\nDEADLINE var drives everything: fifth ledger row on the hero, close-date\nnotes at the submit button, warm closed states on hero and review, and the\nresponse API rejecting writes after the deadline.\n\nCo-Authored-By: Claude Fable 5 <noreply@anthropic.com>\nClaude-Session: https://claude.ai/code/session_01XFGCtqAaDnhNsZDkybtFRB",
+    "files_changed": 8
+  },
+  {
+    "hash": "b93d14c4ced9c042d90d0293c278cfc1e8ad2858",
+    "short_hash": "b93d14c",
+    "author": "Bryan Guffey",
+    "date": "2026-08-05T16:29:23-07:00",
+    "message": "feat: smoke-test feedback round — locked pre-auth feed, next affordances, ZIP lookup, handle typeahead, welcome-back, numeric-globe favicon\n\n1. Signed-out feed is sealed at the hero: no scroll, rail dimmed to a faint\n   map, dots hidden; everything unlocks at sign-in.\n2. Every question grows a Next chip when answered; Enter advances (fields\n   chain name→email→location→next).\n3. Location field resolves 5-digit ZIPs to 'City, ST' via zippopotam.us,\n   graceful fallback to free text.\n4. Sign-in handle field is a typeahead (typeahead.waow.tech, debounced,\n   keyboard-navigable, opens upward from the bottom sheet; degrades to a\n   plain input if the experimental service is down). A 180-day identity-hint\n   cookie greets returning visitors — 'Hey, it's you' — with one-tap\n   continue, surviving logout.\n5. Favicon: original numeric-globe homage to atproto.com's ASCII Earth.\n\nCo-Authored-By: Claude Fable 5 <noreply@anthropic.com>\nClaude-Session: https://claude.ai/code/session_01XFGCtqAaDnhNsZDkybtFRB",
+    "files_changed": 12
+  },
+  {
+    "hash": "c60faa5c13e5c5a797e6731b5b56abaa7cb7f386",
+    "short_hash": "c60faa5",
+    "author": "Bryan Guffey",
+    "date": "2026-08-05T16:05:55-07:00",
+    "message": "fix: resolve workerd export conditions in Vite SSR build\n\nVite's SSR resolver defaults to node conditions, baking @atcute's\nnode-flavored builds (bare Buffer.prototype.base64urlSlice.call) into the\nworker bundle; workerd's stricter Buffer polyfill throws 'The \"start\"\nargument must be of type number' on every OAuth login. Resolve with\nworkerd/worker conditions so the packages' own pure-JS web builds ship.\n\nRoot-caused from Bryan's smoke-test HAR + local workerd repro.\n\nCo-Authored-By: Claude Fable 5 <noreply@anthropic.com>\nClaude-Session: https://claude.ai/code/session_01XFGCtqAaDnhNsZDkybtFRB",
+    "files_changed": 2
+  },
+  {
     "hash": "c847a8e154e2a700eead8f4aa11aa2dd75334105",
     "short_hash": "c847a8e",
     "author": "Bryan Guffey",

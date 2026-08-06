@@ -1,10 +1,25 @@
 {
   "version": 1,
-  "exported_at": "2026-08-06T01:06:00.595509+00:00",
+  "exported_at": "2026-08-06T03:56:04.683590+00:00",
   "issues": [
     {
-      "id": 31,
-      "title": "Deadline: Aug 15 2026 23:59:59 PT — display + enforcement",
+      "id": 34,
+      "title": "Marque support email for stuck zone ingestion",
+      "description": null,
+      "status": "open",
+      "priority": "medium",
+      "parent_id": null,
+      "labels": [
+        "chore"
+      ],
+      "comments": [],
+      "created_at": "2026-08-06T02:35:54.706639+00:00",
+      "updated_at": "2026-08-06T02:35:54.706639+00:00",
+      "closed_at": null
+    },
+    {
+      "id": 33,
+      "title": "Write at.marque.dns zone record for Bryan's domain",
       "description": null,
       "status": "open",
       "priority": "high",
@@ -12,10 +27,67 @@
       "labels": [
         "feature"
       ],
+      "comments": [
+        {
+          "content": "[auto] Session resumed after context compression. Last action: Allowlist live: 18 handles, all resolve; enforcement active",
+          "created_at": "2026-08-06T02:04:39.541778+00:00",
+          "kind": "note"
+        },
+        {
+          "content": "[auto] Session resumed after context compression. Last action: Allowlist live: 18 handles, all resolve; enforcement active",
+          "created_at": "2026-08-06T02:05:13.784033+00:00",
+          "kind": "note"
+        }
+      ],
+      "created_at": "2026-08-06T01:52:23.634143+00:00",
+      "updated_at": "2026-08-06T01:52:23.634143+00:00",
+      "closed_at": null
+    },
+    {
+      "id": 32,
+      "title": "Load allowlist: 16 invitee handles + organizer",
+      "description": null,
+      "status": "closed",
+      "priority": "high",
+      "parent_id": null,
+      "labels": [
+        "deploy"
+      ],
+      "comments": [
+        {
+          "content": "[action] Allowlist live: 18 handles, all resolve; enforcement active",
+          "created_at": "2026-08-06T01:32:05.810339+00:00",
+          "kind": "note"
+        },
+        {
+          "content": "[auto] Session resumed after context compression. Last action: Allowlist live: 18 handles, all resolve; enforcement active",
+          "created_at": "2026-08-06T01:47:59.562068+00:00",
+          "kind": "note"
+        },
+        {
+          "content": "[auto] Session resumed after context compression. Last action: Allowlist live: 18 handles, all resolve; enforcement active",
+          "created_at": "2026-08-06T01:48:25.249795+00:00",
+          "kind": "note"
+        }
+      ],
+      "created_at": "2026-08-06T01:31:27.256338+00:00",
+      "updated_at": "2026-08-06T01:32:05.803830+00:00",
+      "closed_at": "2026-08-06T01:32:05.803830+00:00"
+    },
+    {
+      "id": 31,
+      "title": "Deadline: Aug 15 2026 23:59:59 PT — display + enforcement",
+      "description": null,
+      "status": "closed",
+      "priority": "high",
+      "parent_id": null,
+      "labels": [
+        "feature"
+      ],
       "comments": [],
       "created_at": "2026-08-06T00:50:55.506811+00:00",
-      "updated_at": "2026-08-06T00:50:55.506811+00:00",
-      "closed_at": null
+      "updated_at": "2026-08-06T01:06:05.236013+00:00",
+      "closed_at": "2026-08-06T01:06:05.236013+00:00"
     },
     {
       "id": 30,
