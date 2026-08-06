@@ -33,7 +33,9 @@
 	const interestLabel = $derived(interestQuestion.options.find((o) => o.value === survey.interest)?.label ?? null);
 	const travelLabel = $derived(travelQuestion.options.find((o) => o.value === survey.travel)?.label ?? null);
 	const rankedNames = $derived(
-		survey.ranking.map((id, i) => `${i + 1}. ${locations.find((l) => l.id === id)?.name ?? id}`)
+		survey.noPreference
+			? ['No preference']
+			: survey.ranking.map((id, i) => `${i + 1}. ${locations.find((l) => l.id === id)?.name ?? id}`)
 	);
 
 	const rows = $derived(

@@ -88,8 +88,15 @@ export const datesQuestion = {
 export const locationQuestion = {
 	title: 'Where should it be?',
 	prompt: 'Do you have a preference in location? Rank your top three.',
-	maxRank: 3
+	maxRank: 3,
+	noPreference: 'I don’t have a preference — they all sound great'
 } as const;
+
+/**
+ * Sentinel ranking entry meaning "no location preference". Lives in the same
+ * ranking array (and JSON column) as real location ids, always alone.
+ */
+export const NO_PREFERENCE = 'no-preference';
 
 export const youQuestion = {
 	title: 'Who’s coming',

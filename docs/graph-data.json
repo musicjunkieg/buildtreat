@@ -329,6 +329,28 @@
       "created_at": "2026-08-06T10:23:13.846590-07:00",
       "updated_at": "2026-08-06T10:23:13.846590-07:00",
       "metadata_json": "{\"branch\":\"feature/feedback-round\",\"commit\":\"adc0c53\",\"confidence\":95}"
+    },
+    {
+      "id": 31,
+      "change_id": "499ce472-5183-4c4a-90c3-20e534cc05a8",
+      "node_type": "action",
+      "title": "Linkified organizer mentions via aturi.to profile waypoint (no DM deep link exists cross-client)",
+      "description": null,
+      "status": "pending",
+      "created_at": "2026-08-06T10:46:48.438150-07:00",
+      "updated_at": "2026-08-06T10:46:48.438150-07:00",
+      "metadata_json": "{\"branch\":\"feature/feedback-round\",\"commit\":\"ab01054\",\"confidence\":90}"
+    },
+    {
+      "id": 32,
+      "change_id": "b6ddc01d-0906-4752-aab1-7c3a9e3abcb2",
+      "node_type": "action",
+      "title": "Allowlist +tyler.fun (did:plc:4gt3dbmp4pydjiemob4konzm) — 19 total",
+      "description": null,
+      "status": "pending",
+      "created_at": "2026-08-06T12:58:11.858413-07:00",
+      "updated_at": "2026-08-06T12:58:11.858413-07:00",
+      "metadata_json": "{\"branch\":\"feature/feedback-round\",\"confidence\":100}"
     }
   ],
   "edges": [
@@ -661,6 +683,28 @@
       "weight": 1.0,
       "rationale": "Follow-on: same allowlist gap, moved even earlier in the flow",
       "created_at": "2026-08-06T10:23:13.853810-07:00"
+    },
+    {
+      "id": 31,
+      "from_node_id": 30,
+      "to_node_id": 31,
+      "from_change_id": "9a278a5a-04c6-4c7a-985c-51dd82c7730f",
+      "to_change_id": "499ce472-5183-4c4a-90c3-20e534cc05a8",
+      "edge_type": "leads_to",
+      "weight": 1.0,
+      "rationale": "Polish on the same invite-flow surfaces",
+      "created_at": "2026-08-06T10:46:48.447653-07:00"
+    },
+    {
+      "id": 32,
+      "from_node_id": 25,
+      "to_node_id": 32,
+      "from_change_id": "bc4f0764-2b80-41b8-ab3c-b8f3439406d7",
+      "to_change_id": "b6ddc01d-0906-4752-aab1-7c3a9e3abcb2",
+      "edge_type": "leads_to",
+      "weight": 1.0,
+      "rationale": "Allowlist maintenance",
+      "created_at": "2026-08-06T12:58:11.868498-07:00"
     }
   ]
 }

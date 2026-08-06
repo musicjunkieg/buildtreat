@@ -1,5 +1,13 @@
 [
   {
+    "hash": "ab01054c5870f5fcd1849323b64e633a3cb04c9e",
+    "short_hash": "ab01054",
+    "author": "Bryan Guffey",
+    "date": "2026-08-06T10:46:44-07:00",
+    "message": "feat: linkify organizer mentions via aturi.to profile waypoint\n\nEvery 'DM @chaosgreml.in' mention (hero invite-only + closed notes, sign-in\nsheet denial, review closed note) and the hero author line now link to\nhttps://aturi.to/profile/<did> — no cross-client DM deep link exists, so\nthe aturi.to landing lets each visitor open the profile (Message one tap\naway) in their own Atmosphere client. DID not handle so the link survives\nhandle changes. The sheet's denial message became a structured snippet so\nthe mention could be a real anchor.\n\nCo-Authored-By: Claude Fable 5 <noreply@anthropic.com>\nClaude-Session: https://claude.ai/code/session_01KvMrEJy2nWjYvgkPqQ26eD",
+    "files_changed": 7
+  },
+  {
     "hash": "adc0c532fb2f7856dce46777fc317dbf2dd7ade6",
     "short_hash": "adc0c53",
     "author": "Bryan Guffey",

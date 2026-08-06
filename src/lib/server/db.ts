@@ -1,7 +1,7 @@
 import type { D1Database } from '@cloudflare/workers-types';
 import type { SurveyDraft } from '$lib/survey.svelte';
 import type { AvailabilityRange, InterestValue, TravelValue } from '$lib/content';
-import { locations, retreat } from '$lib/content';
+import { locations, NO_PREFERENCE, retreat } from '$lib/content';
 
 /**
  * D1 access for survey responses. All queries are parameterized.
@@ -68,8 +68,13 @@ export function validateDraft(body: unknown): SurveyDraft {
 	const ranking: string[] = [];
 	if (Array.isArray(b.ranking)) {
 		for (const id of b.ranking) {
-			if (typeof id !== 'string' || !LOCATION_IDS.has(id)) throw new ValidationError('Unknown location');
+			if (typeof id !== 'string' || (id !== NO_PREFERENCE && !LOCATION_IDS.has(id))) {
+				throw new ValidationError('Unknown location');
+			}
 			if (!ranking.includes(id)) ranking.push(id);
+		}
+		if (ranking.includes(NO_PREFERENCE) && ranking.length > 1) {
+			throw new ValidationError('No-preference can’t be combined with a ranking');
 		}
 		if (ranking.length > 3) throw new ValidationError('Rank at most three locations');
 	}
