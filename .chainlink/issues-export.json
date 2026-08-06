@@ -1,12 +1,27 @@
 {
   "version": 1,
-  "exported_at": "2026-08-06T17:23:09.320701+00:00",
+  "exported_at": "2026-08-06T17:46:44.033772+00:00",
   "issues": [
+    {
+      "id": 38,
+      "title": "Linkify DM @chaosgreml.in mentions via aturi.to profile waypoint",
+      "description": null,
+      "status": "open",
+      "priority": "medium",
+      "parent_id": null,
+      "labels": [
+        "enhancement"
+      ],
+      "comments": [],
+      "created_at": "2026-08-06T17:45:01.829062+00:00",
+      "updated_at": "2026-08-06T17:45:01.829062+00:00",
+      "closed_at": null
+    },
     {
       "id": 37,
       "title": "Pre-flight allowlist check on handle submit, before OAuth",
       "description": null,
-      "status": "open",
+      "status": "closed",
       "priority": "high",
       "parent_id": null,
       "labels": [
@@ -14,8 +29,8 @@
       ],
       "comments": [],
       "created_at": "2026-08-06T17:22:21.537532+00:00",
-      "updated_at": "2026-08-06T17:22:21.537532+00:00",
-      "closed_at": null
+      "updated_at": "2026-08-06T17:23:13.859327+00:00",
+      "closed_at": "2026-08-06T17:23:13.859327+00:00"
     },
     {
       "id": 36,

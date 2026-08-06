@@ -318,6 +318,17 @@
       "created_at": "2026-08-06T06:12:30.953915-07:00",
       "updated_at": "2026-08-06T06:12:30.953915-07:00",
       "metadata_json": "{\"branch\":\"feature/feedback-round\",\"confidence\":100}"
+    },
+    {
+      "id": 30,
+      "change_id": "9a278a5a-04c6-4c7a-985c-51dd82c7730f",
+      "node_type": "action",
+      "title": "Pre-flight invite check: /api/invited + sign-in sheet gate before OAuth",
+      "description": null,
+      "status": "pending",
+      "created_at": "2026-08-06T10:23:13.846590-07:00",
+      "updated_at": "2026-08-06T10:23:13.846590-07:00",
+      "metadata_json": "{\"branch\":\"feature/feedback-round\",\"commit\":\"adc0c53\",\"confidence\":95}"
     }
   ],
   "edges": [
@@ -639,6 +650,17 @@
       "weight": 1.0,
       "rationale": "Observation motivated the fix",
       "created_at": "2026-08-06T06:12:30.960092-07:00"
+    },
+    {
+      "id": 30,
+      "from_node_id": 28,
+      "to_node_id": 30,
+      "from_change_id": "1b286f25-5d53-4513-a4f0-39a97618c0f8",
+      "to_change_id": "9a278a5a-04c6-4c7a-985c-51dd82c7730f",
+      "edge_type": "leads_to",
+      "weight": 1.0,
+      "rationale": "Follow-on: same allowlist gap, moved even earlier in the flow",
+      "created_at": "2026-08-06T10:23:13.853810-07:00"
     }
   ]
 }

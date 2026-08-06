@@ -1,5 +1,13 @@
 [
   {
+    "hash": "adc0c532fb2f7856dce46777fc317dbf2dd7ade6",
+    "short_hash": "adc0c53",
+    "author": "Bryan Guffey",
+    "date": "2026-08-06T10:23:09-07:00",
+    "message": "feat: pre-flight invite check on handle submit — uninvited handles learn before the PDS auth dance\n\nNew GET /api/invited?handle= resolves the handle to a DID (so pinned DIDs\nstill match after handle changes) and peeks the allowlist read-only. The\nsign-in sheet calls it before login(); an uninvited handle gets the polite\ninvite-only note inline instead of a full OAuth round-trip. Every failure\nmode (endpoint down, resolution failed, no DB) fails open — real\nenforcement stays server-side after auth.\n\nCo-Authored-By: Claude Fable 5 <noreply@anthropic.com>\nClaude-Session: https://claude.ai/code/session_01KvMrEJy2nWjYvgkPqQ26eD",
+    "files_changed": 6
+  },
+  {
     "hash": "3b49b971c4b3c6c73c3624b71beb26b260425550",
     "short_hash": "3b49b97",
     "author": "Bryan Guffey",

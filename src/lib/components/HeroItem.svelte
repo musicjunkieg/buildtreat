@@ -72,12 +72,13 @@
 	{#if notInvited}
 		<p class="closed-note">
 			This survey is invite-only{deniedHandle ? `, and @${deniedHandle} isn't on the list` : ''}. If that
-			seems wrong, DM <span class="handle">@{retreat.organizerHandle}</span> on Bluesky.
+			seems wrong, DM
+			<a class="handle" href={retreat.organizerLink} target="_blank" rel="noopener">@{retreat.organizerHandle}</a> on Bluesky.
 		</p>
 	{:else if closed}
 		<p class="closed-note">
 			Responses closed {deadlineDisplay ?? ''} — thanks to everyone who answered. Need to change something?
-			DM <span class="handle">@{retreat.organizerHandle}</span>.
+			DM <a class="handle" href={retreat.organizerLink} target="_blank" rel="noopener">@{retreat.organizerHandle}</a>.
 		</p>
 	{:else if signedIn}
 		<button class="pill" onclick={oncontinue}>Start the survey</button>
@@ -98,7 +99,8 @@
 			{/if}
 		</span>
 		<span class="author-text">
-			{retreat.organizerLine} <span class="handle">@{retreat.organizerHandle}</span>
+			{retreat.organizerLine}
+			<a class="handle" href={retreat.organizerLink} target="_blank" rel="noopener">@{retreat.organizerHandle}</a>
 		</span>
 	</p>
 </div>
@@ -236,5 +238,15 @@
 	.handle {
 		color: var(--ink);
 		font-weight: 550;
+	}
+
+	a.handle {
+		text-decoration: underline;
+		text-underline-offset: 3px;
+		text-decoration-color: var(--ink-45);
+	}
+
+	a.handle:hover {
+		text-decoration-color: var(--ink);
 	}
 </style>

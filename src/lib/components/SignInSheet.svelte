@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { login } from '@svelte-atproto/oauth/client';
 	import Icon from '$lib/components/Icon.svelte';
+	import { retreat } from '$lib/content';
 	import type { KnownUser } from '../../routes/+page.server';
 
 	let {
@@ -16,6 +17,9 @@
 	let handle = $state('');
 	let busy = $state(false);
 	let localError = $state<string | null>(null);
+	/** Set instead of localError when the pre-flight invite check says no —
+	 * rendered structurally so the organizer mention can be a real link. */
+	let deniedHandle = $state<string | null>(null);
 	let input = $state<HTMLInputElement | null>(null);
 	let useDifferent = $state(false);
 
@@ -38,6 +42,7 @@
 
 	function onHandleInput() {
 		localError = null;
+		deniedHandle = null;
 		clearTimeout(searchTimer);
 		const q = handle.trim().replace(/^@/, '');
 		if (q.length < 2 || q.startsWith('did:')) {
@@ -111,6 +116,7 @@
 		if (!clean || busy) return;
 		busy = true;
 		localError = null;
+		deniedHandle = null;
 		dropdownOpen = false;
 		try {
 			// Pre-flight invite check: an uninvited handle finds out here, not
@@ -121,7 +127,7 @@
 				if (res.ok) {
 					const { invited } = (await res.json()) as { invited: boolean };
 					if (!invited) {
-						localError = `This survey is invite-only — @${clean} isn’t on the list. DM @chaosgreml.in if that seems wrong.`;
+						deniedHandle = clean;
 						busy = false;
 						return;
 					}
@@ -153,6 +159,18 @@
 			</button>
 		</div>
 
+		{#snippet errorNote()}
+			{#if deniedHandle}
+				<p class="error" role="alert">
+					This survey is invite-only — @{deniedHandle} isn’t on the list.
+					<a class="dm" href={retreat.organizerLink} target="_blank" rel="noopener">DM @{retreat.organizerHandle}</a>
+					if that seems wrong.
+				</p>
+			{:else if shownError}
+				<p class="error" role="alert">{shownError}</p>
+			{/if}
+		{/snippet}
+
 		{#if welcomeBack && knownUser}
 			<div class="known">
 				{#if knownUser.avatar}
@@ -165,14 +183,20 @@
 					<p class="known-handle">Hey, it’s you — @{knownUser.handle}</p>
 				</div>
 			</div>
-			{#if shownError}
-				<p class="error" role="alert">{shownError}</p>
-			{/if}
+			{@render errorNote()}
 			<button class="pill" onclick={() => void go(knownUser.handle)} disabled={busy}>
 				{busy ? 'Contacting your PDS…' : `Continue as @${knownUser.handle}`}
 				<Icon name="butterfly" size={17} />
 			</button>
-			<button type="button" class="alt" onclick={() => (useDifferent = true)}>
+			<button
+				type="button"
+				class="alt"
+				onclick={() => {
+					useDifferent = true;
+					deniedHandle = null;
+					localError = null;
+				}}
+			>
 				Use a different account
 			</button>
 		{:else}
@@ -227,9 +251,7 @@
 					{/if}
 				</div>
 			</div>
-			{#if shownError}
-				<p class="error" role="alert">{shownError}</p>
-			{/if}
+			{@render errorNote()}
 			<button class="pill" onclick={() => void go()} disabled={!handle.trim() || busy}>
 				{busy ? 'Contacting your PDS…' : 'Continue'}
 				<Icon name="butterfly" size={17} />
@@ -460,5 +482,12 @@
 	.error {
 		font-size: var(--text-author);
 		line-height: 1.45;
+	}
+
+	.error .dm {
+		color: var(--ink);
+		font-weight: 550;
+		text-decoration: underline;
+		text-underline-offset: 3px;
 	}
 </style>

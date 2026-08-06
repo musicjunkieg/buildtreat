@@ -20,6 +20,13 @@ export const retreat = {
 	signIn: 'Sign in with Atmosphere',
 	organizerLine: 'Organized by Bluesky, in partnership with',
 	organizerHandle: 'chaosgreml.in',
+	/**
+	 * aturi.to universal link: opens the organizer's profile in whatever
+	 * Atmosphere client the visitor uses (there's no cross-client DM deep
+	 * link, so the profile — with its Message button — is the closest stop).
+	 * DID, not handle, so the link survives handle changes.
+	 */
+	organizerLink: 'https://aturi.to/profile/did:plc:h3wpawnrlptr4534chevddo6',
 	/** Window the availability calendar covers (inclusive). */
 	window: { start: '2026-09-01', end: '2026-11-15' }
 } as const;

@@ -1,6 +1,6 @@
 <script lang="ts">
 	import Icon from '$lib/components/Icon.svelte';
-	import { interestQuestion, itemTitles, locations, travelQuestion, type FeedItemId } from '$lib/content';
+	import { interestQuestion, itemTitles, locations, retreat, travelQuestion, type FeedItemId } from '$lib/content';
 	import { formatRange, portionLabel } from '$lib/dates';
 	import type { SurveyState } from '$lib/survey.svelte';
 
@@ -94,8 +94,8 @@
 
 	{#if closed}
 		<p class="deadline-note">
-			The survey closed {deadlineDisplay ?? ''}. Answers are locked — if something needs fixing, DM the
-			organizers.
+			The survey closed {deadlineDisplay ?? ''}. Answers are locked — if something needs fixing,
+			<a class="dm" href={retreat.organizerLink} target="_blank" rel="noopener">DM @{retreat.organizerHandle}</a>.
 		</p>
 	{:else if !signedIn}
 		<button class="pill" onclick={onsignin}>
@@ -197,6 +197,13 @@
 	.error {
 		font-size: var(--text-author);
 		line-height: 1.45;
+	}
+
+	.deadline-note .dm {
+		color: var(--ink);
+		font-weight: 550;
+		text-decoration: underline;
+		text-underline-offset: 3px;
 	}
 
 	.deadline-note {
