@@ -6,8 +6,8 @@
 export const retreat = {
 	name: 'Atmospheric Builders’ Retreat',
 	nameLines: ['ATMOSPHERIC', 'BUILDERS’ RETREAT.'] as [string, string],
-	kicker: 'For the builders of the Atmosphere',
-	acknowledgment: ['You raised your hand. It’s happening.', 'Help us pick the dates — and the place.'] as [
+	kicker: 'For the (very cool) builders of the Atmosphere',
+	acknowledgment: ['An awesome event is calling', 'Help us pick the dates and narrow down a location.'] as [
 		string,
 		string
 	],
@@ -15,7 +15,7 @@ export const retreat = {
 		{ label: 'What', value: '3 nights · 2 full days' },
 		{ label: 'Where', value: 'Southern California' },
 		{ label: 'When', value: 'Sometime between Sept 1 – Nov 15' },
-		{ label: 'Covered', value: 'Lodging & food — all taken care of' }
+		{ label: 'Your Costs', value: 'Travel only. Lodging & food all taken care of' }
 	],
 	signIn: 'Sign in with Atmosphere',
 	organizerLine: 'Organized by Bluesky, in partnership with',
