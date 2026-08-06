@@ -43,6 +43,8 @@
 	let submitting = $state(false);
 	let justSubmitted = $state(false);
 	const submitted = $derived(data.existingResponse || justSubmitted);
+	let justUpdated = $state(false);
+	let updatedTimer: ReturnType<typeof setTimeout> | undefined;
 	let submitError = $state<string | null>(null);
 
 	let feed = $state<HTMLElement | null>(null);
@@ -121,6 +123,7 @@
 			openSignIn();
 			return;
 		}
+		const wasUpdate = submitted;
 		submitting = true;
 		submitError = null;
 		try {
@@ -134,6 +137,12 @@
 				throw new Error(body?.message ?? `The server said no (${res.status})`);
 			}
 			justSubmitted = true;
+			if (wasUpdate) {
+				// Flash the confirmation so a repeat submitter knows it took.
+				justUpdated = true;
+				clearTimeout(updatedTimer);
+				updatedTimer = setTimeout(() => (justUpdated = false), 4000);
+			}
 			survey.clearLocal();
 			jump('review');
 		} catch (err) {
@@ -214,6 +223,7 @@
 			{deadlineDisplay}
 			{submitting}
 			{submitted}
+			updated={justUpdated}
 			{submitError}
 			onsignin={openSignIn}
 			onsubmit={submit}

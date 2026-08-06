@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { logout } from '@svelte-atproto/oauth/client';
 	import Icon from '$lib/components/Icon.svelte';
 	import { interestQuestion, itemTitles, locations, retreat, travelQuestion, type FeedItemId } from '$lib/content';
 	import { formatRange, portionLabel } from '$lib/dates';
@@ -10,6 +11,7 @@
 		handle,
 		submitting,
 		submitted,
+		updated = false,
 		submitError,
 		closed = false,
 		deadlineDisplay = null,
@@ -22,6 +24,7 @@
 		handle: string | null;
 		submitting: boolean;
 		submitted: boolean;
+		updated?: boolean;
 		submitError: string | null;
 		closed?: boolean;
 		deadlineDisplay?: string | null;
@@ -105,8 +108,8 @@
 			<Icon name="butterfly" size={17} />
 		</button>
 	{:else if submitted}
-		<button class="pill ghost" onclick={onsubmit} disabled={submitting}>
-			{submitting ? 'Updating…' : 'Update my answers'}
+		<button class="pill ghost" class:confirmed={updated} onclick={onsubmit} disabled={submitting} aria-live="polite">
+			{submitting ? 'Updating…' : updated ? 'Answers updated!' : 'Update my answers'}
 		</button>
 		{#if deadlineDisplay}
 			<p class="deadline-note">You can update your answers until {deadlineDisplay}, 11:59 PM Pacific.</p>
@@ -123,6 +126,10 @@
 	{#if submitError}
 		<p class="error" role="alert">{submitError} — your answers are saved on this device; try again in a moment.</p>
 	{/if}
+
+	{#if signedIn && (submitted || closed)}
+		<button class="signout" onclick={() => void logout()}>All set — sign out</button>
+	{/if}
 </div>
 
 <style>
@@ -136,6 +143,25 @@
 	.breathe {
 		flex: 1 1 auto;
 		min-height: 8vh;
+	}
+
+	.signout {
+		align-self: center;
+		font-size: var(--text-kicker);
+		letter-spacing: var(--track-caps);
+		text-transform: uppercase;
+		color: var(--ink-70);
+		text-decoration: underline;
+		text-underline-offset: 3px;
+	}
+
+	.signout:hover {
+		color: var(--ink);
+	}
+
+	.pill.ghost.confirmed {
+		border-color: var(--ink);
+		font-weight: 650;
 	}
 
 	.title {
