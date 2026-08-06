@@ -137,8 +137,10 @@ export class SurveyState {
 			const raw = localStorage.getItem(DRAFT_KEY);
 			if (raw) this.loadDraft(JSON.parse(raw));
 		} catch {
-			// Corrupt draft — start clean rather than crash.
-			localStorage.removeItem(DRAFT_KEY);
+			// Corrupt draft — start clean rather than crash. clearLocal guards
+			// its own storage access: if storage itself is denied, removeItem
+			// here would rethrow and abort the caller's onMount.
+			this.clearLocal();
 		}
 	}
 

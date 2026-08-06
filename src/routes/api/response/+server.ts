@@ -34,7 +34,11 @@ export const PUT: RequestHandler = async ({ request, locals, platform }) => {
 		throw e;
 	}
 
-	const handle = (await loadHandle(locals.did).catch(() => null)) ?? null;
+	const handle =
+		(await loadHandle(locals.did).catch((e) => {
+			console.error('handle load failed for', locals.did, e);
+			return null;
+		})) ?? null;
 	const who = { did: locals.did as string, handle };
 
 	if (!(await checkAllowlist(db, who))) {

@@ -16,8 +16,13 @@ export const GET: RequestHandler = async ({ url, platform }) => {
 
 	const isDid = raw.startsWith('did:');
 	// Resolve the handle so an entry whose DID was pinned still matches after
-	// a handle change; resolution failure falls back to the handle-only match.
+	// a handle change.
 	const did = isDid ? raw : ((await actorToDid(raw).catch(() => null)) ?? null);
+
+	// Unresolvable handle (resolver hiccup or typo): a handle-only lookup
+	// could wrongly deny someone whose listed handle is stale, so answer the
+	// non-answer and let the login flow surface any real problem.
+	if (!isDid && did === null) return json({ invited: true });
 
 	const invited = await peekAllowlist(db, { did, handle: isDid ? null : raw }).catch(() => true);
 	return json({ invited });

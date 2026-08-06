@@ -362,6 +362,17 @@
       "created_at": "2026-08-06T13:08:27.318878-07:00",
       "updated_at": "2026-08-06T13:08:27.318878-07:00",
       "metadata_json": "{\"branch\":\"feature/feedback-round\",\"commit\":\"27c3313\",\"confidence\":92}"
+    },
+    {
+      "id": 34,
+      "change_id": "db011de5-991c-4785-8cbc-c5e40c4235f7",
+      "node_type": "action",
+      "title": "Review polish: update confirmation flash + end-of-flow sign-out",
+      "description": null,
+      "status": "pending",
+      "created_at": "2026-08-06T13:17:20.479107-07:00",
+      "updated_at": "2026-08-06T13:17:20.479107-07:00",
+      "metadata_json": "{\"branch\":\"feature/feedback-round\",\"commit\":\"8b92cb7\",\"confidence\":92}"
     }
   ],
   "edges": [
@@ -727,6 +738,17 @@
       "weight": 1.0,
       "rationale": "Continued feedback-round polish",
       "created_at": "2026-08-06T13:08:27.326030-07:00"
+    },
+    {
+      "id": 34,
+      "from_node_id": 33,
+      "to_node_id": 34,
+      "from_change_id": "027af65d-e4c1-4d28-b5ec-fdf9d39b1987",
+      "to_change_id": "db011de5-991c-4785-8cbc-c5e40c4235f7",
+      "edge_type": "leads_to",
+      "weight": 1.0,
+      "rationale": "Continued feedback-round polish",
+      "created_at": "2026-08-06T13:17:20.511249-07:00"
     }
   ]
 }

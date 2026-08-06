@@ -104,7 +104,10 @@ export const load: PageServerLoad = async ({ locals, platform, url, cookies }) =
 		};
 	}
 
-	const profile = await loadBskyProfile(locals.did, { cache: profileCache }).catch(() => undefined);
+	const profile = await loadBskyProfile(locals.did, { cache: profileCache }).catch((e) => {
+		console.error('profile load failed for', locals.did, e);
+		return undefined;
+	});
 
 	const user: PageUser = {
 		did: locals.did,
@@ -127,12 +130,32 @@ export const load: PageServerLoad = async ({ locals, platform, url, cookies }) =
 
 	// The allowlist gates the whole survey, not just submission: a signed-in
 	// account that isn't invited sees the polite invite-only state and the
-	// feed stays sealed. (The response API enforces this again on write.)
-	const allowed = db
-		? await checkAllowlist(db, { did: locals.did, handle: user.handle }).catch(() => false)
-		: true;
+	// feed stays sealed. This gate is a courtesy, so it degrades OPEN: the
+	// response API re-enforces authoritatively on write, and a false "not on
+	// the list" screen for an invited user is worse than an uninvited one
+	// browsing questions they can't submit.
+	let allowed = true;
+	if (db) {
+		try {
+			allowed = await checkAllowlist(db, { did: locals.did, handle: user.handle });
+			if (!allowed && !profile) {
+				// Identity resolution failed above — a handle-less lookup can't
+				// confidently deny (DIDs are pre-pinned, but stay honest).
+				console.error('allowlist: unverifiable without profile for', locals.did);
+				allowed = true;
+			}
+		} catch (e) {
+			console.error('allowlist check failed for', locals.did, e);
+		}
+	}
 
-	const stored = db && allowed ? await getResponse(db, locals.did).catch(() => null) : null;
+	const stored =
+		db && allowed
+			? await getResponse(db, locals.did).catch((e) => {
+					console.error('response load failed for', locals.did, e);
+					return null;
+				})
+			: null;
 
 	return {
 		user,
