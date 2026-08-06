@@ -5,6 +5,8 @@
 
 	let {
 		signedIn,
+		notInvited = false,
+		deniedHandle = null,
 		closed = false,
 		deadlineDisplay = null,
 		organizerAvatar = null,
@@ -12,6 +14,8 @@
 		oncontinue
 	}: {
 		signedIn: boolean;
+		notInvited?: boolean;
+		deniedHandle?: string | null;
 		closed?: boolean;
 		deadlineDisplay?: string | null;
 		organizerAvatar?: string | null;
@@ -23,7 +27,7 @@
 <div class="hero">
 	<div class="topline">
 		<p class="kicker">{retreat.kicker}</p>
-		{#if signedIn}
+		{#if signedIn || notInvited}
 			<button class="signout" onclick={() => void logout()}>sign out</button>
 		{/if}
 	</div>
@@ -65,7 +69,12 @@
 		{/if}
 	</ul>
 
-	{#if closed}
+	{#if notInvited}
+		<p class="closed-note">
+			This survey is invite-only{deniedHandle ? `, and @${deniedHandle} isn't on the list` : ''}. If that
+			seems wrong, DM <span class="handle">@{retreat.organizerHandle}</span> on Bluesky.
+		</p>
+	{:else if closed}
 		<p class="closed-note">
 			Responses closed {deadlineDisplay ?? ''} — thanks to everyone who answered. Need to change something?
 			DM <span class="handle">@{retreat.organizerHandle}</span>.

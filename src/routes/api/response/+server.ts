@@ -38,7 +38,7 @@ export const PUT: RequestHandler = async ({ request, locals, platform }) => {
 	const who = { did: locals.did as string, handle };
 
 	if (!(await checkAllowlist(db, who))) {
-		error(403, { message: 'This survey is invite-only — your handle isn’t on the list. Ping @bryan if that seems wrong.' });
+		error(403, { message: 'This survey is invite-only — your handle isn’t on the list. DM @chaosgreml.in if that seems wrong.' });
 	}
 
 	await upsertResponse(db, who, draft);

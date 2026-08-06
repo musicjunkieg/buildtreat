@@ -1,21 +1,42 @@
 {
   "version": 1,
-  "exported_at": "2026-08-06T06:48:45.815690+00:00",
+  "exported_at": "2026-08-06T13:12:20.788580+00:00",
   "issues": [
     {
-      "id": 35,
-      "title": "Cut over to buildersretre.at: ORIGIN, redirect, verify",
+      "id": 36,
+      "title": "Gate allowlist at sign-in, not just submit",
       "description": null,
       "status": "open",
       "priority": "high",
       "parent_id": null,
       "labels": [
-        "deploy"
+        "bug"
       ],
       "comments": [],
-      "created_at": "2026-08-06T06:39:29.175505+00:00",
-      "updated_at": "2026-08-06T06:39:29.175505+00:00",
+      "created_at": "2026-08-06T13:07:42.682042+00:00",
+      "updated_at": "2026-08-06T13:07:42.682042+00:00",
       "closed_at": null
+    },
+    {
+      "id": 35,
+      "title": "Cut over to buildersretre.at: ORIGIN, redirect, verify",
+      "description": null,
+      "status": "closed",
+      "priority": "high",
+      "parent_id": null,
+      "labels": [
+        "deploy"
+      ],
+      "comments": [
+        {
+          "content": "[action] buildersretre.at fully live and verified; all launch blockers cleared",
+          "created_at": "2026-08-06T06:48:49.497895+00:00",
+          "kind": "note"
+        }
+      ],
+      "created_at": "2026-08-06T06:39:29.175505+00:00",
+      "updated_at": "2026-08-06T06:48:49.488866+00:00",
+      "closed_at": "2026-08-06T06:48:49.488866+00:00"
     },
     {
       "id": 34,
@@ -36,7 +57,7 @@
       "id": 33,
       "title": "Write at.marque.dns zone record for Bryan's domain",
       "description": null,
-      "status": "open",
+      "status": "closed",
       "priority": "high",
       "parent_id": null,
       "labels": [
@@ -55,8 +76,8 @@
         }
       ],
       "created_at": "2026-08-06T01:52:23.634143+00:00",
-      "updated_at": "2026-08-06T01:52:23.634143+00:00",
-      "closed_at": null
+      "updated_at": "2026-08-06T06:48:49.475961+00:00",
+      "closed_at": "2026-08-06T06:48:49.475961+00:00"
     },
     {
       "id": 32,

@@ -4,7 +4,7 @@ import { loadBskyProfile } from '@svelte-atproto/oauth/bsky';
 import { actorToDid } from '@svelte-atproto/oauth/helper';
 import { cloudflareKV } from '@svelte-atproto/oauth/server/stores/cloudflare';
 import { retreat } from '$lib/content';
-import { getResponse } from '$lib/server/db';
+import { checkAllowlist, getResponse } from '$lib/server/db';
 import type { SurveyDraft } from '$lib/survey.svelte';
 
 export interface PageUser {
@@ -79,6 +79,7 @@ export const load: PageServerLoad = async ({ locals, platform, url, cookies }) =
 				displayName: 'Preview Builder',
 				avatar: null
 			} as PageUser,
+			allowed: true,
 			answers: null as SurveyDraft | null,
 			existingResponse: false,
 			organizer,
@@ -92,6 +93,7 @@ export const load: PageServerLoad = async ({ locals, platform, url, cookies }) =
 	if (!locals.did) {
 		return {
 			user: null as PageUser | null,
+			allowed: true,
 			answers: null as SurveyDraft | null,
 			existingResponse: false,
 			organizer,
@@ -122,10 +124,19 @@ export const load: PageServerLoad = async ({ locals, platform, url, cookies }) =
 	}
 
 	const db = platform?.env?.DB;
-	const stored = db ? await getResponse(db, locals.did).catch(() => null) : null;
+
+	// The allowlist gates the whole survey, not just submission: a signed-in
+	// account that isn't invited sees the polite invite-only state and the
+	// feed stays sealed. (The response API enforces this again on write.)
+	const allowed = db
+		? await checkAllowlist(db, { did: locals.did, handle: user.handle }).catch(() => false)
+		: true;
+
+	const stored = db && allowed ? await getResponse(db, locals.did).catch(() => null) : null;
 
 	return {
 		user,
+		allowed,
 		answers: stored?.draft ?? null,
 		existingResponse: stored !== null,
 		organizer,

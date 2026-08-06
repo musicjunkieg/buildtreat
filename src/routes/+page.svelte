@@ -24,7 +24,8 @@
 
 	const survey = new SurveyState();
 
-	const signedIn = $derived(data.user !== null);
+	const signedIn = $derived(data.user !== null && data.allowed);
+	const notInvited = $derived(data.user !== null && !data.allowed);
 	const handle = $derived(data.user?.handle ?? null);
 	const closed = $derived(data.closed);
 	const deadlineDisplay = $derived(
@@ -153,7 +154,7 @@
 		eager
 		labelledby="hero-title"
 	>
-		<HeroItem {signedIn} {closed} {deadlineDisplay} organizerAvatar={data.organizer.avatar} onsignin={openSignIn} oncontinue={() => jump('you')} />
+		<HeroItem {signedIn} {notInvited} deniedHandle={data.user?.handle ?? null} {closed} {deadlineDisplay} organizerAvatar={data.organizer.avatar} onsignin={openSignIn} oncontinue={() => jump('you')} />
 	</FeedItem>
 
 	<FeedItem id="you" media="/media/item-you.png" labelledby="you-title">
