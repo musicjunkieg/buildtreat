@@ -243,6 +243,17 @@
       "metadata_json": "{\"branch\":\"feature/feedback-round\",\"commit\":\"c60faa5\",\"confidence\":95}"
     },
     {
+      "id": 27,
+      "change_id": "691612e9-63d4-43f0-8dbd-b6fd1e1ed88f",
+      "node_type": "outcome",
+      "title": "buildersretre.at live: Marque zone ingested, NS switched, domain bound, ORIGIN cut over, OAuth verified on new client_id, workers.dev 301s",
+      "description": null,
+      "status": "pending",
+      "created_at": "2026-08-05T23:48:45.697605-07:00",
+      "updated_at": "2026-08-05T23:48:45.697605-07:00",
+      "metadata_json": "{\"branch\":\"feature/feedback-round\",\"confidence\":95}"
+    },
+    {
       "id": 23,
       "change_id": "e787efc0-f504-431c-bc4e-56d7e4221d32",
       "node_type": "action",
@@ -584,6 +595,17 @@
       "weight": 1.0,
       "rationale": "Custom-domain cutover blocked on Marque",
       "created_at": "2026-08-05T20:55:43.381970-07:00"
+    },
+    {
+      "id": 28,
+      "from_node_id": 26,
+      "to_node_id": 27,
+      "from_change_id": "5cf01b5e-4c12-43ea-bf4d-58caa814a03a",
+      "to_change_id": "691612e9-63d4-43f0-8dbd-b6fd1e1ed88f",
+      "edge_type": "leads_to",
+      "weight": 1.0,
+      "rationale": "DNS blocker resolved; cutover complete",
+      "created_at": "2026-08-05T23:48:45.705693-07:00"
     }
   ]
 }
