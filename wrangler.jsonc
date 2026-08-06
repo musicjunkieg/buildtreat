@@ -14,7 +14,7 @@
 	"vars": {
 		// The public URL — also the ATProto OAuth client_id base; must match
 		// exactly where the app is served.
-		"ORIGIN": "https://atmospheric-builders-retreat.bryan-78d.workers.dev",
+		"ORIGIN": "https://buildersretre.at",
 		// Respond-by deadline: Aug 15 2026, 11:59:59 PM Pacific (PDT = UTC-7).
 		"DEADLINE": "2026-08-16T06:59:59Z"
 	},

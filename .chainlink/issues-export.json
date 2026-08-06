@@ -1,7 +1,22 @@
 {
   "version": 1,
-  "exported_at": "2026-08-06T03:56:04.683590+00:00",
+  "exported_at": "2026-08-06T06:41:46.419858+00:00",
   "issues": [
+    {
+      "id": 35,
+      "title": "Cut over to buildersretre.at: ORIGIN, redirect, verify",
+      "description": null,
+      "status": "open",
+      "priority": "high",
+      "parent_id": null,
+      "labels": [
+        "deploy"
+      ],
+      "comments": [],
+      "created_at": "2026-08-06T06:39:29.175505+00:00",
+      "updated_at": "2026-08-06T06:39:29.175505+00:00",
+      "closed_at": null
+    },
     {
       "id": 34,
       "title": "Marque support email for stuck zone ingestion",
