@@ -14,6 +14,8 @@ declare global {
 		}
 		interface Platform {
 			env: {
+				ORIGIN?: string;
+				DEADLINE?: string;
 				OAUTH_SESSIONS: KVNamespace;
 				OAUTH_STATES: KVNamespace;
 				PROFILE_CACHE: KVNamespace;

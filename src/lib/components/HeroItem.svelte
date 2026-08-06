@@ -5,11 +5,15 @@
 
 	let {
 		signedIn,
+		closed = false,
+		deadlineDisplay = null,
 		organizerAvatar = null,
 		onsignin,
 		oncontinue
 	}: {
 		signedIn: boolean;
+		closed?: boolean;
+		deadlineDisplay?: string | null;
 		organizerAvatar?: string | null;
 		onsignin: () => void;
 		oncontinue: () => void;
@@ -53,9 +57,20 @@
 				</span>
 			</li>
 		{/each}
+		{#if deadlineDisplay}
+			<li>
+				<span class="fact-label">Respond by</span>
+				<span class="fact-value">{deadlineDisplay}, 11:59 PM Pacific</span>
+			</li>
+		{/if}
 	</ul>
 
-	{#if signedIn}
+	{#if closed}
+		<p class="closed-note">
+			Responses closed {deadlineDisplay ?? ''} — thanks to everyone who answered. Need to change something?
+			DM <span class="handle">@{retreat.organizerHandle}</span>.
+		</p>
+	{:else if signedIn}
 		<button class="pill" onclick={oncontinue}>Start the survey</button>
 	{:else}
 		<button class="pill" onclick={onsignin}>
@@ -154,6 +169,19 @@
 	.keep :global(svg) {
 		vertical-align: -0.15em;
 		margin-left: 0.2rem;
+	}
+
+	.closed-note {
+		font-size: var(--text-body);
+		line-height: 1.5;
+		color: var(--ink-70);
+		max-width: 44ch;
+		padding: 0.9rem 0;
+	}
+
+	.closed-note .handle {
+		color: var(--ink);
+		font-weight: 550;
 	}
 
 	.author {

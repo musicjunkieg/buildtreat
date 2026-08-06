@@ -11,6 +11,8 @@
 		submitting,
 		submitted,
 		submitError,
+		closed = false,
+		deadlineDisplay = null,
 		onsignin,
 		onsubmit,
 		onjump
@@ -21,6 +23,8 @@
 		submitting: boolean;
 		submitted: boolean;
 		submitError: string | null;
+		closed?: boolean;
+		deadlineDisplay?: string | null;
 		onsignin: () => void;
 		onsubmit: () => void;
 		onjump: (id: FeedItemId) => void;
@@ -88,7 +92,12 @@
 		{/each}
 	</ul>
 
-	{#if !signedIn}
+	{#if closed}
+		<p class="deadline-note">
+			The survey closed {deadlineDisplay ?? ''}. Answers are locked — if something needs fixing, DM the
+			organizers.
+		</p>
+	{:else if !signedIn}
 		<button class="pill" onclick={onsignin}>
 			Sign in with Atmosphere to submit
 			<Icon name="butterfly" size={17} />
@@ -97,10 +106,16 @@
 		<button class="pill ghost" onclick={onsubmit} disabled={submitting}>
 			{submitting ? 'Updating…' : 'Update my answers'}
 		</button>
+		{#if deadlineDisplay}
+			<p class="deadline-note">You can update your answers until {deadlineDisplay}, 11:59 PM Pacific.</p>
+		{/if}
 	{:else}
 		<button class="pill" onclick={onsubmit} disabled={!survey.readyToSubmit || submitting}>
 			{submitting ? 'Sending…' : survey.readyToSubmit ? 'Send it in' : 'A few answers still missing'}
 		</button>
+		{#if deadlineDisplay}
+			<p class="deadline-note">Responses close {deadlineDisplay}, 11:59 PM Pacific.</p>
+		{/if}
 	{/if}
 
 	{#if submitError}
@@ -182,5 +197,11 @@
 	.error {
 		font-size: var(--text-author);
 		line-height: 1.45;
+	}
+
+	.deadline-note {
+		font-size: var(--text-author);
+		color: var(--ink-70);
+		text-align: center;
 	}
 </style>

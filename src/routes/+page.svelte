@@ -26,6 +26,16 @@
 
 	const signedIn = $derived(data.user !== null);
 	const handle = $derived(data.user?.handle ?? null);
+	const closed = $derived(data.closed);
+	const deadlineDisplay = $derived(
+		data.deadline
+			? new Date(data.deadline).toLocaleDateString('en-US', {
+					timeZone: 'America/Los_Angeles',
+					month: 'long',
+					day: 'numeric'
+				})
+			: null
+	);
 
 	let current = $state<FeedItemId>('hero');
 	let sheetOpen = $state(false);
@@ -143,7 +153,7 @@
 		eager
 		labelledby="hero-title"
 	>
-		<HeroItem {signedIn} organizerAvatar={data.organizer.avatar} onsignin={openSignIn} oncontinue={() => jump('you')} />
+		<HeroItem {signedIn} {closed} {deadlineDisplay} organizerAvatar={data.organizer.avatar} onsignin={openSignIn} oncontinue={() => jump('you')} />
 	</FeedItem>
 
 	<FeedItem id="you" media="/media/item-you.png" labelledby="you-title">
@@ -199,6 +209,8 @@
 			{survey}
 			{signedIn}
 			{handle}
+			{closed}
+			{deadlineDisplay}
 			{submitting}
 			{submitted}
 			{submitError}

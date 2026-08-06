@@ -59,6 +59,9 @@ export const load: PageServerLoad = async ({ locals, platform, url, cookies }) =
 	// The OAuth library redirects back with ?error=... when a login fails.
 	const authError = url.searchParams.get('error');
 
+	const deadline = platform?.env?.DEADLINE ?? null;
+	const closed = deadline !== null && Date.now() > Date.parse(deadline);
+
 	const profileCache = platform?.env?.PROFILE_CACHE
 		? cloudflareKV(platform.env.PROFILE_CACHE, { ttl: 3600 })
 		: undefined;
@@ -79,6 +82,8 @@ export const load: PageServerLoad = async ({ locals, platform, url, cookies }) =
 			answers: null as SurveyDraft | null,
 			existingResponse: false,
 			organizer,
+			deadline,
+			closed,
 			knownUser,
 			authError
 		};
@@ -90,6 +95,8 @@ export const load: PageServerLoad = async ({ locals, platform, url, cookies }) =
 			answers: null as SurveyDraft | null,
 			existingResponse: false,
 			organizer,
+			deadline,
+			closed,
 			knownUser,
 			authError
 		};
@@ -122,6 +129,8 @@ export const load: PageServerLoad = async ({ locals, platform, url, cookies }) =
 		answers: stored?.draft ?? null,
 		existingResponse: stored !== null,
 		organizer,
+		deadline,
+		closed,
 		knownUser,
 		authError
 	};

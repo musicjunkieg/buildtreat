@@ -7,6 +7,13 @@ export const PUT: RequestHandler = async ({ request, locals, platform }) => {
 	if (!locals.did) {
 		error(401, { message: 'Sign in with Atmosphere first' });
 	}
+	const deadline = platform?.env?.DEADLINE;
+	if (deadline && Date.now() > Date.parse(deadline)) {
+		error(403, {
+			message:
+				'The survey closed on August 15 — answers are locked. Ping @chaosgreml.in if something needs fixing.'
+		});
+	}
 	const db = platform?.env?.DB;
 	if (!db) {
 		error(503, { message: 'Storage is not available right now' });
