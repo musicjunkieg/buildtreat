@@ -1,5 +1,13 @@
 [
   {
+    "hash": "4469f497da4dc46e3bc3cec891ed2a52584acd87",
+    "short_hash": "4469f49",
+    "author": "Bryan Guffey",
+    "date": "2026-08-07T10:38:59-07:00",
+    "message": "feat: /organizer surface — command rail, heatmap, table, allowlist\n\nThe Dusk world at Operate density: solid ground + grain, one white ink,\nhairline ledgers, no photography. Fixed left rail (display-numeral stats,\nlocation tally, deadline overrides, docked export); content carries the\navailability heatmap (half-day split cells, intensity = white opacity),\nbest 3-night windows, responses table with expandable detail, and\nallowlist management. Approved comp org-b recorded with sidecar.\nCSV export hardened against spreadsheet formula injection.\n\nCo-Authored-By: Claude Fable 5 <noreply@anthropic.com>\nClaude-Session: https://claude.ai/code/session_014GrGCvMtG1jntmgmLjWmvh",
+    "files_changed": 14
+  },
+  {
     "hash": "e42d0bf7b339d5befad8edab5727f2a5c63eb707",
     "short_hash": "e42d0bf",
     "author": "Bryan Guffey",

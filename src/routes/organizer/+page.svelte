@@ -121,7 +121,10 @@ STORY: Bryan signs in, reads the counts, sees the bright band in October,
 picks a window, checks who needs travel help, manages the list, exports.
 FIRST VIEWPORT: fixed left rail (title, deadline, stat stack, location tally,
 overrides, export) | content: WHEN CAN THEY COME heatmap + best windows.
-FORM: Command rail — approved comp .impeccable/mocks/org-b.png, option B of 3.
+FORM: Command rail — approved comp .impeccable/mocks/org-b.png, option B of 3
+visualize comps. No concept-seed roll was run: composition was fixed by the
+confirmed shape brief (Operate, established world) and Bryan's comp choice;
+recorded here so the absent seed key reads as a decision, not an omission.
 FINISH: unreviewed and undocumented is unfinished; this build ends with the
 finish review, the verdict, and DESIGN.md.
 -->
@@ -129,9 +132,10 @@ finish review, the verdict, and DESIGN.md.
 {#if data.authState === 'signed-out'}
 	<main class="gate">
 		<div class="gate-box">
-			<p class="kicker">The Atmospheric Builders’ Retreat</p>
 			<h1 class="display gate-title">Organizer.</h1>
-			<p class="gate-explain">This side is for the retreat organizers. Sign in and we’ll check.</p>
+			<p class="gate-explain">
+				This side is for the organizers of the Atmospheric Builders’ Retreat. Sign in and we’ll check.
+			</p>
 			<div class="gate-field">
 				<label class="kicker" for="org-handle">Your handle</label>
 				<input
@@ -161,6 +165,9 @@ finish review, the verdict, and DESIGN.md.
 			<div class="rail-top">
 				<h1 class="display rail-title"><span>Atmospheric</span><span>Organizer.</span></h1>
 				<p class="deadline" class:reopened={data.reopened}>{deadlineLine}</p>
+				{#if data.preview}
+					<p class="preview-flag">Synthetic preview data</p>
+				{/if}
 			</div>
 
 			<ul class="stats" aria-label="Response counts">
@@ -179,7 +186,7 @@ finish review, the verdict, and DESIGN.md.
 							<li>
 								<span class="loc-rank">{i + 1}</span>
 								<span class="loc-name">{locationName.get(t.id) ?? t.id}</span>
-								<span class="loc-bar" style="width: {Math.round((t.points / maxPoints) * 100)}%"></span>
+								<span class="loc-bar" style="scale: {(t.points / maxPoints).toFixed(3)} 1"></span>
 								<span class="loc-pts">{t.points}</span>
 							</li>
 						{/each}
@@ -353,8 +360,11 @@ finish review, the verdict, and DESIGN.md.
 		inset: 0;
 		background: url('/media/grain.png');
 		background-size: 340px;
-		opacity: 0.07;
-		mix-blend-mode: overlay;
+		/* Overlay-blend vanishes on flat near-black (it needs midtones under
+		   it, which the survey's photos supply). Screen-blend at lower opacity
+		   is the same grain made visible on this surface's solid ground. */
+		opacity: 0.05;
+		mix-blend-mode: screen;
 		pointer-events: none;
 		z-index: 5;
 	}
@@ -437,7 +447,7 @@ finish review, the verdict, and DESIGN.md.
 		scrollbar-color: var(--ink-35) transparent;
 		display: flex;
 		flex-direction: column;
-		gap: var(--space-3);
+		gap: var(--space-2);
 		padding: var(--space-4) var(--space-4) 0 var(--gutter);
 		border-right: var(--hairline);
 	}
@@ -458,6 +468,19 @@ finish review, the verdict, and DESIGN.md.
 		color: var(--ink);
 	}
 
+	.preview-flag {
+		display: inline-block;
+		width: max-content;
+		margin-top: var(--space-2);
+		padding: 0.25rem 0.7rem;
+		border: 1px solid var(--ink-45);
+		border-radius: 999px;
+		font-size: 0.6875rem;
+		font-weight: 500;
+		letter-spacing: 0.18em;
+		text-transform: uppercase;
+	}
+
 	.stats {
 		list-style: none;
 	}
@@ -466,7 +489,7 @@ finish review, the verdict, and DESIGN.md.
 		display: flex;
 		align-items: baseline;
 		gap: var(--space-2);
-		padding: 0.55rem 0;
+		padding: 0.45rem 0;
 		border-top: var(--hairline);
 	}
 
@@ -476,10 +499,11 @@ finish review, the verdict, and DESIGN.md.
 
 	.stat-num {
 		/* The comp's rail numerals are condensed display digits — the
-		   documented title ramp in Big Shoulders, like the comp shows. */
+		   documented title ramp's endpoints, interpolated by viewport HEIGHT
+		   so the whole rail (overrides included) fits the first viewport. */
 		min-width: 1.6ch;
 		font-family: var(--font-display);
-		font-size: clamp(2.2rem, 7.5vw, 3.6rem);
+		font-size: clamp(2.2rem, 3.2vh, 3.6rem);
 		font-weight: 700;
 		line-height: 0.92;
 		font-variant-numeric: tabular-nums;
@@ -507,16 +531,17 @@ finish review, the verdict, and DESIGN.md.
 		list-style: none;
 		display: flex;
 		flex-direction: column;
-		gap: 0.55rem;
+		gap: 0.5rem;
 	}
 
+	/* The comp's ledger geometry: rank, name, tally, count share one
+	   baseline; the bar runs the slack between name and count. */
 	.loc-list li {
 		display: grid;
-		grid-template-columns: 1.1rem 1fr auto;
-		grid-template-areas: 'rank name pts' '. bar bar';
-		align-items: baseline;
+		grid-template-columns: 1.1rem auto minmax(1.5rem, 1fr) auto;
+		grid-template-areas: 'rank name bar pts';
+		align-items: center;
 		column-gap: 0.5rem;
-		row-gap: 0.3rem;
 	}
 
 	.loc-rank {
@@ -533,11 +558,13 @@ finish review, the verdict, and DESIGN.md.
 
 	.loc-bar {
 		grid-area: bar;
+		width: 100%;
 		height: 2px;
 		background: var(--ink);
 		opacity: 0.75;
 		border-radius: 999px;
-		transition: width 0.3s var(--ease-out);
+		transform-origin: left center;
+		transition: scale 0.3s var(--ease-out);
 	}
 
 	.loc-pts {
@@ -557,7 +584,7 @@ finish review, the verdict, and DESIGN.md.
 		align-items: center;
 		justify-content: space-between;
 		gap: var(--space-2);
-		padding: 0.55rem 0;
+		padding: 0.45rem 0;
 		border-top: var(--hairline);
 	}
 
@@ -682,7 +709,7 @@ finish review, the verdict, and DESIGN.md.
 		display: flex;
 		flex-direction: column;
 		gap: var(--space-2);
-		padding: var(--space-3) 0 calc(env(safe-area-inset-bottom) + var(--space-3));
+		padding: var(--space-2) 0 calc(env(safe-area-inset-bottom) + var(--space-2));
 		background: var(--ground);
 		border-top: var(--hairline);
 	}

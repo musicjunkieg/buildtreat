@@ -92,7 +92,7 @@
 						<Icon name="chevron-down" size={14} />
 					</button>
 				</td>
-				<td>
+				<td class="who-cell">
 					<span class="who">
 						{#if avatars.get(r.did)}
 							<img class="avatar" src={avatars.get(r.did)} alt="" loading="lazy" />
@@ -325,6 +325,84 @@
 		.detail-grid {
 			grid-template-columns: 1fr;
 			gap: var(--space-2);
+		}
+	}
+
+	/* Phones: each response collapses to two lines — handle + interest,
+	   then name + range count — instead of a crushed multi-column row. */
+	@media (max-width: 640px) {
+		thead {
+			display: none;
+		}
+
+		.table,
+		tbody {
+			display: block;
+		}
+
+		tbody tr.row {
+			display: grid;
+			grid-template-columns: auto 1fr auto;
+			grid-template-areas:
+				'exp who int'
+				'exp name num';
+			align-items: center;
+			column-gap: 0.6rem;
+			row-gap: 0.15rem;
+			padding: 0.65rem 0;
+			border-bottom: 1px solid rgba(255, 255, 255, 0.14);
+		}
+
+		tbody tr.row td {
+			display: block;
+			padding: 0;
+			border-bottom: none;
+		}
+
+		.expand-col {
+			grid-area: exp;
+		}
+
+		.who-cell {
+			grid-area: who;
+			min-width: 0;
+		}
+
+		.who-cell .handle {
+			overflow: hidden;
+			text-overflow: ellipsis;
+		}
+
+		.name {
+			grid-area: name;
+			font-size: 0.8125rem;
+			color: var(--ink-70);
+		}
+
+		.interest {
+			grid-area: int;
+			justify-self: end;
+		}
+
+		.num {
+			grid-area: num;
+			justify-self: end;
+			font-size: 0.8125rem;
+			color: var(--ink-70);
+		}
+
+		tbody tr.detail {
+			display: block;
+			border-bottom: 1px solid rgba(255, 255, 255, 0.14);
+		}
+
+		tbody tr.detail td {
+			display: block;
+			border-bottom: none;
+		}
+
+		tbody tr.detail td:first-child {
+			display: none;
 		}
 	}
 </style>

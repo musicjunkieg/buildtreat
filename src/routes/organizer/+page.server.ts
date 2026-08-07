@@ -28,6 +28,8 @@ import {
 
 export interface OrganizerPageData {
 	authState: 'signed-out' | 'ok';
+	/** True only for the dev ?preview fixture state — rendered on-surface. */
+	preview: boolean;
 	responses: OrganizerResponse[];
 	allowlist: AllowlistEntry[];
 	latePasses: LatePass[];
@@ -38,6 +40,7 @@ export interface OrganizerPageData {
 }
 
 const EMPTY: Omit<OrganizerPageData, 'authState'> = {
+	preview: false,
 	responses: [],
 	allowlist: [],
 	latePasses: [],
@@ -57,7 +60,13 @@ export const load: PageServerLoad = async ({ locals, platform, url }): Promise<O
 	// Dev-only design preview with synthetic data; `dev` is compile-time false
 	// in production builds, so this path cannot ship.
 	if (dev && url.searchParams.has('preview')) {
-		return { authState: 'ok', ...previewData(), deadline: '2026-08-16T06:59:59Z', deadlineDisplay: 'August 15' };
+		return {
+			authState: 'ok',
+			preview: true,
+			...previewData(),
+			deadline: '2026-08-16T06:59:59Z',
+			deadlineDisplay: 'August 15'
+		};
 	}
 
 	if (!locals.did) {
@@ -78,6 +87,7 @@ export const load: PageServerLoad = async ({ locals, platform, url }): Promise<O
 
 	return {
 		authState: 'ok',
+		preview: false,
 		responses,
 		allowlist,
 		latePasses,
@@ -147,7 +157,7 @@ export const actions: Actions = {
 /* ── dev preview fixtures ─────────────────────────────────────────────── */
 
 /** Deterministic synthetic dataset for the ?preview design state. */
-function previewData(): Omit<OrganizerPageData, 'authState' | 'deadline' | 'deadlineDisplay'> {
+function previewData(): Omit<OrganizerPageData, 'authState' | 'preview' | 'deadline' | 'deadlineDisplay'> {
 	const first = ['Maren', 'Chris', 'Koko', 'Evan', 'Lauren', 'Jacob', 'Priya', 'Sam', 'Dana', 'Alex', 'Noor', 'Theo'];
 	const last = ['Costa', 'Lee', 'Nguyen', 'Mono', 'Bell', 'Foster', 'Shah', 'Rivera', 'Kim', 'Okafor', 'Haddad', 'Ames'];
 	const cities = [
