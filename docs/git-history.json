@@ -1,5 +1,13 @@
 [
   {
+    "hash": "d39c6dd4fd742a156d1fd28cf16b88ea04714a59",
+    "short_hash": "d39c6dd",
+    "author": "Bryan Guffey",
+    "date": "2026-08-07T10:46:49-07:00",
+    "message": "fix: finish-review batch — rail fit, gate copy, preview marker, mobile table\n\nStat numerals interpolate by viewport height so overrides + export fit\nthe first viewport; gate eyebrow removed per craft-floor ban; synthetic\npreview data labeled on-surface; location tallies on the comp's shared\nbaseline; grain switched to screen blend (overlay vanishes on flat\nnear-black); phone table rows collapse to two lines; tally bars animate\nvia transform, not width.\n\nCo-Authored-By: Claude Fable 5 <noreply@anthropic.com>\nClaude-Session: https://claude.ai/code/session_014GrGCvMtG1jntmgmLjWmvh",
+    "files_changed": 6
+  },
+  {
     "hash": "4469f497da4dc46e3bc3cec891ed2a52584acd87",
     "short_hash": "4469f49",
     "author": "Bryan Guffey",
