@@ -9,6 +9,9 @@ import type { SurveyDraft } from '$lib/survey.svelte';
 import type { KnownUser } from '$lib/types';
 import { deadlineStatus } from '$lib/server/deadline';
 
+/** Enough of a DID to correlate log lines without logging the full identifier. */
+const logDid = (did: string) => `${did.slice(0, 14)}…`;
+
 export interface PageUser {
 	did: string;
 	handle: string | null;
@@ -106,7 +109,7 @@ export const load: PageServerLoad = async ({ locals, platform, url, cookies }) =
 	}
 
 	const profile = await loadBskyProfile(locals.did, { cache: profileCache }).catch((e) => {
-		console.error('profile load failed for', locals.did, e);
+		console.error('profile load failed for', logDid(locals.did), e);
 		return undefined;
 	});
 
@@ -132,11 +135,11 @@ export const load: PageServerLoad = async ({ locals, platform, url, cookies }) =
 			if (!allowed && !profile) {
 				// Identity resolution failed above — a handle-less lookup can't
 				// confidently deny (DIDs are pre-pinned, but stay honest).
-				console.error('allowlist: unverifiable without profile for', locals.did);
+				console.error('allowlist: unverifiable without profile for', logDid(locals.did));
 				allowed = true;
 			}
 		} catch (e) {
-			console.error('allowlist check failed for', locals.did, e);
+			console.error('allowlist check failed for', logDid(locals.did), e);
 		}
 	}
 
@@ -157,7 +160,7 @@ export const load: PageServerLoad = async ({ locals, platform, url, cookies }) =
 	const stored =
 		db && allowed
 			? await getResponse(db, locals.did).catch((e) => {
-					console.error('response load failed for', locals.did, e);
+					console.error('response load failed for', logDid(locals.did), e);
 					return null;
 				})
 			: null;

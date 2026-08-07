@@ -205,34 +205,37 @@ export async function peekAllowlist(
 	db: D1Database,
 	who: { did: string | null; handle: string | null }
 ): Promise<boolean> {
-	const count = await db.prepare(`SELECT COUNT(*) AS n FROM allowlist`).first<{ n: number }>();
-	if (!count || count.n === 0) return true;
-
+	// One round trip: empty list admits everyone; otherwise match DID/handle.
 	const row = await db
 		.prepare(
-			`SELECT 1 AS hit FROM allowlist WHERE (?1 IS NOT NULL AND did = ?1) OR lower(handle) = lower(?2) LIMIT 1`
+			`SELECT (SELECT COUNT(*) FROM allowlist) AS n,
+			        (SELECT 1 FROM allowlist WHERE (?1 IS NOT NULL AND did = ?1) OR lower(handle) = lower(?2) LIMIT 1) AS hit`
 		)
 		.bind(who.did, who.handle)
-		.first();
-	return row !== null;
+		.first<{ n: number; hit: number | null }>();
+	if (!row) return true;
+	return row.n === 0 || row.hit !== null;
 }
 
 export async function checkAllowlist(
 	db: D1Database,
 	who: { did: string; handle: string | null }
 ): Promise<boolean> {
-	const count = await db.prepare(`SELECT COUNT(*) AS n FROM allowlist`).first<{ n: number }>();
-	if (!count || count.n === 0) return true;
-
+	// One round trip: empty-list count and the matched handle (needed below
+	// for DID pinning) come back together.
 	const row = await db
-		.prepare(`SELECT handle FROM allowlist WHERE did = ?1 OR lower(handle) = lower(?2) LIMIT 1`)
+		.prepare(
+			`SELECT (SELECT COUNT(*) FROM allowlist) AS n,
+			        (SELECT handle FROM allowlist WHERE did = ?1 OR lower(handle) = lower(?2) LIMIT 1) AS matched`
+		)
 		.bind(who.did, who.handle)
-		.first<{ handle: string }>();
-	if (!row) return false;
+		.first<{ n: number; matched: string | null }>();
+	if (!row || row.n === 0) return true;
+	if (row.matched === null) return false;
 
 	await db.prepare(`UPDATE allowlist SET did = ?1 WHERE lower(handle) = lower(?2) AND did IS NULL`).bind(
 		who.did,
-		row.handle
+		row.matched
 	).run();
 	return true;
 }

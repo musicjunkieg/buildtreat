@@ -1,12 +1,27 @@
 {
   "version": 1,
-  "exported_at": "2026-08-07T03:00:40.045005+00:00",
+  "exported_at": "2026-08-07T03:09:18.778219+00:00",
   "issues": [
+    {
+      "id": 46,
+      "title": "CodeRabbit round 6: six trivia fixes",
+      "description": null,
+      "status": "open",
+      "priority": "medium",
+      "parent_id": null,
+      "labels": [
+        "task"
+      ],
+      "comments": [],
+      "created_at": "2026-08-07T03:08:10.267902+00:00",
+      "updated_at": "2026-08-07T03:08:10.267902+00:00",
+      "closed_at": null
+    },
     {
       "id": 45,
       "title": "CodeRabbit round 5: 3 fixes, 4 reasoned skips",
       "description": null,
-      "status": "open",
+      "status": "closed",
       "priority": "high",
       "parent_id": null,
       "labels": [
@@ -14,8 +29,8 @@
       ],
       "comments": [],
       "created_at": "2026-08-07T03:00:09.817611+00:00",
-      "updated_at": "2026-08-07T03:00:09.817611+00:00",
-      "closed_at": null
+      "updated_at": "2026-08-07T03:00:44.909714+00:00",
+      "closed_at": "2026-08-07T03:00:44.909714+00:00"
     },
     {
       "id": 44,

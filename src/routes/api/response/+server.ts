@@ -3,6 +3,7 @@ import type { RequestHandler } from './$types';
 import { loadHandle } from '@svelte-atproto/oauth/helper';
 import { checkAllowlist, upsertResponse, validateDraft, ValidationError } from '$lib/server/db';
 import { deadlineStatus } from '$lib/server/deadline';
+import { retreat } from '$lib/content';
 
 export const PUT: RequestHandler = async ({ request, locals, platform }) => {
 	if (!locals.did) {
@@ -11,7 +12,7 @@ export const PUT: RequestHandler = async ({ request, locals, platform }) => {
 	const { closed, display } = deadlineStatus(platform?.env?.DEADLINE);
 	if (closed) {
 		error(403, {
-			message: `The survey closed on ${display} — answers are locked. Ping @chaosgreml.in if something needs fixing.`
+			message: `The survey closed on ${display} — answers are locked. Ping @${retreat.organizerHandle} if something needs fixing.`
 		});
 	}
 	const db = platform?.env?.DB;
@@ -36,13 +37,15 @@ export const PUT: RequestHandler = async ({ request, locals, platform }) => {
 
 	const handle =
 		(await loadHandle(locals.did).catch((e) => {
-			console.error('handle load failed for', locals.did, e);
+			console.error('handle load failed for', `${String(locals.did).slice(0, 14)}…`, e);
 			return null;
 		})) ?? null;
 	const who = { did: locals.did as string, handle };
 
 	if (!(await checkAllowlist(db, who))) {
-		error(403, { message: 'This survey is invite-only — your handle isn’t on the list. DM @chaosgreml.in if that seems wrong.' });
+		error(403, {
+			message: `This survey is invite-only — your handle isn’t on the list. DM @${retreat.organizerHandle} if that seems wrong.`
+		});
 	}
 
 	await upsertResponse(db, who, draft);

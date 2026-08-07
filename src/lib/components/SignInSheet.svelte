@@ -229,7 +229,7 @@
 				</div>
 			</div>
 			{@render errorNote()}
-			<button bind:this={continueBtn} class="pill" onclick={() => void go(knownUser.handle)} disabled={busy}>
+			<button bind:this={continueBtn} type="button" class="pill" onclick={() => void go(knownUser.handle)} disabled={busy}>
 				{busy ? 'Contacting your PDS…' : `Continue as @${knownUser.handle}`}
 				<Icon name="butterfly" size={17} />
 			</button>
@@ -306,7 +306,7 @@
 				</div>
 			</div>
 			{@render errorNote()}
-			<button class="pill" onclick={() => void go()} disabled={!handle.trim() || busy}>
+			<button type="button" class="pill" onclick={() => void go()} disabled={!handle.trim() || busy}>
 				{busy ? 'Contacting your PDS…' : 'Continue'}
 				<Icon name="butterfly" size={17} />
 			</button>

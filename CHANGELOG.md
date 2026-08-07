@@ -7,12 +7,24 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## [Unreleased]
 
 ### Added
+- Review: answers-updated confirmation + sign-out at end (#41)
+- Location question: add no-preference option (#40)
+- Linkify DM @chaosgreml.in mentions via aturi.to profile waypoint (#38)
+- Pre-flight allowlist check on handle submit, before OAuth (#37)
+- Write at.marque.dns zone record for Bryan's domain (#33)
 - Deadline: Aug 15 2026 23:59:59 PT — display + enforcement (#31)
 
 ### Fixed
-- Analyze smoke-test HAR from deployed survey (#19)
+- Review findings: pre-pin allowlist DIDs, fail-open gates, log swallowed errors (#42)
+- Gate allowlist at sign-in, not just submit (#36)
+- OAuth login on the deployed Worker: SSR now resolves workerd package builds, fixing the 500 on sign-in (#19)
 
 ### Changed
+- CodeRabbit round 5: 3 fixes, 4 reasoned skips (#45)
+- CodeRabbit round 4: 10 findings across both overlapping reviews (#44)
+- Address CodeRabbit review on PR #3 until approval (#43)
+- Add tyler.fun to allowlist (#39)
+- Cut over to buildersretre.at: ORIGIN, redirect, verify (#35)
 - Load allowlist: 16 invitee handles + organizer (#32)
 - Rebuild and deploy Bryan's manual tweaks (#30)
 - Desktop (16-inch MBP) reviewer snapshots (#29)

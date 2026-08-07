@@ -1,5 +1,13 @@
 [
   {
+    "hash": "99af46d2b08acfc1c629733dcdf4899251ba8ee4",
+    "short_hash": "99af46d",
+    "author": "Bryan Guffey",
+    "date": "2026-08-06T20:00:40-07:00",
+    "message": "fix: CodeRabbit round 5 — draft ranking filter, unthrottleable-oracle non-answer, sheet reset\n\n- loadDraft only restores ranking ids that are real locations (or the\n  no-preference sentinel) — junk in localStorage can't fake completion\n  past server validation\n- /api/invited: if the per-IP throttle can't run (no KV, no client IP,\n  KV error), the oracle answers the non-answer instead of proceeding\n  unthrottled; sign-in still proceeds normally\n- sign-in sheet resets to a clean state on close (welcome-back branch,\n  errors) while deliberately keeping the typed handle\n- identity-cookie comment references the DEADLINE binding, not a\n  hardcoded date\n\nSkipped with reasons (posted on the PR): shot.mjs --no-sandbox (dev-only\nscript for the sandboxed local env), backdrop-as-button (adds a phantom\ntab stop; Escape + labeled close serve keyboard/AT), 180d cookie revert\n(contradicts round 3; 30d covers the window), un-inerting YouItem's\nsign-out when closed (sign-out stays available on hero + review).\n\nCo-Authored-By: Claude Fable 5 <noreply@anthropic.com>\nClaude-Session: https://claude.ai/code/session_01KvMrEJy2nWjYvgkPqQ26eD",
+    "files_changed": 7
+  },
+  {
     "hash": "199f93fd3a47ffd42132e51a4cf9fc810572edfb",
     "short_hash": "199f93f",
     "author": "Bryan Guffey",

@@ -123,7 +123,9 @@ export class SurveyState {
 			// Untrusted storage: only real location ids (or the sentinel) count,
 			// so junk can't fake locationComplete past server validation.
 			const known = new Set<string>(locations.map((l) => l.id));
-			const arr = d.ranking.filter((x): x is string => typeof x === 'string' && (x === NO_PREFERENCE || known.has(x)));
+			const arr = [
+				...new Set(d.ranking.filter((x): x is string => typeof x === 'string' && (x === NO_PREFERENCE || known.has(x))))
+			];
 			this.ranking = arr.includes(NO_PREFERENCE) ? [NO_PREFERENCE] : arr.slice(0, 3);
 		}
 	}
