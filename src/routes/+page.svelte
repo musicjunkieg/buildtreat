@@ -84,9 +84,17 @@
 		document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
 	}
 
+	/** Where "next" goes from an item — "no" respondents skip the questions
+	 * they don't owe (travel/dates/location) and land on review. */
+	function nextAfter(id: FeedItemId): FeedItemId | null {
+		if (id === 'interest' && survey.interest === 'no') return 'review';
+		const i = feedItems.indexOf(id);
+		return i < feedItems.length - 1 ? feedItems[i + 1] : null;
+	}
+
 	function next() {
-		const i = feedItems.indexOf(current);
-		if (i < feedItems.length - 1) jump(feedItems[i + 1]);
+		const n = nextAfter(current);
+		if (n) jump(n);
 	}
 
 	function prev() {
@@ -171,11 +179,11 @@
 		<HeroItem {signedIn} {notInvited} deniedHandle={data.user?.handle ?? null} {closed} {deadlineDisplay} organizerAvatar={data.organizer.avatar} onsignin={openSignIn} oncontinue={() => jump('you')} />
 	</FeedItem>
 
-	<FeedItem id="you" inert={!signedIn} media="/media/item-you.png" labelledby="you-title">
+	<FeedItem id="you" inert={!signedIn || closed} media="/media/item-you.png" labelledby="you-title">
 		<YouItem {survey} {signedIn} {handle} onsignin={openSignIn} onnext={() => jump('interest')} />
 	</FeedItem>
 
-	<FeedItem id="interest" inert={!signedIn} media="/media/item-interest.png" labelledby="interest-title">
+	<FeedItem id="interest" inert={!signedIn || closed} media="/media/item-interest.png" labelledby="interest-title">
 		<ChoiceItem
 			titleId="interest-title"
 			title={interestQuestion.title}
@@ -189,11 +197,11 @@
 				survey.interest = v as InterestValue;
 				survey.saveLocal();
 			}}
-			onnext={() => jump('travel')}
+			onnext={() => jump(survey.interest === 'no' ? 'review' : 'travel')}
 		/>
 	</FeedItem>
 
-	<FeedItem id="travel" inert={!signedIn} media="/media/item-travel.png" labelledby="travel-title">
+	<FeedItem id="travel" inert={!signedIn || closed} media="/media/item-travel.png" labelledby="travel-title">
 		<ChoiceItem
 			titleId="travel-title"
 			title={travelQuestion.title}
@@ -211,11 +219,11 @@
 		/>
 	</FeedItem>
 
-	<FeedItem id="dates" inert={!signedIn} media="/media/item-dates.png" darker labelledby="dates-title">
+	<FeedItem id="dates" inert={!signedIn || closed} media="/media/item-dates.png" darker labelledby="dates-title">
 		<DatesItem {survey} {signedIn} onsignin={openSignIn} onnext={() => jump('location')} />
 	</FeedItem>
 
-	<FeedItem id="location" inert={!signedIn} media="/media/item-location.png" darker labelledby="location-title">
+	<FeedItem id="location" inert={!signedIn || closed} media="/media/item-location.png" darker labelledby="location-title">
 		<LocationItem {survey} {signedIn} onsignin={openSignIn} onnext={() => jump('review')} />
 	</FeedItem>
 

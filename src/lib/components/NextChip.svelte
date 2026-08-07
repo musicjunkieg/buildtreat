@@ -12,7 +12,7 @@
 
 {#if show}
 	<div class="next-row">
-		<button class="next" onclick={onnext}>
+		<button type="button" class="next" onclick={onnext}>
 			{label}
 			<span class="arrow" aria-hidden="true">↓</span>
 		</button>

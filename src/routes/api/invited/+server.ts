@@ -26,13 +26,6 @@ async function resolveHandle(handle: string): Promise<string | null> {
 }
 
 /**
- * Pre-auth invite check so the sign-in sheet can tell an uninvited handle
- * immediately, before the OAuth round-trip to their PDS. Anything short of a
- * confident, well-formed "no" answers `invited: true` — this endpoint only
- * ever short-circuits the happy path; real enforcement happens after auth
- * (page load + response API).
- */
-/**
  * Coarse per-IP fixed-window throttle on the KV cache namespace. KV writes
  * aren't atomic, so a racing burst can slip a few extra requests through —
  * fine for taking the bulk-probing edge off an endpoint whose worst answer
@@ -52,6 +45,13 @@ async function rateLimited(kv: App.Platform['env']['PROFILE_CACHE'] | undefined,
 	}
 }
 
+/**
+ * Pre-auth invite check so the sign-in sheet can tell an uninvited handle
+ * immediately, before the OAuth round-trip to their PDS. Anything short of a
+ * confident, well-formed "no" answers `invited: true` — this endpoint only
+ * ever short-circuits the happy path; real enforcement happens after auth
+ * (page load + response API).
+ */
 export const GET: RequestHandler = async ({ url, platform, request }) => {
 	const raw = url.searchParams.get('handle')?.trim().replace(/^@/, '') ?? '';
 	const db = platform?.env?.DB;

@@ -25,7 +25,7 @@ The differentiating mechanism is date-range availability collection with edge-da
 
 ## Operating Context
 
-- One retreat, one survey, one organizer. This is a one-off, not a platform; simplicity beats generality.
+- One retreat, one survey, one operational owner (Bryan, with Bluesky as organizing partner). This is a one-off, not a platform; simplicity beats generality.
 - Respondents authenticate via **ATProto login** (Bluesky-style handle sign-in), which fits the audience and gives verified identity per response.
 - The retreat: **3 nights / two full days**, in **Southern California**, sometime between **September 1 and November 15**. Lodging and food are covered by the organizers; respondents cover (or get help with) their own travel.
 

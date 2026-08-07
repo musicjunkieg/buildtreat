@@ -54,7 +54,8 @@
 			const seq = ++searchSeq;
 			try {
 				const res = await fetch(
-					`https://typeahead.waow.tech/xrpc/tech.waow.typeahead.searchActors?q=${encodeURIComponent(q)}&limit=6`
+					`https://typeahead.waow.tech/xrpc/tech.waow.typeahead.searchActors?q=${encodeURIComponent(q)}&limit=6`,
+					{ signal: AbortSignal.timeout(3000) }
 				);
 				if (!res.ok) throw new Error(String(res.status));
 				const data = (await res.json()) as { actors?: Actor[] };
@@ -121,8 +122,9 @@
 	$effect(() => {
 		if (!open) {
 			// A stale open dropdown would block window-level Escape forever —
-			// and a pending debounced search could reopen it after close.
+			// and a pending debounce or in-flight response could reopen it.
 			clearTimeout(searchTimer);
+			searchSeq++;
 			dropdownOpen = false;
 			results = [];
 			highlighted = -1;
