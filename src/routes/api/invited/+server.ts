@@ -36,7 +36,11 @@ const RL_PER_MINUTE = 20;
 async function rateLimited(kv: App.Platform['env']['PROFILE_CACHE'] | undefined, ip: string): Promise<boolean> {
 	if (!kv || !ip) return false;
 	try {
-		const key = `rl:invited:${ip}:${Math.floor(Date.now() / 60_000)}`;
+		// Don't persist raw IPs: a truncated SHA-256 keeps the fixed window
+		// working without storing personal data.
+		const digest = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(ip));
+		const ipHash = [...new Uint8Array(digest).slice(0, 8)].map((b) => b.toString(16).padStart(2, '0')).join('');
+		const key = `rl:invited:${ipHash}:${Math.floor(Date.now() / 60_000)}`;
 		const n = Number((await kv.get(key)) ?? '0') + 1;
 		await kv.put(key, String(n), { expirationTtl: 120 });
 		return n > RL_PER_MINUTE;

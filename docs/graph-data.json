@@ -417,6 +417,28 @@
       "created_at": "2026-08-06T18:57:16.637166-07:00",
       "updated_at": "2026-08-06T18:57:16.637166-07:00",
       "metadata_json": "{\"branch\":\"feature/feedback-round\",\"commit\":\"3498951\",\"confidence\":95}"
+    },
+    {
+      "id": 39,
+      "change_id": "a5cb6d68-01a4-44cb-b483-0f4e83a40a27",
+      "node_type": "action",
+      "title": "CodeRabbit round 3: no-path routing, closed-state inert, cookie 30d, misc",
+      "description": null,
+      "status": "pending",
+      "created_at": "2026-08-06T19:37:08.088491-07:00",
+      "updated_at": "2026-08-06T19:37:08.088491-07:00",
+      "metadata_json": "{\"branch\":\"feature/feedback-round\",\"commit\":\"3d5d5db\",\"confidence\":95}"
+    },
+    {
+      "id": 40,
+      "change_id": "f5290271-888f-4537-87c7-a61b6acd501a",
+      "node_type": "outcome",
+      "title": "CodeRabbit APPROVED PR #3 at 3d5d5db after 3 review rounds (10 → 4 → 9 comments, all addressed or reasoned-skipped)",
+      "description": null,
+      "status": "pending",
+      "created_at": "2026-08-06T19:42:53.621372-07:00",
+      "updated_at": "2026-08-06T19:42:53.621372-07:00",
+      "metadata_json": "{\"branch\":\"feature/feedback-round\",\"confidence\":100}"
     }
   ],
   "edges": [
@@ -837,6 +859,28 @@
       "weight": 1.0,
       "rationale": "External review loop round 2",
       "created_at": "2026-08-06T18:57:16.647204-07:00"
+    },
+    {
+      "id": 39,
+      "from_node_id": 38,
+      "to_node_id": 39,
+      "from_change_id": "5f1b6196-c5c7-4948-aa37-8d1a9b7fb443",
+      "to_change_id": "a5cb6d68-01a4-44cb-b483-0f4e83a40a27",
+      "edge_type": "leads_to",
+      "weight": 1.0,
+      "rationale": "External review loop round 3",
+      "created_at": "2026-08-06T19:37:08.098214-07:00"
+    },
+    {
+      "id": 40,
+      "from_node_id": 39,
+      "to_node_id": 40,
+      "from_change_id": "a5cb6d68-01a4-44cb-b483-0f4e83a40a27",
+      "to_change_id": "f5290271-888f-4537-87c7-a61b6acd501a",
+      "edge_type": "leads_to",
+      "weight": 1.0,
+      "rationale": "Review loop converged",
+      "created_at": "2026-08-06T19:42:53.633958-07:00"
     }
   ]
 }

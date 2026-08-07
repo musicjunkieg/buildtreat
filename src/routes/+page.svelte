@@ -114,11 +114,14 @@
 			e.preventDefault();
 			prev();
 		} else if (e.key === 'Enter') {
-			// Enter advances once the current item is answered — including when
-			// focus sits on an answer control (place card, radio), where the
-			// browser default would re-activate it and undo the answer. Links
-			// and non-answer buttons keep their native Enter.
-			const answerControl = t.closest('.place, input[type="radio"], [role="radio"]');
+			// A focused, still-unranked place keeps native Enter so keyboard
+			// users can rank more than one; a ranked place must not re-toggle
+			// (that would un-rank it), so Enter advances instead. Radios never
+			// toggle on Enter, so they always advance. Links and non-answer
+			// buttons keep their native Enter.
+			const place = t.closest('.place');
+			if (place && place.getAttribute('aria-pressed') !== 'true') return;
+			const answerControl = place ?? t.closest('input[type="radio"], [role="radio"]');
 			if (!answerControl && t.closest('button, a')) return;
 			if (survey.completion[current] || current === 'hero') {
 				e.preventDefault();
@@ -168,7 +171,7 @@
 
 <svelte:window {onkeydown} />
 
-<main class="feed" class:locked={!signedIn} bind:this={feed}>
+<main class="feed" class:locked={!signedIn} inert={sheetOpen} bind:this={feed}>
 	<FeedItem
 		id="hero"
 		media="/media/hero-portrait.png"
@@ -245,10 +248,12 @@
 	</FeedItem>
 </main>
 
-<Rail {current} completion={{ ...survey.completion, review: submitted }} dimmed={!signedIn} onjump={jump} />
-{#if signedIn}
-	<Dots {current} onjump={jump} />
-{/if}
+<div inert={sheetOpen}>
+	<Rail {current} completion={{ ...survey.completion, review: submitted }} dimmed={!signedIn} onjump={jump} />
+	{#if signedIn}
+		<Dots {current} onjump={jump} />
+	{/if}
+</div>
 <SignInSheet bind:open={sheetOpen} error={data.authError} knownUser={data.knownUser} />
 
 <style>

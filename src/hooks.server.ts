@@ -14,7 +14,10 @@ const canonicalize: Handle = async ({ event, resolve }) => {
 		if (event.url.hostname.endsWith('.workers.dev') && event.url.hostname !== canonicalHost) {
 			// 308, not 301: a redirected PUT /api/response must keep its method
 			// and body.
-			redirect(308, new URL(event.url.pathname + event.url.search, origin).toString());
+			const target = new URL(origin);
+			target.pathname = event.url.pathname;
+			target.search = event.url.search;
+			redirect(308, target.toString());
 		}
 	}
 	return resolve(event);

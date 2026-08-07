@@ -108,7 +108,13 @@
 			<Icon name="butterfly" size={17} />
 		</button>
 	{:else if submitted}
-		<button class="pill ghost" class:confirmed={updated} onclick={onsubmit} disabled={submitting} aria-live="polite">
+		<button
+			class="pill ghost"
+			class:confirmed={updated}
+			onclick={onsubmit}
+			disabled={submitting || !survey.readyToSubmit}
+			aria-live="polite"
+		>
 			{submitting ? 'Updating…' : updated ? 'Answers updated!' : 'Update my answers'}
 		</button>
 		{#if deadlineDisplay}

@@ -40,18 +40,25 @@
 	let searchTimer: ReturnType<typeof setTimeout> | undefined;
 	let searchSeq = 0;
 
+	/** Kill the pending debounce AND any in-flight response — stale results
+	 * must never reopen the dropdown or apply after input changed. */
+	function invalidateSearch() {
+		clearTimeout(searchTimer);
+		searchSeq++;
+	}
+
 	function onHandleInput() {
 		localError = null;
 		deniedHandle = null;
-		clearTimeout(searchTimer);
+		invalidateSearch();
 		const q = handle.trim().replace(/^@/, '');
 		if (q.length < 2 || q.startsWith('did:')) {
 			dropdownOpen = false;
 			results = [];
 			return;
 		}
+		const seq = searchSeq;
 		searchTimer = setTimeout(async () => {
-			const seq = ++searchSeq;
 			try {
 				const res = await fetch(
 					`https://typeahead.waow.tech/xrpc/tech.waow.typeahead.searchActors?q=${encodeURIComponent(q)}&limit=6`,
@@ -92,12 +99,15 @@
 			}
 			if (e.key === 'ArrowUp') {
 				e.preventDefault();
-				highlighted = (highlighted - 1 + results.length) % results.length;
+				// From the unset state (-1), the first ArrowUp lands on the LAST
+				// result, not the second-to-last.
+				highlighted = highlighted <= 0 ? results.length - 1 : highlighted - 1;
 				document.getElementById(`handle-opt-${highlighted}`)?.scrollIntoView({ block: 'nearest' });
 				return;
 			}
 			if (e.key === 'Escape') {
 				e.stopPropagation();
+				invalidateSearch();
 				dropdownOpen = false;
 				return;
 			}
@@ -115,19 +125,25 @@
 
 	/* ── sign-in ── */
 
-	$effect(() => {
-		if (open && !welcomeBack) input?.focus();
-	});
+	let continueBtn = $state<HTMLButtonElement | null>(null);
+	let restoreTo: HTMLElement | null = null;
 
 	$effect(() => {
-		if (!open) {
+		if (open) {
+			// Modal focus management: remember the trigger, focus the primary
+			// control (input, or the Continue button in the welcome-back state).
+			restoreTo ??= document.activeElement as HTMLElement | null;
+			if (welcomeBack) continueBtn?.focus();
+			else input?.focus();
+		} else {
 			// A stale open dropdown would block window-level Escape forever —
 			// and a pending debounce or in-flight response could reopen it.
-			clearTimeout(searchTimer);
-			searchSeq++;
+			invalidateSearch();
 			dropdownOpen = false;
 			results = [];
 			highlighted = -1;
+			restoreTo?.focus();
+			restoreTo = null;
 		}
 	});
 
@@ -137,13 +153,16 @@
 		busy = true;
 		localError = null;
 		deniedHandle = null;
+		invalidateSearch();
 		dropdownOpen = false;
 		try {
 			// Pre-flight invite check: an uninvited handle finds out here, not
 			// after the whole PDS auth dance. Any hiccup fails open — the server
 			// re-checks after auth regardless.
 			try {
-				const res = await fetch(`/api/invited?handle=${encodeURIComponent(clean)}`);
+				const res = await fetch(`/api/invited?handle=${encodeURIComponent(clean)}`, {
+					signal: AbortSignal.timeout(3000)
+				});
 				if (res.ok) {
 					const { invited } = (await res.json()) as { invited: boolean };
 					if (!invited) {
@@ -204,7 +223,7 @@
 				</div>
 			</div>
 			{@render errorNote()}
-			<button class="pill" onclick={() => void go(knownUser.handle)} disabled={busy}>
+			<button bind:this={continueBtn} class="pill" onclick={() => void go(knownUser.handle)} disabled={busy}>
 				{busy ? 'Contacting your PDS…' : `Continue as @${knownUser.handle}`}
 				<Icon name="butterfly" size={17} />
 			</button>

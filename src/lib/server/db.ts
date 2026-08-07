@@ -212,7 +212,7 @@ export async function peekAllowlist(
 		.prepare(
 			`SELECT 1 AS hit FROM allowlist WHERE (?1 IS NOT NULL AND did = ?1) OR lower(handle) = lower(?2) LIMIT 1`
 		)
-		.bind(who.did, who.handle ?? '')
+		.bind(who.did, who.handle)
 		.first();
 	return row !== null;
 }
@@ -226,7 +226,7 @@ export async function checkAllowlist(
 
 	const row = await db
 		.prepare(`SELECT handle FROM allowlist WHERE did = ?1 OR lower(handle) = lower(?2) LIMIT 1`)
-		.bind(who.did, who.handle ?? '')
+		.bind(who.did, who.handle)
 		.first<{ handle: string }>();
 	if (!row) return false;
 

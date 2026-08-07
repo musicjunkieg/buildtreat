@@ -1,5 +1,13 @@
 [
   {
+    "hash": "3d5d5db394aa6ee4aa24c5b80e6fe56fcdb308da",
+    "short_hash": "3d5d5db",
+    "author": "Bryan Guffey",
+    "date": "2026-08-06T19:37:03-07:00",
+    "message": "fix: CodeRabbit round 3 — no-path routing, closed-state seal, misc hardening\n\n- 'not interested' respondents now route straight to review from the\n  interest question (Enter, arrows, and the Next chip all share the same\n  nextAfter() logic) — they never owed travel/dates/location\n- editable sections (you→location) go inert after the deadline; review\n  stays live for the closure notice and sign-out\n- sheet close invalidates in-flight typeahead responses (searchSeq++),\n  and the typeahead fetch gets a 3s timeout\n- workers.dev redirect joins paths via the URL constructor (no // when\n  ORIGIN has a trailing slash); NextChip is explicitly type=button;\n  invited-endpoint doc block reattached to the GET handler\n- identity-hint cookie retention cut 180d → 30d (still covers the whole\n  survey window); PRODUCT.md 'one organizer' wording reconciled with the\n  Bluesky partnership\n\nDeliberately skipped: CodeRabbit's suggestion to not start OAuth on\ntypeahead selection — one-tap sign-in from the picked account is the\nintended interaction, consistent with the welcome-back flow.\n\nCo-Authored-By: Claude Fable 5 <noreply@anthropic.com>\nClaude-Session: https://claude.ai/code/session_01KvMrEJy2nWjYvgkPqQ26eD",
+    "files_changed": 10
+  },
+  {
     "hash": "34989517aec5a93d5f1ca90b8ba17acf099e6759",
     "short_hash": "3498951",
     "author": "Bryan Guffey",
