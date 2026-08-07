@@ -1,2 +1,8 @@
+# `packages` names the repo root as the only package: config-only workspace
+# files (no packages field) fail `pnpm install` on the pnpm 10.11 that
+# Cloudflare Workers Builds provisions.
+packages:
+  - '.'
+
 onlyBuiltDependencies:
   - esbuild
