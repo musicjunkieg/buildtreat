@@ -13,7 +13,7 @@ SvelteKit, deployed to Cloudflare. (Confirmed by Bryan 2026-08-04 — overrides 
 ## Users
 
 - **Respondents:** ATProto builders who already expressed interest in the retreat by responding to Bryan's Bluesky post. They arrive warm and excited, not skeptical — the survey confirms the retreat is real and gathers their details. They sign in with their ATProto identity and fill out one survey, on whatever device they have handy.
-- **Organizer:** Bryan, the sole organizer. He needs the collected responses to pick a retreat date window and location and to plan travel assistance.
+- **Organizers:** Bluesky organizes the retreat in partnership with Bryan. Bryan runs the survey and needs the collected responses to pick a retreat date window and location and to plan travel assistance.
 
 ## Product Purpose
 
@@ -25,7 +25,7 @@ The differentiating mechanism is date-range availability collection with edge-da
 
 ## Operating Context
 
-- One retreat, one survey, one organizer. This is a one-off, not a platform; simplicity beats generality.
+- One retreat, one survey, one operational owner (Bryan, with Bluesky as organizing partner). This is a one-off, not a platform; simplicity beats generality.
 - Respondents authenticate via **ATProto login** (Bluesky-style handle sign-in), which fits the audience and gives verified identity per response.
 - The retreat: **3 nights / two full days**, in **Southern California**, sometime between **September 1 and November 15**. Lodging and food are covered by the organizers; respondents cover (or get help with) their own travel.
 
@@ -49,7 +49,7 @@ Undecided / not yet provided (do not invent):
 
 - **The retreat is named "the Atmospheric Builders' Retreat"** (settled 2026-08-04; an earlier "taproot" mention was a typo for "atproto"). "buildtreat" is only the project codename and must not appear in the product surface.
 - **The sign-in action is worded "Sign in with Atmosphere"** — the community's name for the ATProto ecosystem — never "Sign in with ATProto".
-- **Sponsored by Bluesky** — confirmed fact, and the survey is the first artifact that names it publicly to the invitees. The sponsorship explains why lodging and food are covered.
+- **Organized by Bluesky, in partnership with Bryan** (updated 2026-08-05; supersedes the narrower "sponsored by" framing). The survey is the first artifact that names Bluesky's role publicly to the invitees, and the credit belongs to the whole retreat — not just the lodging-and-food line. Bluesky's backing explains why lodging and food are covered.
 - **Tone: interested, not booked.** Respondents raised their hands; they have not committed. Confirmation copy acknowledges their interest without presuming attendance ("You said you were in" is too forward).
 - **Organizer credit is minimal:** at most a small mention of Bryan as organizer ("organized by @chaosgreml.in" — his real handle, confirmed 2026-08-04). No personal branding beyond that.
 - No logo, palette, or other visual constraints exist yet.

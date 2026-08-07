@@ -1,7 +1,7 @@
 import type { D1Database } from '@cloudflare/workers-types';
 import type { SurveyDraft } from '$lib/survey.svelte';
 import type { AvailabilityRange, InterestValue, TravelValue } from '$lib/content';
-import { locations, retreat } from '$lib/content';
+import { locations, NO_PREFERENCE, retreat } from '$lib/content';
 
 /**
  * D1 access for survey responses. All queries are parameterized.
@@ -68,8 +68,13 @@ export function validateDraft(body: unknown): SurveyDraft {
 	const ranking: string[] = [];
 	if (Array.isArray(b.ranking)) {
 		for (const id of b.ranking) {
-			if (typeof id !== 'string' || !LOCATION_IDS.has(id)) throw new ValidationError('Unknown location');
+			if (typeof id !== 'string' || (id !== NO_PREFERENCE && !LOCATION_IDS.has(id))) {
+				throw new ValidationError('Unknown location');
+			}
 			if (!ranking.includes(id)) ranking.push(id);
+		}
+		if (ranking.includes(NO_PREFERENCE) && ranking.length > 1) {
+			throw new ValidationError('No-preference can’t be combined with a ranking');
 		}
 		if (ranking.length > 3) throw new ValidationError('Rank at most three locations');
 	}
@@ -191,22 +196,46 @@ export async function getResponse(db: D1Database, did: string): Promise<StoredRe
  * Matching is by handle (case-insensitive) or DID; on first login the DID is
  * recorded next to the handle so later handle changes don't lock anyone out.
  */
+/**
+ * Read-only allowlist lookup for the pre-auth sign-in check. Unlike
+ * checkAllowlist it never pins a DID — the caller may only have an
+ * unauthenticated handle typed into the sign-in sheet.
+ */
+export async function peekAllowlist(
+	db: D1Database,
+	who: { did: string | null; handle: string | null }
+): Promise<boolean> {
+	// One round trip: empty list admits everyone; otherwise match DID/handle.
+	const row = await db
+		.prepare(
+			`SELECT (SELECT COUNT(*) FROM allowlist) AS n,
+			        (SELECT 1 FROM allowlist WHERE (?1 IS NOT NULL AND did = ?1) OR lower(handle) = lower(?2) LIMIT 1) AS hit`
+		)
+		.bind(who.did, who.handle)
+		.first<{ n: number; hit: number | null }>();
+	if (!row) return true;
+	return row.n === 0 || row.hit !== null;
+}
+
 export async function checkAllowlist(
 	db: D1Database,
 	who: { did: string; handle: string | null }
 ): Promise<boolean> {
-	const count = await db.prepare(`SELECT COUNT(*) AS n FROM allowlist`).first<{ n: number }>();
-	if (!count || count.n === 0) return true;
-
+	// One round trip: empty-list count and the matched handle (needed below
+	// for DID pinning) come back together.
 	const row = await db
-		.prepare(`SELECT handle FROM allowlist WHERE did = ?1 OR lower(handle) = lower(?2) LIMIT 1`)
-		.bind(who.did, who.handle ?? '')
-		.first<{ handle: string }>();
-	if (!row) return false;
+		.prepare(
+			`SELECT (SELECT COUNT(*) FROM allowlist) AS n,
+			        (SELECT handle FROM allowlist WHERE did = ?1 OR lower(handle) = lower(?2) LIMIT 1) AS matched`
+		)
+		.bind(who.did, who.handle)
+		.first<{ n: number; matched: string | null }>();
+	if (!row || row.n === 0) return true;
+	if (row.matched === null) return false;
 
 	await db.prepare(`UPDATE allowlist SET did = ?1 WHERE lower(handle) = lower(?2) AND did IS NULL`).bind(
 		who.did,
-		row.handle
+		row.matched
 	).run();
 	return true;
 }

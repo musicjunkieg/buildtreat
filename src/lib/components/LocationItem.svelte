@@ -1,16 +1,19 @@
 <script lang="ts">
 	import Icon from '$lib/components/Icon.svelte';
-	import { locationQuestion, locations } from '$lib/content';
+	import NextChip from '$lib/components/NextChip.svelte';
+	import { locationQuestion, locations, NO_PREFERENCE } from '$lib/content';
 	import type { SurveyState } from '$lib/survey.svelte';
 
 	let {
 		survey,
 		signedIn,
-		onsignin
+		onsignin,
+		onnext
 	}: {
 		survey: SurveyState;
 		signedIn: boolean;
 		onsignin: () => void;
+		onnext?: () => void;
 	} = $props();
 </script>
 
@@ -53,8 +56,23 @@
 		{/each}
 	</ul>
 
+	<button
+		class="nopref"
+		class:on={survey.noPreference}
+		onclick={() => {
+			survey.toggleRank(NO_PREFERENCE);
+			survey.saveLocal();
+		}}
+		disabled={!signedIn}
+		aria-pressed={survey.noPreference}
+	>
+		{locationQuestion.noPreference}
+	</button>
+
 	<p class="hint" aria-live="polite">
-		{#if survey.ranking.length === 0}
+		{#if survey.noPreference}
+			No preference noted — we’ll pick a great spot.
+		{:else if survey.ranking.length === 0}
 			Tap places in order of preference — 1 is your favorite.
 		{:else if survey.ranking.length < locationQuestion.maxRank}
 			{survey.ranking.length} of {locationQuestion.maxRank} ranked. Tap again to remove.
@@ -62,6 +80,9 @@
 			Top three set. Tap any to change your mind.
 		{/if}
 	</p>
+	{#if signedIn && onnext}
+		<NextChip label="Review answers" show={survey.ranking.length > 0} {onnext} />
+	{/if}
 </div>
 
 <style>
@@ -172,6 +193,33 @@
 		background: var(--ink);
 		border-color: var(--ink);
 		color: var(--on-pill);
+	}
+
+	.nopref {
+		padding: 0.7rem 1.1rem;
+		border-radius: 10px;
+		border: 1px dashed var(--ink-45);
+		color: var(--ink-70);
+		font-size: 0.9375rem;
+		text-align: center;
+		transition:
+			border-color 0.2s var(--ease-out),
+			color 0.2s var(--ease-out);
+	}
+
+	.nopref:not(:disabled):hover {
+		border-color: var(--ink-70);
+		color: var(--ink);
+	}
+
+	.nopref.on {
+		border: 1.5px solid var(--ink);
+		color: var(--ink);
+		font-weight: 550;
+	}
+
+	.nopref:disabled {
+		opacity: 0.5;
 	}
 
 	.hint {

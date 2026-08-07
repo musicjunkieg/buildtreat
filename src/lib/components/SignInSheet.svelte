@@ -1,28 +1,185 @@
 <script lang="ts">
-	import Icon from '$lib/components/Icon.svelte';
-
 	import { login } from '@svelte-atproto/oauth/client';
+	import Icon from '$lib/components/Icon.svelte';
+	import { retreat } from '$lib/content';
+	import type { KnownUser } from '$lib/types';
 
-	let { open = $bindable(), error }: { open: boolean; error?: string | null } = $props();
+	let {
+		open = $bindable(),
+		error,
+		knownUser = null
+	}: {
+		open: boolean;
+		error?: string | null;
+		knownUser?: KnownUser | null;
+	} = $props();
 
 	let handle = $state('');
 	let busy = $state(false);
 	let localError = $state<string | null>(null);
+	/** Set instead of localError when the pre-flight invite check says no —
+	 * rendered structurally so the organizer mention can be a real link. */
+	let deniedHandle = $state<string | null>(null);
 	let input = $state<HTMLInputElement | null>(null);
+	let useDifferent = $state(false);
 
 	const shownError = $derived(localError ?? error ?? null);
+	const welcomeBack = $derived(knownUser !== null && !useDifferent);
+
+	/* ── handle typeahead (typeahead.waow.tech — community actor search) ── */
+
+	interface Actor {
+		handle: string;
+		displayName?: string;
+		avatar?: string;
+	}
+
+	let results = $state<Actor[]>([]);
+	let dropdownOpen = $state(false);
+	let highlighted = $state(-1);
+	let searchTimer: ReturnType<typeof setTimeout> | undefined;
+	let searchSeq = 0;
+
+	/** Kill the pending debounce AND any in-flight response — stale results
+	 * must never reopen the dropdown or apply after input changed. */
+	function invalidateSearch() {
+		clearTimeout(searchTimer);
+		searchSeq++;
+	}
+
+	function onHandleInput() {
+		localError = null;
+		deniedHandle = null;
+		invalidateSearch();
+		const q = handle.trim().replace(/^@/, '');
+		if (q.length < 2 || q.startsWith('did:')) {
+			dropdownOpen = false;
+			results = [];
+			return;
+		}
+		const seq = searchSeq;
+		searchTimer = setTimeout(async () => {
+			try {
+				const res = await fetch(
+					`https://typeahead.waow.tech/xrpc/tech.waow.typeahead.searchActors?q=${encodeURIComponent(q)}&limit=6`,
+					{ signal: AbortSignal.timeout(3000) }
+				);
+				if (!res.ok) throw new Error(String(res.status));
+				const data = (await res.json()) as { actors?: Actor[] };
+				if (seq !== searchSeq) return; // a newer query superseded this one
+				// Dedupe by handle: the keyed each would crash on duplicates.
+				results = [
+					...new Map(
+						(data.actors ?? []).filter((a) => typeof a.handle === 'string').map((a) => [a.handle, a])
+					).values()
+				];
+				highlighted = -1;
+				dropdownOpen = results.length > 0;
+			} catch {
+				// The service is experimental; the plain input keeps working without it.
+				if (seq === searchSeq) dropdownOpen = false;
+			}
+		}, 250);
+	}
+
+	function pick(actor: Actor) {
+		handle = actor.handle;
+		dropdownOpen = false;
+		results = [];
+		void go();
+	}
+
+	function onInputKeydown(e: KeyboardEvent) {
+		if (dropdownOpen) {
+			if (e.key === 'ArrowDown') {
+				e.preventDefault();
+				highlighted = (highlighted + 1) % results.length;
+				document.getElementById(`handle-opt-${highlighted}`)?.scrollIntoView({ block: 'nearest' });
+				return;
+			}
+			if (e.key === 'ArrowUp') {
+				e.preventDefault();
+				// From the unset state (-1), the first ArrowUp lands on the LAST
+				// result, not the second-to-last.
+				highlighted = highlighted <= 0 ? results.length - 1 : highlighted - 1;
+				document.getElementById(`handle-opt-${highlighted}`)?.scrollIntoView({ block: 'nearest' });
+				return;
+			}
+			if (e.key === 'Escape') {
+				e.stopPropagation();
+				invalidateSearch();
+				dropdownOpen = false;
+				return;
+			}
+			if (e.key === 'Enter' && highlighted >= 0) {
+				e.preventDefault();
+				pick(results[highlighted]);
+				return;
+			}
+		}
+		if (e.key === 'Enter') {
+			e.preventDefault();
+			void go();
+		}
+	}
+
+	/* ── sign-in ── */
+
+	let continueBtn = $state<HTMLButtonElement | null>(null);
+	let restoreTo: HTMLElement | null = null;
 
 	$effect(() => {
-		if (open) input?.focus();
+		if (open) {
+			// Modal focus management: remember the trigger, focus the primary
+			// control (input, or the Continue button in the welcome-back state).
+			restoreTo ??= document.activeElement as HTMLElement | null;
+			if (welcomeBack) continueBtn?.focus();
+			else input?.focus();
+		} else {
+			// A stale open dropdown would block window-level Escape forever —
+			// and a pending debounce or in-flight response could reopen it.
+			invalidateSearch();
+			dropdownOpen = false;
+			results = [];
+			highlighted = -1;
+			// Fresh state next open: back to welcome-back, no stale errors.
+			// The typed handle is deliberately kept — an accidental dismissal
+			// shouldn't eat what the visitor typed.
+			useDifferent = false;
+			deniedHandle = null;
+			localError = null;
+			restoreTo?.focus();
+			restoreTo = null;
+		}
 	});
 
-	async function go(e: SubmitEvent) {
-		e.preventDefault();
-		const clean = handle.trim().replace(/^@/, '');
+	async function go(withHandle?: string) {
+		const clean = (withHandle ?? handle).trim().replace(/^@/, '');
 		if (!clean || busy) return;
 		busy = true;
 		localError = null;
+		deniedHandle = null;
+		invalidateSearch();
+		dropdownOpen = false;
 		try {
+			// Pre-flight invite check: an uninvited handle finds out here, not
+			// after the whole PDS auth dance. Any hiccup fails open — the server
+			// re-checks after auth regardless.
+			try {
+				const res = await fetch(`/api/invited?handle=${encodeURIComponent(clean)}`, {
+					signal: AbortSignal.timeout(3000)
+				});
+				if (res.ok) {
+					const { invited } = (await res.json()) as { invited: boolean };
+					if (!invited) {
+						deniedHandle = clean;
+						busy = false;
+						return;
+					}
+				}
+			} catch {
+				// Unreachable check service: proceed to login.
+			}
 			await login(clean);
 		} catch (err) {
 			localError = err instanceof Error ? err.message : 'Sign-in failed — try again';
@@ -31,7 +188,7 @@
 	}
 
 	function onkeydown(e: KeyboardEvent) {
-		if (e.key === 'Escape') open = false;
+		if (e.key === 'Escape' && !dropdownOpen) open = false;
 	}
 </script>
 
@@ -39,38 +196,122 @@
 
 {#if open}
 	<div class="backdrop" onclick={() => (open = false)} aria-hidden="true"></div>
-	<form class="sheet" onsubmit={go} aria-label="Sign in with Atmosphere">
+	<div class="sheet" role="dialog" aria-modal="true" aria-label="Sign in with Atmosphere">
 		<div class="sheet-head">
 			<p class="kicker">Sign in with Atmosphere</p>
 			<button type="button" class="close" onclick={() => (open = false)} aria-label="Close">
 				<Icon name="x" size={16} />
 			</button>
 		</div>
-		<p class="explain">
-			Your ATProto account identifies you — we only read your handle and profile. No posting, ever.
-		</p>
-		<label class="field">
-			<span class="kicker">Your handle</span>
-			<input
-				bind:this={input}
-				bind:value={handle}
-				type="text"
-				name="handle"
-				placeholder="you.bsky.social"
-				autocapitalize="none"
-				autocorrect="off"
-				spellcheck="false"
-				autocomplete="username"
-			/>
-		</label>
-		{#if shownError}
-			<p class="error" role="alert">{shownError}</p>
+
+		{#snippet errorNote()}
+			{#if deniedHandle}
+				<p class="error" role="alert">
+					This survey is invite-only — @{deniedHandle} isn’t on the list.
+					<a class="dm" href={retreat.organizerLink} target="_blank" rel="noopener">DM @{retreat.organizerHandle}</a>
+					if that seems wrong.
+				</p>
+			{:else if shownError}
+				<p class="error" role="alert">{shownError}</p>
+			{/if}
+		{/snippet}
+
+		{#if welcomeBack && knownUser}
+			<div class="known">
+				{#if knownUser.avatar}
+					<img class="known-avatar" src={knownUser.avatar} alt="" />
+				{:else}
+					<span class="known-avatar fallback" aria-hidden="true"><Icon name="person" size={20} /></span>
+				{/if}
+				<div class="known-who">
+					<p class="known-name">{knownUser.displayName ?? `@${knownUser.handle}`}</p>
+					<p class="known-handle">Hey, it’s you — @{knownUser.handle}</p>
+				</div>
+			</div>
+			{@render errorNote()}
+			<button bind:this={continueBtn} type="button" class="pill" onclick={() => void go(knownUser.handle)} disabled={busy}>
+				{busy ? 'Contacting your PDS…' : `Continue as @${knownUser.handle}`}
+				<Icon name="butterfly" size={17} />
+			</button>
+			<button
+				type="button"
+				class="alt"
+				onclick={() => {
+					useDifferent = true;
+					deniedHandle = null;
+					localError = null;
+				}}
+			>
+				Use a different account
+			</button>
+		{:else}
+			<p class="explain">
+				Your ATProto account identifies you — we only read your handle and profile. No posting, ever.
+			</p>
+			<div class="field">
+				<label class="kicker" for="signin-handle">Your handle</label>
+				<div
+					class="combo"
+					onfocusout={(e) => {
+						const combo = e.currentTarget as HTMLElement;
+						if (!combo.contains(e.relatedTarget as Node)) dropdownOpen = false;
+					}}
+				>
+					<input
+						id="signin-handle"
+						bind:this={input}
+						bind:value={handle}
+						type="text"
+						name="handle"
+						placeholder="you.bsky.social"
+						autocapitalize="none"
+						autocorrect="off"
+						spellcheck="false"
+						autocomplete="username"
+						role="combobox"
+						aria-expanded={dropdownOpen}
+						aria-controls="handle-results"
+						aria-autocomplete="list"
+						aria-activedescendant={dropdownOpen && highlighted >= 0 ? `handle-opt-${highlighted}` : undefined}
+						oninput={onHandleInput}
+						onkeydown={onInputKeydown}
+					/>
+					{#if dropdownOpen}
+						<ul class="results" id="handle-results" role="listbox">
+							{#each results as actor, i (actor.handle)}
+								<!-- svelte-ignore a11y_click_events_have_key_events -- combobox pattern: keyboard interaction lives on the input -->
+								<li
+									id="handle-opt-{i}"
+									class="result"
+									class:hl={i === highlighted}
+									role="option"
+									aria-selected={i === highlighted}
+									onmousedown={(e) => e.preventDefault()}
+									onclick={() => pick(actor)}
+									onmouseenter={() => (highlighted = i)}
+								>
+									{#if actor.avatar}
+										<img class="result-avatar" src={actor.avatar} alt="" loading="lazy" />
+									{:else}
+										<span class="result-avatar fallback" aria-hidden="true"><Icon name="person" size={14} /></span>
+									{/if}
+									<span class="result-info">
+										<span class="result-name">{actor.displayName || actor.handle}</span>
+										<span class="result-handle">@{actor.handle}</span>
+									</span>
+								</li>
+							{/each}
+						</ul>
+					{/if}
+				</div>
+			</div>
+			{@render errorNote()}
+			<button type="button" class="pill" onclick={() => void go()} disabled={!handle.trim() || busy}>
+				{busy ? 'Contacting your PDS…' : 'Continue'}
+				<Icon name="butterfly" size={17} />
+			</button>
 		{/if}
-		<button class="pill" type="submit" disabled={!handle.trim() || busy}>
-			{busy ? 'Contacting your PDS…' : 'Continue'}
-			<Icon name="butterfly" size={17} />
-		</button>
-	</form>
+	</div>
 {/if}
 
 <style>
@@ -139,6 +380,52 @@
 		max-width: 40ch;
 	}
 
+	/* ── welcome back ── */
+
+	.known {
+		display: flex;
+		align-items: center;
+		gap: 0.9rem;
+	}
+
+	.known-avatar {
+		width: 3rem;
+		height: 3rem;
+		border-radius: 999px;
+		object-fit: cover;
+		border: 1px solid var(--ink-45);
+	}
+
+	.known-avatar.fallback {
+		display: grid;
+		place-items: center;
+		color: var(--ink-70);
+	}
+
+	.known-name {
+		font-weight: 650;
+		font-size: 1.0625rem;
+	}
+
+	.known-handle {
+		font-size: var(--text-author);
+		color: var(--ink-70);
+	}
+
+	.alt {
+		align-self: center;
+		font-size: var(--text-author);
+		color: var(--ink-70);
+		text-decoration: underline;
+		text-underline-offset: 3px;
+	}
+
+	.alt:hover {
+		color: var(--ink);
+	}
+
+	/* ── handle field + typeahead ── */
+
 	.field {
 		display: flex;
 		flex-direction: column;
@@ -149,26 +436,113 @@
 		color: var(--ink-70);
 	}
 
-	.field input {
+	.combo {
+		position: relative;
+	}
+
+	.combo input {
+		width: 100%;
 		background: transparent;
 		border: none;
 		border-bottom: 1px solid var(--ink-45);
 		border-radius: 0;
 		padding: 0.45rem 0 0.55rem;
 		font-size: 1.125rem;
+		caret-color: var(--ink);
 	}
 
-	.field input::placeholder {
+	.combo input::placeholder {
 		color: var(--ink-45);
 	}
 
-	.field input:focus {
+	.combo input:focus {
 		outline: none;
 		border-bottom-color: var(--ink);
+	}
+
+	.results {
+		position: absolute;
+		/* The sheet is bottom-docked on phones, so results open upward. */
+		bottom: calc(100% + 0.4rem);
+		left: 0;
+		right: 0;
+		z-index: 60;
+		list-style: none;
+		background: var(--ground);
+		border: var(--hairline);
+		border-radius: 10px;
+		max-height: 14rem;
+		overflow-y: auto;
+		box-shadow: 0 -8px 28px rgba(11, 9, 8, 0.6);
+	}
+
+	@media (min-width: 700px) {
+		.results {
+			bottom: auto;
+			top: calc(100% + 0.4rem);
+			box-shadow: 0 8px 28px rgba(11, 9, 8, 0.6);
+		}
+	}
+
+	.result {
+		display: flex;
+		align-items: center;
+		gap: 0.7rem;
+		width: 100%;
+		padding: 0.55rem 0.8rem;
+		text-align: left;
+		color: var(--ink);
+		cursor: pointer;
+		transition: background 0.15s var(--ease-out);
+	}
+
+	.result.hl,
+	.result:hover {
+		background: var(--ink-12);
+	}
+
+	.result-avatar {
+		flex: 0 0 auto;
+		width: 2rem;
+		height: 2rem;
+		border-radius: 999px;
+		object-fit: cover;
+	}
+
+	.result-avatar.fallback {
+		display: grid;
+		place-items: center;
+		border: 1px solid var(--ink-45);
+		color: var(--ink-70);
+	}
+
+	.result-info {
+		display: flex;
+		flex-direction: column;
+		min-width: 0;
+	}
+
+	.result-name {
+		font-size: 0.9375rem;
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
+	}
+
+	.result-handle {
+		font-size: var(--text-author);
+		color: var(--ink-70);
 	}
 
 	.error {
 		font-size: var(--text-author);
 		line-height: 1.45;
+	}
+
+	.error .dm {
+		color: var(--ink);
+		font-weight: 550;
+		text-decoration: underline;
+		text-underline-offset: 3px;
 	}
 </style>

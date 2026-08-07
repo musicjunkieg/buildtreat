@@ -1,14 +1,23 @@
 <script lang="ts">
+	import { logout } from '@svelte-atproto/oauth/client';
 	import Icon from '$lib/components/Icon.svelte';
 	import { retreat } from '$lib/content';
 
 	let {
 		signedIn,
+		notInvited = false,
+		deniedHandle = null,
+		closed = false,
+		deadlineDisplay = null,
 		organizerAvatar = null,
 		onsignin,
 		oncontinue
 	}: {
 		signedIn: boolean;
+		notInvited?: boolean;
+		deniedHandle?: string | null;
+		closed?: boolean;
+		deadlineDisplay?: string | null;
 		organizerAvatar?: string | null;
 		onsignin: () => void;
 		oncontinue: () => void;
@@ -16,7 +25,12 @@
 </script>
 
 <div class="hero">
-	<p class="kicker">{retreat.kicker}</p>
+	<div class="topline">
+		<p class="kicker">{retreat.kicker}</p>
+		{#if signedIn || notInvited}
+			<button class="signout" onclick={() => void logout()}>sign out</button>
+		{/if}
+	</div>
 
 	<div class="breathe" aria-hidden="true"></div>
 
@@ -47,9 +61,26 @@
 				</span>
 			</li>
 		{/each}
+		{#if deadlineDisplay}
+			<li>
+				<span class="fact-label">Respond by</span>
+				<span class="fact-value">{deadlineDisplay}, 11:59 PM Pacific</span>
+			</li>
+		{/if}
 	</ul>
 
-	{#if signedIn}
+	{#if notInvited}
+		<p class="closed-note">
+			This survey is invite-only{deniedHandle ? `, and @${deniedHandle} isn't on the list` : ''}. If that
+			seems wrong, DM
+			<a class="handle" href={retreat.organizerLink} target="_blank" rel="noopener">@{retreat.organizerHandle}</a> on Bluesky.
+		</p>
+	{:else if closed}
+		<p class="closed-note">
+			Responses closed {deadlineDisplay ?? ''} — thanks to everyone who answered. Need to change something?
+			DM <a class="handle" href={retreat.organizerLink} target="_blank" rel="noopener">@{retreat.organizerHandle}</a>.
+		</p>
+	{:else if signedIn}
 		<button class="pill" onclick={oncontinue}>Start the survey</button>
 	{:else}
 		<button class="pill" onclick={onsignin}>
@@ -59,12 +90,18 @@
 	{/if}
 
 	<p class="author">
-		{#if organizerAvatar}
-			<img class="avatar" src={organizerAvatar} alt="" />
-		{:else}
-			<span class="avatar" aria-hidden="true"><Icon name="person" size={14} /></span>
-		{/if}
-		{retreat.organizerLabel} <span class="handle">@{retreat.organizerHandle}</span>
+		<span class="avatars" aria-hidden="true">
+			<span class="avatar mark"><Icon name="butterfly" size={15} /></span>
+			{#if organizerAvatar}
+				<img class="avatar overlap" src={organizerAvatar} alt="" />
+			{:else}
+				<span class="avatar overlap"><Icon name="person" size={14} /></span>
+			{/if}
+		</span>
+		<span class="author-text">
+			{retreat.organizerLine}
+			<a class="handle" href={retreat.organizerLink} target="_blank" rel="noopener">@{retreat.organizerHandle}</a>
+		</span>
 	</p>
 </div>
 
@@ -74,6 +111,27 @@
 		flex-direction: column;
 		height: 100%;
 		gap: var(--space-3);
+	}
+
+	.topline {
+		display: flex;
+		align-items: baseline;
+		justify-content: space-between;
+		gap: var(--space-3);
+	}
+
+	.signout {
+		flex: 0 0 auto;
+		font-size: var(--text-kicker);
+		letter-spacing: var(--track-caps);
+		text-transform: uppercase;
+		color: var(--ink-70);
+		text-decoration: underline;
+		text-underline-offset: 3px;
+	}
+
+	.signout:hover {
+		color: var(--ink);
 	}
 
 	.breathe {
@@ -124,13 +182,31 @@
 		margin-left: 0.2rem;
 	}
 
+	.closed-note {
+		font-size: var(--text-body);
+		line-height: 1.5;
+		color: var(--ink-70);
+		max-width: 44ch;
+		padding: 0.9rem 0;
+	}
+
+	.closed-note .handle {
+		color: var(--ink);
+		font-weight: 550;
+	}
+
 	.author {
 		display: flex;
 		align-items: center;
-		gap: 0.55rem;
+		gap: 0.65rem;
 		margin-top: var(--space-2);
 		font-size: var(--text-author);
 		color: var(--ink-70);
+	}
+
+	.avatars {
+		display: flex;
+		flex: 0 0 auto;
 	}
 
 	.avatar {
@@ -144,8 +220,33 @@
 		object-fit: cover;
 	}
 
+	.avatar.mark {
+		color: var(--ink);
+		background: var(--ground);
+	}
+
+	.avatar.overlap {
+		margin-left: -0.55rem;
+		background: var(--ground);
+	}
+
+	.author-text {
+		line-height: 1.35;
+		text-wrap: balance;
+	}
+
 	.handle {
 		color: var(--ink);
 		font-weight: 550;
+	}
+
+	a.handle {
+		text-decoration: underline;
+		text-underline-offset: 3px;
+		text-decoration-color: var(--ink-45);
+	}
+
+	a.handle:hover {
+		text-decoration-color: var(--ink);
 	}
 </style>

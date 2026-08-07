@@ -1,6 +1,7 @@
 <script lang="ts">
+	import { logout } from '@svelte-atproto/oauth/client';
 	import Icon from '$lib/components/Icon.svelte';
-	import { interestQuestion, itemTitles, locations, travelQuestion, type FeedItemId } from '$lib/content';
+	import { interestQuestion, itemTitles, locations, retreat, travelQuestion, type FeedItemId } from '$lib/content';
 	import { formatRange, portionLabel } from '$lib/dates';
 	import type { SurveyState } from '$lib/survey.svelte';
 
@@ -10,7 +11,10 @@
 		handle,
 		submitting,
 		submitted,
+		updated = false,
 		submitError,
+		closed = false,
+		deadlineDisplay = null,
 		onsignin,
 		onsubmit,
 		onjump
@@ -20,7 +24,10 @@
 		handle: string | null;
 		submitting: boolean;
 		submitted: boolean;
+		updated?: boolean;
 		submitError: string | null;
+		closed?: boolean;
+		deadlineDisplay?: string | null;
 		onsignin: () => void;
 		onsubmit: () => void;
 		onjump: (id: FeedItemId) => void;
@@ -29,7 +36,9 @@
 	const interestLabel = $derived(interestQuestion.options.find((o) => o.value === survey.interest)?.label ?? null);
 	const travelLabel = $derived(travelQuestion.options.find((o) => o.value === survey.travel)?.label ?? null);
 	const rankedNames = $derived(
-		survey.ranking.map((id, i) => `${i + 1}. ${locations.find((l) => l.id === id)?.name ?? id}`)
+		survey.noPreference
+			? ['No preference']
+			: survey.ranking.map((id, i) => `${i + 1}. ${locations.find((l) => l.id === id)?.name ?? id}`)
 	);
 
 	const rows = $derived(
@@ -88,23 +97,44 @@
 		{/each}
 	</ul>
 
-	{#if !signedIn}
+	{#if closed}
+		<p class="deadline-note">
+			The survey closed {deadlineDisplay ?? ''}. Answers are locked — if something needs fixing,
+			<a class="dm" href={retreat.organizerLink} target="_blank" rel="noopener">DM @{retreat.organizerHandle}</a>.
+		</p>
+	{:else if !signedIn}
 		<button class="pill" onclick={onsignin}>
 			Sign in with Atmosphere to submit
 			<Icon name="butterfly" size={17} />
 		</button>
 	{:else if submitted}
-		<button class="pill ghost" onclick={onsubmit} disabled={submitting}>
-			{submitting ? 'Updating…' : 'Update my answers'}
+		<button
+			class="pill ghost"
+			class:confirmed={updated}
+			onclick={onsubmit}
+			disabled={submitting || !survey.readyToSubmit}
+			aria-live="polite"
+		>
+			{submitting ? 'Updating…' : updated ? 'Answers updated!' : 'Update my answers'}
 		</button>
+		{#if deadlineDisplay}
+			<p class="deadline-note">You can update your answers until {deadlineDisplay}, 11:59 PM Pacific.</p>
+		{/if}
 	{:else}
 		<button class="pill" onclick={onsubmit} disabled={!survey.readyToSubmit || submitting}>
 			{submitting ? 'Sending…' : survey.readyToSubmit ? 'Send it in' : 'A few answers still missing'}
 		</button>
+		{#if deadlineDisplay}
+			<p class="deadline-note">Responses close {deadlineDisplay}, 11:59 PM Pacific.</p>
+		{/if}
 	{/if}
 
 	{#if submitError}
 		<p class="error" role="alert">{submitError} — your answers are saved on this device; try again in a moment.</p>
+	{/if}
+
+	{#if signedIn && (submitted || closed)}
+		<button class="signout" onclick={() => void logout()}>All set — sign out</button>
 	{/if}
 </div>
 
@@ -119,6 +149,25 @@
 	.breathe {
 		flex: 1 1 auto;
 		min-height: 8vh;
+	}
+
+	.signout {
+		align-self: center;
+		font-size: var(--text-kicker);
+		letter-spacing: var(--track-caps);
+		text-transform: uppercase;
+		color: var(--ink-70);
+		text-decoration: underline;
+		text-underline-offset: 3px;
+	}
+
+	.signout:hover {
+		color: var(--ink);
+	}
+
+	.pill.ghost.confirmed {
+		border-color: var(--ink);
+		font-weight: 650;
 	}
 
 	.title {
@@ -182,5 +231,18 @@
 	.error {
 		font-size: var(--text-author);
 		line-height: 1.45;
+	}
+
+	.deadline-note .dm {
+		color: var(--ink);
+		font-weight: 550;
+		text-decoration: underline;
+		text-underline-offset: 3px;
+	}
+
+	.deadline-note {
+		font-size: var(--text-author);
+		color: var(--ink-70);
+		text-align: center;
 	}
 </style>

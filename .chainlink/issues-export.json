@@ -1,12 +1,512 @@
 {
   "version": 1,
-  "exported_at": "2026-08-05T22:30:24.740522+00:00",
+  "exported_at": "2026-08-07T03:09:18.778219+00:00",
   "issues": [
+    {
+      "id": 46,
+      "title": "CodeRabbit round 6: six trivia fixes",
+      "description": null,
+      "status": "open",
+      "priority": "medium",
+      "parent_id": null,
+      "labels": [
+        "task"
+      ],
+      "comments": [],
+      "created_at": "2026-08-07T03:08:10.267902+00:00",
+      "updated_at": "2026-08-07T03:08:10.267902+00:00",
+      "closed_at": null
+    },
+    {
+      "id": 45,
+      "title": "CodeRabbit round 5: 3 fixes, 4 reasoned skips",
+      "description": null,
+      "status": "closed",
+      "priority": "high",
+      "parent_id": null,
+      "labels": [
+        "task"
+      ],
+      "comments": [],
+      "created_at": "2026-08-07T03:00:09.817611+00:00",
+      "updated_at": "2026-08-07T03:00:44.909714+00:00",
+      "closed_at": "2026-08-07T03:00:44.909714+00:00"
+    },
+    {
+      "id": 44,
+      "title": "CodeRabbit round 4: 10 findings across both overlapping reviews",
+      "description": null,
+      "status": "closed",
+      "priority": "high",
+      "parent_id": null,
+      "labels": [
+        "task"
+      ],
+      "comments": [],
+      "created_at": "2026-08-07T02:50:48.311586+00:00",
+      "updated_at": "2026-08-07T02:51:42.862355+00:00",
+      "closed_at": "2026-08-07T02:51:42.862355+00:00"
+    },
+    {
+      "id": 43,
+      "title": "Address CodeRabbit review on PR #3 until approval",
+      "description": null,
+      "status": "closed",
+      "priority": "high",
+      "parent_id": null,
+      "labels": [
+        "task"
+      ],
+      "comments": [],
+      "created_at": "2026-08-07T01:47:57.073873+00:00",
+      "updated_at": "2026-08-07T02:42:53.642132+00:00",
+      "closed_at": "2026-08-07T02:42:53.642132+00:00"
+    },
+    {
+      "id": 42,
+      "title": "Review findings: pre-pin allowlist DIDs, fail-open gates, log swallowed errors",
+      "description": null,
+      "status": "closed",
+      "priority": "high",
+      "parent_id": null,
+      "labels": [
+        "bug"
+      ],
+      "comments": [],
+      "created_at": "2026-08-06T20:38:00.782073+00:00",
+      "updated_at": "2026-08-06T20:42:10.007763+00:00",
+      "closed_at": "2026-08-06T20:42:10.007763+00:00"
+    },
+    {
+      "id": 41,
+      "title": "Review: answers-updated confirmation + sign-out at end",
+      "description": null,
+      "status": "closed",
+      "priority": "high",
+      "parent_id": null,
+      "labels": [
+        "enhancement"
+      ],
+      "comments": [],
+      "created_at": "2026-08-06T20:16:34.494355+00:00",
+      "updated_at": "2026-08-06T20:17:20.523004+00:00",
+      "closed_at": "2026-08-06T20:17:20.523004+00:00"
+    },
+    {
+      "id": 40,
+      "title": "Location question: add no-preference option",
+      "description": null,
+      "status": "closed",
+      "priority": "high",
+      "parent_id": null,
+      "labels": [
+        "enhancement"
+      ],
+      "comments": [],
+      "created_at": "2026-08-06T20:06:57.814287+00:00",
+      "updated_at": "2026-08-06T20:08:27.332322+00:00",
+      "closed_at": "2026-08-06T20:08:27.332322+00:00"
+    },
+    {
+      "id": 39,
+      "title": "Add tyler.fun to allowlist",
+      "description": null,
+      "status": "closed",
+      "priority": "high",
+      "parent_id": null,
+      "labels": [
+        "task"
+      ],
+      "comments": [],
+      "created_at": "2026-08-06T19:57:59.925268+00:00",
+      "updated_at": "2026-08-06T19:58:11.877188+00:00",
+      "closed_at": "2026-08-06T19:58:11.877188+00:00"
+    },
+    {
+      "id": 38,
+      "title": "Linkify DM @chaosgreml.in mentions via aturi.to profile waypoint",
+      "description": null,
+      "status": "closed",
+      "priority": "medium",
+      "parent_id": null,
+      "labels": [
+        "enhancement"
+      ],
+      "comments": [],
+      "created_at": "2026-08-06T17:45:01.829062+00:00",
+      "updated_at": "2026-08-06T17:46:48.454883+00:00",
+      "closed_at": "2026-08-06T17:46:48.454883+00:00"
+    },
+    {
+      "id": 37,
+      "title": "Pre-flight allowlist check on handle submit, before OAuth",
+      "description": null,
+      "status": "closed",
+      "priority": "high",
+      "parent_id": null,
+      "labels": [
+        "enhancement"
+      ],
+      "comments": [],
+      "created_at": "2026-08-06T17:22:21.537532+00:00",
+      "updated_at": "2026-08-06T17:23:13.859327+00:00",
+      "closed_at": "2026-08-06T17:23:13.859327+00:00"
+    },
+    {
+      "id": 36,
+      "title": "Gate allowlist at sign-in, not just submit",
+      "description": null,
+      "status": "closed",
+      "priority": "high",
+      "parent_id": null,
+      "labels": [
+        "bug"
+      ],
+      "comments": [],
+      "created_at": "2026-08-06T13:07:42.682042+00:00",
+      "updated_at": "2026-08-06T13:12:40.674714+00:00",
+      "closed_at": "2026-08-06T13:12:40.674714+00:00"
+    },
+    {
+      "id": 35,
+      "title": "Cut over to buildersretre.at: ORIGIN, redirect, verify",
+      "description": null,
+      "status": "closed",
+      "priority": "high",
+      "parent_id": null,
+      "labels": [
+        "deploy"
+      ],
+      "comments": [
+        {
+          "content": "[action] buildersretre.at fully live and verified; all launch blockers cleared",
+          "created_at": "2026-08-06T06:48:49.497895+00:00",
+          "kind": "note"
+        }
+      ],
+      "created_at": "2026-08-06T06:39:29.175505+00:00",
+      "updated_at": "2026-08-06T06:48:49.488866+00:00",
+      "closed_at": "2026-08-06T06:48:49.488866+00:00"
+    },
+    {
+      "id": 34,
+      "title": "Marque support email for stuck zone ingestion",
+      "description": null,
+      "status": "open",
+      "priority": "medium",
+      "parent_id": null,
+      "labels": [
+        "chore"
+      ],
+      "comments": [],
+      "created_at": "2026-08-06T02:35:54.706639+00:00",
+      "updated_at": "2026-08-06T02:35:54.706639+00:00",
+      "closed_at": null
+    },
+    {
+      "id": 33,
+      "title": "Write at.marque.dns zone record for Bryan's domain",
+      "description": null,
+      "status": "closed",
+      "priority": "high",
+      "parent_id": null,
+      "labels": [
+        "feature"
+      ],
+      "comments": [
+        {
+          "content": "[auto] Session resumed after context compression. Last action: Allowlist live: 18 handles, all resolve; enforcement active",
+          "created_at": "2026-08-06T02:04:39.541778+00:00",
+          "kind": "note"
+        },
+        {
+          "content": "[auto] Session resumed after context compression. Last action: Allowlist live: 18 handles, all resolve; enforcement active",
+          "created_at": "2026-08-06T02:05:13.784033+00:00",
+          "kind": "note"
+        }
+      ],
+      "created_at": "2026-08-06T01:52:23.634143+00:00",
+      "updated_at": "2026-08-06T06:48:49.475961+00:00",
+      "closed_at": "2026-08-06T06:48:49.475961+00:00"
+    },
+    {
+      "id": 32,
+      "title": "Load allowlist: 16 invitee handles + organizer",
+      "description": null,
+      "status": "closed",
+      "priority": "high",
+      "parent_id": null,
+      "labels": [
+        "deploy"
+      ],
+      "comments": [
+        {
+          "content": "[action] Allowlist live: 18 handles, all resolve; enforcement active",
+          "created_at": "2026-08-06T01:32:05.810339+00:00",
+          "kind": "note"
+        },
+        {
+          "content": "[auto] Session resumed after context compression. Last action: Allowlist live: 18 handles, all resolve; enforcement active",
+          "created_at": "2026-08-06T01:47:59.562068+00:00",
+          "kind": "note"
+        },
+        {
+          "content": "[auto] Session resumed after context compression. Last action: Allowlist live: 18 handles, all resolve; enforcement active",
+          "created_at": "2026-08-06T01:48:25.249795+00:00",
+          "kind": "note"
+        }
+      ],
+      "created_at": "2026-08-06T01:31:27.256338+00:00",
+      "updated_at": "2026-08-06T01:32:05.803830+00:00",
+      "closed_at": "2026-08-06T01:32:05.803830+00:00"
+    },
+    {
+      "id": 31,
+      "title": "Deadline: Aug 15 2026 23:59:59 PT — display + enforcement",
+      "description": null,
+      "status": "closed",
+      "priority": "high",
+      "parent_id": null,
+      "labels": [
+        "feature"
+      ],
+      "comments": [],
+      "created_at": "2026-08-06T00:50:55.506811+00:00",
+      "updated_at": "2026-08-06T01:06:05.236013+00:00",
+      "closed_at": "2026-08-06T01:06:05.236013+00:00"
+    },
+    {
+      "id": 30,
+      "title": "Rebuild and deploy Bryan's manual tweaks",
+      "description": null,
+      "status": "closed",
+      "priority": "medium",
+      "parent_id": null,
+      "labels": [
+        "deploy"
+      ],
+      "comments": [
+        {
+          "content": "[action] Bryan's copy tweaks deployed + verified live + committed to PR 3",
+          "created_at": "2026-08-06T00:34:55.120+00:00",
+          "kind": "note"
+        }
+      ],
+      "created_at": "2026-08-06T00:26:15.335220+00:00",
+      "updated_at": "2026-08-06T00:34:55.106191+00:00",
+      "closed_at": "2026-08-06T00:34:55.106191+00:00"
+    },
+    {
+      "id": 29,
+      "title": "Desktop (16-inch MBP) reviewer snapshots",
+      "description": null,
+      "status": "closed",
+      "priority": "medium",
+      "parent_id": null,
+      "labels": [
+        "chore"
+      ],
+      "comments": [
+        {
+          "content": "[action] Desktop reviewer pack (16-inch MBP, 2x) delivered; both packs in reviewer-pack/",
+          "created_at": "2026-08-06T00:11:28.678793+00:00",
+          "kind": "note"
+        }
+      ],
+      "created_at": "2026-08-06T00:10:03.204886+00:00",
+      "updated_at": "2026-08-06T00:11:28.673653+00:00",
+      "closed_at": "2026-08-06T00:11:28.673653+00:00"
+    },
+    {
+      "id": 28,
+      "title": "Copy reviewer pack into project folder",
+      "description": null,
+      "status": "closed",
+      "priority": "low",
+      "parent_id": null,
+      "labels": [
+        "chore"
+      ],
+      "comments": [],
+      "created_at": "2026-08-06T00:08:02.436352+00:00",
+      "updated_at": "2026-08-06T00:11:28.667356+00:00",
+      "closed_at": "2026-08-06T00:11:28.667356+00:00"
+    },
+    {
+      "id": 27,
+      "title": "Reviewer snapshot pack: high-res captures of all seven items",
+      "description": null,
+      "status": "closed",
+      "priority": "medium",
+      "parent_id": null,
+      "labels": [
+        "chore"
+      ],
+      "comments": [
+        {
+          "content": "[action] Reviewer snapshot pack (7 pages, 3x retina) delivered to Bryan",
+          "created_at": "2026-08-06T00:06:01.990414+00:00",
+          "kind": "note"
+        }
+      ],
+      "created_at": "2026-08-06T00:04:00.474428+00:00",
+      "updated_at": "2026-08-06T00:06:01.983743+00:00",
+      "closed_at": "2026-08-06T00:06:01.983743+00:00"
+    },
+    {
+      "id": 26,
+      "title": "Bluesky-organized attribution + logout affordance",
+      "description": null,
+      "status": "closed",
+      "priority": "high",
+      "parent_id": null,
+      "labels": [
+        "design"
+      ],
+      "comments": [
+        {
+          "content": "[action] Bluesky attribution + logout shipped to prod and PR 3",
+          "created_at": "2026-08-05T23:36:30.817448+00:00",
+          "kind": "note"
+        }
+      ],
+      "created_at": "2026-08-05T23:33:55.024689+00:00",
+      "updated_at": "2026-08-05T23:36:30.805334+00:00",
+      "closed_at": "2026-08-05T23:36:30.805334+00:00"
+    },
+    {
+      "id": 25,
+      "title": "Favicon: numeric globe in world style",
+      "description": null,
+      "status": "closed",
+      "priority": "medium",
+      "parent_id": 20,
+      "labels": [],
+      "comments": [],
+      "created_at": "2026-08-05T23:17:24.676842+00:00",
+      "updated_at": "2026-08-05T23:29:50.959224+00:00",
+      "closed_at": "2026-08-05T23:29:50.959224+00:00"
+    },
+    {
+      "id": 24,
+      "title": "Handle typeahead (typeahead.waow.tech) + welcome-back cookie",
+      "description": null,
+      "status": "closed",
+      "priority": "medium",
+      "parent_id": 20,
+      "labels": [],
+      "comments": [],
+      "created_at": "2026-08-05T23:17:24.672057+00:00",
+      "updated_at": "2026-08-05T23:29:50.953188+00:00",
+      "closed_at": "2026-08-05T23:29:50.953188+00:00"
+    },
+    {
+      "id": 23,
+      "title": "Location field: ZIP/city lookup",
+      "description": null,
+      "status": "closed",
+      "priority": "medium",
+      "parent_id": 20,
+      "labels": [],
+      "comments": [],
+      "created_at": "2026-08-05T23:17:24.666395+00:00",
+      "updated_at": "2026-08-05T23:29:50.946365+00:00",
+      "closed_at": "2026-08-05T23:29:50.946365+00:00"
+    },
+    {
+      "id": 22,
+      "title": "Next affordance + Enter-to-advance per item",
+      "description": null,
+      "status": "closed",
+      "priority": "medium",
+      "parent_id": 20,
+      "labels": [],
+      "comments": [],
+      "created_at": "2026-08-05T23:17:24.661887+00:00",
+      "updated_at": "2026-08-05T23:29:50.937006+00:00",
+      "closed_at": "2026-08-05T23:29:50.937006+00:00"
+    },
+    {
+      "id": 21,
+      "title": "Lock feed pre-auth: hero only, dimmed rail, unlock on sign-in",
+      "description": null,
+      "status": "closed",
+      "priority": "medium",
+      "parent_id": 20,
+      "labels": [],
+      "comments": [],
+      "created_at": "2026-08-05T23:17:24.656636+00:00",
+      "updated_at": "2026-08-05T23:29:50.922641+00:00",
+      "closed_at": "2026-08-05T23:29:50.922641+00:00"
+    },
+    {
+      "id": 20,
+      "title": "Post-smoke-test notes from Bryan",
+      "description": null,
+      "status": "closed",
+      "priority": "high",
+      "parent_id": null,
+      "labels": [
+        "feedback"
+      ],
+      "comments": [
+        {
+          "content": "[action] Feedback round shipped: PR 3 open, deployed to production",
+          "created_at": "2026-08-05T23:29:50.970055+00:00",
+          "kind": "note"
+        }
+      ],
+      "created_at": "2026-08-05T23:11:51.418887+00:00",
+      "updated_at": "2026-08-05T23:29:50.964592+00:00",
+      "closed_at": "2026-08-05T23:29:50.964592+00:00"
+    },
+    {
+      "id": 19,
+      "title": "Analyze smoke-test HAR from deployed survey",
+      "description": null,
+      "status": "closed",
+      "priority": "high",
+      "parent_id": null,
+      "labels": [
+        "bug"
+      ],
+      "comments": [
+        {
+          "content": "[action] OAuth login fixed (workerd export conditions in vite ssr); deployed + verified; awaiting Bryan phone retest",
+          "created_at": "2026-08-05T23:05:59.831927+00:00",
+          "kind": "note"
+        }
+      ],
+      "created_at": "2026-08-05T22:54:53.738511+00:00",
+      "updated_at": "2026-08-05T23:05:59.819165+00:00",
+      "closed_at": "2026-08-05T23:05:59.819165+00:00"
+    },
+    {
+      "id": 18,
+      "title": "Provision Cloudflare and deploy the survey to workers.dev",
+      "description": null,
+      "status": "closed",
+      "priority": "high",
+      "parent_id": null,
+      "labels": [
+        "deploy"
+      ],
+      "comments": [
+        {
+          "content": "[action] Deployed live to atmospheric-builders-retreat.bryan-78d.workers.dev; OAuth healthy; awaiting Bryan's smoke test + allowlist + deadline",
+          "created_at": "2026-08-05T22:47:40.952763+00:00",
+          "kind": "note"
+        }
+      ],
+      "created_at": "2026-08-05T22:39:08.219460+00:00",
+      "updated_at": "2026-08-05T22:47:40.939874+00:00",
+      "closed_at": "2026-08-05T22:47:40.939874+00:00"
+    },
     {
       "id": 17,
       "title": "Write LAUNCH.md runbook for taking the survey live",
       "description": null,
-      "status": "open",
+      "status": "closed",
       "priority": "high",
       "parent_id": null,
       "labels": [
@@ -14,8 +514,8 @@
       ],
       "comments": [],
       "created_at": "2026-08-05T22:29:14.922766+00:00",
-      "updated_at": "2026-08-05T22:29:14.922766+00:00",
-      "closed_at": null
+      "updated_at": "2026-08-05T22:30:28.527657+00:00",
+      "closed_at": "2026-08-05T22:30:28.527657+00:00"
     },
     {
       "id": 16,

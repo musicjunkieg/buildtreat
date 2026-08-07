@@ -6,8 +6,8 @@
 export const retreat = {
 	name: 'Atmospheric Builders’ Retreat',
 	nameLines: ['ATMOSPHERIC', 'BUILDERS’ RETREAT.'] as [string, string],
-	kicker: 'For the builders of the Atmosphere',
-	acknowledgment: ['You raised your hand. It’s happening.', 'Help us pick the dates — and the place.'] as [
+	kicker: 'For the (very cool) builders of the Atmosphere',
+	acknowledgment: ['An awesome event is calling', 'Help us pick the dates and narrow down a location.'] as [
 		string,
 		string
 	],
@@ -15,11 +15,18 @@ export const retreat = {
 		{ label: 'What', value: '3 nights · 2 full days' },
 		{ label: 'Where', value: 'Southern California' },
 		{ label: 'When', value: 'Sometime between Sept 1 – Nov 15' },
-		{ label: 'Covered', value: 'Lodging & food — sponsored by Bluesky', bluesky: true }
+		{ label: 'Your Costs', value: 'Travel only. Lodging & food all taken care of' }
 	],
 	signIn: 'Sign in with Atmosphere',
-	organizerLabel: 'organized by',
+	organizerLine: 'Organized by Bluesky, in partnership with',
 	organizerHandle: 'chaosgreml.in',
+	/**
+	 * aturi.to universal link: opens the organizer's profile in whatever
+	 * Atmosphere client the visitor uses (there's no cross-client DM deep
+	 * link, so the profile — with its Message button — is the closest stop).
+	 * DID, not handle, so the link survives handle changes.
+	 */
+	organizerLink: 'https://aturi.to/profile/did:plc:h3wpawnrlptr4534chevddo6',
 	/** Window the availability calendar covers (inclusive). */
 	window: { start: '2026-09-01', end: '2026-11-15' }
 } as const;
@@ -81,8 +88,15 @@ export const datesQuestion = {
 export const locationQuestion = {
 	title: 'Where should it be?',
 	prompt: 'Do you have a preference in location? Rank your top three.',
-	maxRank: 3
+	maxRank: 3,
+	noPreference: 'I don’t have a preference — they all sound great'
 } as const;
+
+/**
+ * Sentinel ranking entry meaning "no location preference". Lives in the same
+ * ranking array (and JSON column) as real location ids, always alone.
+ */
+export const NO_PREFERENCE = 'no-preference';
 
 export const youQuestion = {
 	title: 'Who’s coming',

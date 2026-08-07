@@ -5,10 +5,12 @@
 	let {
 		current,
 		completion,
+		dimmed = false,
 		onjump
 	}: {
 		current: FeedItemId;
 		completion: Record<FeedItemId, boolean>;
+		dimmed?: boolean;
 		onjump: (id: FeedItemId) => void;
 	} = $props();
 
@@ -22,18 +24,18 @@
 	];
 </script>
 
-<nav class="rail" aria-label="Survey sections">
+<nav class="rail" class:dimmed aria-label="Survey sections">
 	{#each stops as stop (stop.id)}
 		<button
 			class="stop"
 			class:active={current === stop.id}
 			class:done={completion[stop.id]}
 			onclick={() => onjump(stop.id)}
-			aria-label="{itemTitles[stop.id]}{completion[stop.id] ? ' — answered' : ''}"
+			aria-label="{itemTitles[stop.id]}{dimmed ? ' — sign in to open' : completion[stop.id] ? ' — answered' : ''}"
 			aria-current={current === stop.id ? 'true' : undefined}
 		>
 			<Icon name={stop.icon} size={22} />
-			{#if completion[stop.id]}
+			{#if completion[stop.id] && !dimmed}
 				<span class="tick" aria-hidden="true"><Icon name="check" size={9} /></span>
 			{/if}
 		</button>
@@ -50,6 +52,16 @@
 		display: flex;
 		flex-direction: column;
 		gap: 1.15rem;
+	}
+
+	/* Signed-out: the map of what's ahead stays faint and quiet. */
+	.rail.dimmed .stop {
+		opacity: 0.22;
+	}
+
+	.rail.dimmed .stop:hover {
+		opacity: 0.35;
+		transform: none;
 	}
 
 	.stop {

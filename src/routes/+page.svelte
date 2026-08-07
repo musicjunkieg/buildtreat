@@ -24,14 +24,27 @@
 
 	const survey = new SurveyState();
 
-	const signedIn = $derived(data.user !== null);
+	const signedIn = $derived(data.user !== null && data.allowed);
+	const notInvited = $derived(data.user !== null && !data.allowed);
 	const handle = $derived(data.user?.handle ?? null);
+	const closed = $derived(data.closed);
+	const deadlineDisplay = $derived(
+		data.deadline
+			? new Date(data.deadline).toLocaleDateString('en-US', {
+					timeZone: 'America/Los_Angeles',
+					month: 'long',
+					day: 'numeric'
+				})
+			: null
+	);
 
 	let current = $state<FeedItemId>('hero');
 	let sheetOpen = $state(false);
 	let submitting = $state(false);
 	let justSubmitted = $state(false);
 	const submitted = $derived(data.existingResponse || justSubmitted);
+	let justUpdated = $state(false);
+	let updatedTimer: ReturnType<typeof setTimeout> | undefined;
 	let submitError = $state<string | null>(null);
 
 	let feed = $state<HTMLElement | null>(null);
@@ -63,12 +76,25 @@
 	});
 
 	function jump(id: FeedItemId) {
+		// Pre-auth the feed is sealed: the survey isn't browsable until sign-in.
+		if (!signedIn && id !== 'hero') {
+			openSignIn();
+			return;
+		}
 		document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
 	}
 
+	/** Where "next" goes from an item — "no" respondents skip the questions
+	 * they don't owe (travel/dates/location) and land on review. */
+	function nextAfter(id: FeedItemId): FeedItemId | null {
+		if (id === 'interest' && survey.interest === 'no') return 'review';
+		const i = feedItems.indexOf(id);
+		return i < feedItems.length - 1 ? feedItems[i + 1] : null;
+	}
+
 	function next() {
-		const i = feedItems.indexOf(current);
-		if (i < feedItems.length - 1) jump(feedItems[i + 1]);
+		const n = nextAfter(current);
+		if (n) jump(n);
 	}
 
 	function prev() {
@@ -78,14 +104,29 @@
 
 	function onkeydown(e: KeyboardEvent) {
 		if (sheetOpen) return;
+		if (!signedIn) return;
 		const t = e.target as HTMLElement;
-		if (t.closest('input, select, textarea, [role="application"], details')) return;
+		if (t.closest('input:not([type="radio"]), select, textarea, details, .calendar')) return;
 		if (e.key === 'ArrowDown' || e.key === 'PageDown') {
 			e.preventDefault();
 			next();
 		} else if (e.key === 'ArrowUp' || e.key === 'PageUp') {
 			e.preventDefault();
 			prev();
+		} else if (e.key === 'Enter') {
+			// A focused, still-unranked place keeps native Enter so keyboard
+			// users can rank more than one; a ranked place must not re-toggle
+			// (that would un-rank it), so Enter advances instead. Radios never
+			// toggle on Enter, so they always advance. Links and non-answer
+			// buttons keep their native Enter.
+			const place = t.closest('.place');
+			if (place && place.getAttribute('aria-pressed') !== 'true') return;
+			const answerControl = place ?? t.closest('input[type="radio"], [role="radio"]');
+			if (!answerControl && t.closest('button, a')) return;
+			if (survey.completion[current] || current === 'hero') {
+				e.preventDefault();
+				next();
+			}
 		}
 	}
 
@@ -98,6 +139,7 @@
 			openSignIn();
 			return;
 		}
+		const wasUpdate = submitted;
 		submitting = true;
 		submitError = null;
 		try {
@@ -111,6 +153,12 @@
 				throw new Error(body?.message ?? `The server said no (${res.status})`);
 			}
 			justSubmitted = true;
+			if (wasUpdate) {
+				// Flash the confirmation so a repeat submitter knows it took.
+				justUpdated = true;
+				clearTimeout(updatedTimer);
+				updatedTimer = setTimeout(() => (justUpdated = false), 4000);
+			}
 			survey.clearLocal();
 			jump('review');
 		} catch (err) {
@@ -123,7 +171,7 @@
 
 <svelte:window {onkeydown} />
 
-<main class="feed" bind:this={feed}>
+<main class="feed" class:locked={!signedIn} inert={sheetOpen} bind:this={feed}>
 	<FeedItem
 		id="hero"
 		media="/media/hero-portrait.png"
@@ -131,14 +179,14 @@
 		eager
 		labelledby="hero-title"
 	>
-		<HeroItem {signedIn} organizerAvatar={data.organizer.avatar} onsignin={openSignIn} oncontinue={() => jump('you')} />
+		<HeroItem {signedIn} {notInvited} deniedHandle={data.user?.handle ?? null} {closed} {deadlineDisplay} organizerAvatar={data.organizer.avatar} onsignin={openSignIn} oncontinue={() => jump('you')} />
 	</FeedItem>
 
-	<FeedItem id="you" media="/media/item-you.png" labelledby="you-title">
-		<YouItem {survey} {signedIn} {handle} onsignin={openSignIn} />
+	<FeedItem id="you" inert={!signedIn || closed} media="/media/item-you.png" labelledby="you-title">
+		<YouItem {survey} {signedIn} {handle} onsignin={openSignIn} onnext={() => jump('interest')} />
 	</FeedItem>
 
-	<FeedItem id="interest" media="/media/item-interest.png" labelledby="interest-title">
+	<FeedItem id="interest" inert={!signedIn || closed} media="/media/item-interest.png" labelledby="interest-title">
 		<ChoiceItem
 			titleId="interest-title"
 			title={interestQuestion.title}
@@ -152,10 +200,11 @@
 				survey.interest = v as InterestValue;
 				survey.saveLocal();
 			}}
+			onnext={() => jump(survey.interest === 'no' ? 'review' : 'travel')}
 		/>
 	</FeedItem>
 
-	<FeedItem id="travel" media="/media/item-travel.png" labelledby="travel-title">
+	<FeedItem id="travel" inert={!signedIn || closed} media="/media/item-travel.png" labelledby="travel-title">
 		<ChoiceItem
 			titleId="travel-title"
 			title={travelQuestion.title}
@@ -169,24 +218,28 @@
 				survey.travel = v as TravelValue;
 				survey.saveLocal();
 			}}
+			onnext={() => jump('dates')}
 		/>
 	</FeedItem>
 
-	<FeedItem id="dates" media="/media/item-dates.png" darker labelledby="dates-title">
-		<DatesItem {survey} {signedIn} onsignin={openSignIn} />
+	<FeedItem id="dates" inert={!signedIn || closed} media="/media/item-dates.png" darker labelledby="dates-title">
+		<DatesItem {survey} {signedIn} onsignin={openSignIn} onnext={() => jump('location')} />
 	</FeedItem>
 
-	<FeedItem id="location" media="/media/item-location.png" darker labelledby="location-title">
-		<LocationItem {survey} {signedIn} onsignin={openSignIn} />
+	<FeedItem id="location" inert={!signedIn || closed} media="/media/item-location.png" darker labelledby="location-title">
+		<LocationItem {survey} {signedIn} onsignin={openSignIn} onnext={() => jump('review')} />
 	</FeedItem>
 
-	<FeedItem id="review" media="/media/item-review.png" labelledby="review-title">
+	<FeedItem id="review" inert={!signedIn} media="/media/item-review.png" labelledby="review-title">
 		<ReviewItem
 			{survey}
 			{signedIn}
 			{handle}
+			{closed}
+			{deadlineDisplay}
 			{submitting}
 			{submitted}
+			updated={justUpdated}
 			{submitError}
 			onsignin={openSignIn}
 			onsubmit={submit}
@@ -195,9 +248,13 @@
 	</FeedItem>
 </main>
 
-<Rail {current} completion={{ ...survey.completion, review: submitted }} onjump={jump} />
-<Dots {current} onjump={jump} />
-<SignInSheet bind:open={sheetOpen} error={data.authError} />
+<div inert={sheetOpen}>
+	<Rail {current} completion={{ ...survey.completion, review: submitted }} dimmed={!signedIn} onjump={jump} />
+	{#if signedIn}
+		<Dots {current} onjump={jump} />
+	{/if}
+</div>
+<SignInSheet bind:open={sheetOpen} error={data.authError} knownUser={data.knownUser} />
 
 <style>
 	.feed {
@@ -205,6 +262,11 @@
 		overflow-y: auto;
 		scroll-snap-type: y mandatory;
 		scroll-behavior: smooth;
+	}
+
+	/* Signed-out: the hero is the whole page — nothing to peek at below. */
+	.feed.locked {
+		overflow: hidden;
 	}
 
 	@media (prefers-reduced-motion: reduce) {

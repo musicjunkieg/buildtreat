@@ -7,10 +7,42 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## [Unreleased]
 
 ### Added
+- Review: answers-updated confirmation + sign-out at end (#41)
+- Location question: add no-preference option (#40)
+- Linkify DM @chaosgreml.in mentions via aturi.to profile waypoint (#38)
+- Pre-flight allowlist check on handle submit, before OAuth (#37)
+- Write at.marque.dns zone record for Bryan's domain (#33)
+- Deadline: Aug 15 2026 23:59:59 PT — display + enforcement (#31)
 
 ### Fixed
+- Review findings: pre-pin allowlist DIDs, fail-open gates, log swallowed errors (#42)
+- Gate allowlist at sign-in, not just submit (#36)
+- OAuth login on the deployed Worker: SSR now resolves workerd package builds, fixing the 500 on sign-in (#19)
 
 ### Changed
+- CodeRabbit round 5: 3 fixes, 4 reasoned skips (#45)
+- CodeRabbit round 4: 10 findings across both overlapping reviews (#44)
+- Address CodeRabbit review on PR #3 until approval (#43)
+- Add tyler.fun to allowlist (#39)
+- Cut over to buildersretre.at: ORIGIN, redirect, verify (#35)
+- Load allowlist: 16 invitee handles + organizer (#32)
+- Rebuild and deploy Bryan's manual tweaks (#30)
+- Desktop (16-inch MBP) reviewer snapshots (#29)
+- Copy reviewer pack into project folder (#28)
+- Reviewer snapshot pack: high-res captures of all seven items (#27)
+- Bluesky-organized attribution + logout affordance (#26)
+- Post-smoke-test notes from Bryan (#20)
+- Favicon: numeric globe in world style (#25)
+- Handle typeahead (typeahead.waow.tech) + welcome-back cookie (#24)
+- Location field: ZIP/city lookup (#23)
+- Next affordance + Enter-to-advance per item (#22)
+- Lock feed pre-auth: hero only, dimmed rail, unlock on sign-in (#21)
+- Provision Cloudflare and deploy the survey to workers.dev (#18)
+- Write LAUNCH.md runbook for taking the survey live (#17)
+- Verify local Playwright screenshots after sandbox hole (#16)
+- Commit impeccable install (skill, agents, hooks) to repo (#15)
+- Complete DESIGN.md type ramp so hook matches shipped sizes (resume) (#14)
+- Complete DESIGN.md type ramp so hook matches shipped sizes (#13)
 - Build buildtreat survey (Full-Bleed Feed) (#5)
 - Finish: detector, reviewer, documenter, DESIGN.md (#12)
 - ATProto auth + allowlist + response storage (#11)

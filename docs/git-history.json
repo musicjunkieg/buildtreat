@@ -1,5 +1,125 @@
 [
   {
+    "hash": "99af46d2b08acfc1c629733dcdf4899251ba8ee4",
+    "short_hash": "99af46d",
+    "author": "Bryan Guffey",
+    "date": "2026-08-06T20:00:40-07:00",
+    "message": "fix: CodeRabbit round 5 — draft ranking filter, unthrottleable-oracle non-answer, sheet reset\n\n- loadDraft only restores ranking ids that are real locations (or the\n  no-preference sentinel) — junk in localStorage can't fake completion\n  past server validation\n- /api/invited: if the per-IP throttle can't run (no KV, no client IP,\n  KV error), the oracle answers the non-answer instead of proceeding\n  unthrottled; sign-in still proceeds normally\n- sign-in sheet resets to a clean state on close (welcome-back branch,\n  errors) while deliberately keeping the typed handle\n- identity-cookie comment references the DEADLINE binding, not a\n  hardcoded date\n\nSkipped with reasons (posted on the PR): shot.mjs --no-sandbox (dev-only\nscript for the sandboxed local env), backdrop-as-button (adds a phantom\ntab stop; Escape + labeled close serve keyboard/AT), 180d cookie revert\n(contradicts round 3; 30d covers the window), un-inerting YouItem's\nsign-out when closed (sign-out stays available on hero + review).\n\nCo-Authored-By: Claude Fable 5 <noreply@anthropic.com>\nClaude-Session: https://claude.ai/code/session_01KvMrEJy2nWjYvgkPqQ26eD",
+    "files_changed": 7
+  },
+  {
+    "hash": "199f93fd3a47ffd42132e51a4cf9fc810572edfb",
+    "short_hash": "199f93f",
+    "author": "Bryan Guffey",
+    "date": "2026-08-06T19:51:38-07:00",
+    "message": "fix: CodeRabbit round 4 — modal focus, search invalidation, pre-check timeout\n\n- SignInSheet is a real modal now: background (feed + rail/dots) goes\n  inert while open, the primary control gets focus in both branches, and\n  focus returns to the trigger on close\n- one invalidateSearch() helper kills pending debounce AND in-flight\n  typeahead responses on input change, Escape, go(), and sheet close —\n  stale results can no longer reopen the dropdown or misdirect a pick;\n  first ArrowUp from the unset state lands on the last result\n- the sheet's /api/invited pre-check gets a 3s timeout so a stalled\n  endpoint can't freeze the Continue button (still fails open to login)\n- Enter on a still-unranked place card keeps native activation (keyboard\n  users can rank 2nd/3rd choices); a ranked one advances instead of\n  un-ranking\n- 'Update my answers' disabled while the draft is invalid\n- allowlist queries bind NULL (not '') for a missing handle; rate-limit\n  keys store a truncated SHA-256 of the IP instead of the raw address;\n  redirect target built by assigning path/search onto the ORIGIN URL;\n  svelte floor raised to ^5.51.5 (lockfile already at 5.56.8)\n\nCo-Authored-By: Claude Fable 5 <noreply@anthropic.com>\nClaude-Session: https://claude.ai/code/session_01KvMrEJy2nWjYvgkPqQ26eD",
+    "files_changed": 10
+  },
+  {
+    "hash": "3d5d5db394aa6ee4aa24c5b80e6fe56fcdb308da",
+    "short_hash": "3d5d5db",
+    "author": "Bryan Guffey",
+    "date": "2026-08-06T19:37:03-07:00",
+    "message": "fix: CodeRabbit round 3 — no-path routing, closed-state seal, misc hardening\n\n- 'not interested' respondents now route straight to review from the\n  interest question (Enter, arrows, and the Next chip all share the same\n  nextAfter() logic) — they never owed travel/dates/location\n- editable sections (you→location) go inert after the deadline; review\n  stays live for the closure notice and sign-out\n- sheet close invalidates in-flight typeahead responses (searchSeq++),\n  and the typeahead fetch gets a 3s timeout\n- workers.dev redirect joins paths via the URL constructor (no // when\n  ORIGIN has a trailing slash); NextChip is explicitly type=button;\n  invited-endpoint doc block reattached to the GET handler\n- identity-hint cookie retention cut 180d → 30d (still covers the whole\n  survey window); PRODUCT.md 'one organizer' wording reconciled with the\n  Bluesky partnership\n\nDeliberately skipped: CodeRabbit's suggestion to not start OAuth on\ntypeahead selection — one-tap sign-in from the picked account is the\nintended interaction, consistent with the welcome-back flow.\n\nCo-Authored-By: Claude Fable 5 <noreply@anthropic.com>\nClaude-Session: https://claude.ai/code/session_01KvMrEJy2nWjYvgkPqQ26eD",
+    "files_changed": 10
+  },
+  {
+    "hash": "34989517aec5a93d5f1ca90b8ba17acf099e6759",
+    "short_hash": "3498951",
+    "author": "Bryan Guffey",
+    "date": "2026-08-06T18:57:12-07:00",
+    "message": "fix: CodeRabbit round 2 — ZIP lookup robustness, IME-safe Enter\n\n- 5s AbortSignal.timeout on the zippopotam.us fetch (a stall no longer\n  leaves 'Looking up that ZIP…' forever)\n- transport failures get their own 'error' state and message; 'notfound'\n  is reserved for an actual 404\n- zipSeq bumps on every edit, so ZIP→ZIP changes also invalidate\n  in-flight lookups\n- fieldEnter ignores Enter while an IME composition is committing\n\nCo-Authored-By: Claude Fable 5 <noreply@anthropic.com>\nClaude-Session: https://claude.ai/code/session_01KvMrEJy2nWjYvgkPqQ26eD",
+    "files_changed": 4
+  },
+  {
+    "hash": "ed35e07b8d859d6e66ccfcb3e39aa99d990a2131",
+    "short_hash": "ed35e07",
+    "author": "Bryan Guffey",
+    "date": "2026-08-06T18:50:38-07:00",
+    "message": "fix: address CodeRabbit review — all 10 comments\n\nActionable:\n- /api/invited: per-IP fixed-window rate limit (20/min on PROFILE_CACHE\n  KV, exhausted budget answers the invited:true non-answer) + 3s timeout\n  on the appview resolver fetch\n- SignInSheet: pending search debounce cleared when the sheet closes so\n  it can't reopen the dropdown; combobox a11y — options are real\n  role=option elements with ids (no nested interactive button),\n  aria-activedescendant on the input, arrow keys scroll the highlighted\n  option into view\n- YouItem: leaving the ZIP shape invalidates in-flight lookups (seq bump\n  + status reset); lookup status messages are a role=status live region\n\nNitpicks:\n- KnownUser type moved to $lib/types (route module decoupled from client\n  component)\n- deadlineStatus() shared helper — page and response API can no longer\n  disagree about closed-ness or the displayed date\n- canonicalize redirects with 308 (PUT keeps method+body) and guards\n  ORIGIN with URL.canParse\n- vite ssr conditions keep Vite's defaults behind workerd/worker;\n  verified the bundle still resolves @atcute workerd builds (no bare\n  Buffer internals present)\n\nCo-Authored-By: Claude Fable 5 <noreply@anthropic.com>\nClaude-Session: https://claude.ai/code/session_01KvMrEJy2nWjYvgkPqQ26eD",
+    "files_changed": 12
+  },
+  {
+    "hash": "fd365f2b7eea08fee449f1f559b28ac001d11af7",
+    "short_hash": "fd365f2",
+    "author": "Bryan Guffey",
+    "date": "2026-08-06T13:42:05-07:00",
+    "message": "fix: code-review findings — invited-endpoint hardening, Enter semantics, sealed-feed inert, ZIP race\n\n- /api/invited resolves handles via public.api.bsky.app only (actorToDid\n  would fetch https://<caller-string>/.well-known/atproto-did — an open\n  request-forgery primitive on an unauthenticated endpoint) and validates\n  handle/DID shape before touching anything\n- Enter now advances from focused answer controls (place cards, radios)\n  instead of re-activating them — Enter on a just-ranked location was\n  un-ranking it while the chip promised 'press Enter'; also makes the\n  affordance real on interest/travel where radio focus swallowed it\n- sealed feed gets inert on non-hero items: overflow:hidden alone still\n  let Tab-focus scroll the feed and screen readers read everything\n- ZIP lookup debounced 400ms with staleness + sequence guards — no more\n  clobbering a ZIP+4 mid-keystroke; retyping the same ZIP works again\n- abr_known cookie only set for allowed users, strict shape/length checks\n  on read (it renders in the sheet and seeds login())\n- typeahead results deduped by handle (keyed each crashed on dupes);\n  dropdown closes on focusout and resets when the sheet closes, so a\n  stale dropdown can't block window Escape\n- response API's closed message derives its date from the DEADLINE\n  binding instead of hardcoding August 15\n\nCo-Authored-By: Claude Fable 5 <noreply@anthropic.com>\nClaude-Session: https://claude.ai/code/session_01KvMrEJy2nWjYvgkPqQ26eD",
+    "files_changed": 10
+  },
+  {
+    "hash": "1a4180cad77cf9e66c780573e4b4a49b44ffe6ce",
+    "short_hash": "1a4180c",
+    "author": "Bryan Guffey",
+    "date": "2026-08-06T13:39:27-07:00",
+    "message": "fix: review findings — never falsely deny invited users, log swallowed errors\n\nSilent-failure review of the branch found that infrastructure hiccups\ncould masquerade as 'you're not on the list':\n- page gate now fails OPEN on D1 errors or unresolved identity (the\n  response API re-enforces authoritatively on write) and logs every\n  swallowed error to Workers observability\n- /api/invited answers the non-answer (invited:true) when handle\n  resolution fails, instead of a confident wrong denial from a\n  handle-only match against a possibly-stale stored handle\n- restoreLocal's catch uses clearLocal so a storage SecurityError can't\n  rethrow and abort onMount (killing scroll-spy + keyboard nav)\n\nData-side (already live): all 19 allowlist rows now have DIDs pre-pinned,\nso DID-only matching works even when profile/handle resolution is down.\n\nCo-Authored-By: Claude Fable 5 <noreply@anthropic.com>\nClaude-Session: https://claude.ai/code/session_01KvMrEJy2nWjYvgkPqQ26eD",
+    "files_changed": 7
+  },
+  {
+    "hash": "8b92cb7f2c60b601e046513a9474e43eeb5bf440",
+    "short_hash": "8b92cb7",
+    "author": "Bryan Guffey",
+    "date": "2026-08-06T13:17:15-07:00",
+    "message": "feat: 'Answers updated!' confirmation + sign-out at end of review\n\nRe-submitting an existing response flips the update button to 'Answers\nupdated!' (aria-live, 4s flash) so repeat submitters know it took. The\nreview item ends with an 'All set — sign out' affordance for submitted or\nclosed states, so nobody has to scroll back to the hero to log out.\n\nCo-Authored-By: Claude Fable 5 <noreply@anthropic.com>\nClaude-Session: https://claude.ai/code/session_01KvMrEJy2nWjYvgkPqQ26eD",
+    "files_changed": 5
+  },
+  {
+    "hash": "27c33137c3e29b58dd4cc818e7daf4322a12fd76",
+    "short_hash": "27c3313",
+    "author": "Bryan Guffey",
+    "date": "2026-08-06T13:08:22-07:00",
+    "message": "feat: location no-preference option for folks who don't know the spots\n\nA 'no-preference' sentinel travels in the existing ranking array (and the\nlocation_ranking JSON column — no migration). It's mutually exclusive with\na real ranking: picking it clears ranks, ranking a place clears it, and\nthe server rejects a mixed payload. Dashed-border toggle under the place\nlist; review page shows 'No preference'.\n\nCo-Authored-By: Claude Fable 5 <noreply@anthropic.com>\nClaude-Session: https://claude.ai/code/session_01KvMrEJy2nWjYvgkPqQ26eD",
+    "files_changed": 8
+  },
+  {
+    "hash": "ab01054c5870f5fcd1849323b64e633a3cb04c9e",
+    "short_hash": "ab01054",
+    "author": "Bryan Guffey",
+    "date": "2026-08-06T10:46:44-07:00",
+    "message": "feat: linkify organizer mentions via aturi.to profile waypoint\n\nEvery 'DM @chaosgreml.in' mention (hero invite-only + closed notes, sign-in\nsheet denial, review closed note) and the hero author line now link to\nhttps://aturi.to/profile/<did> — no cross-client DM deep link exists, so\nthe aturi.to landing lets each visitor open the profile (Message one tap\naway) in their own Atmosphere client. DID not handle so the link survives\nhandle changes. The sheet's denial message became a structured snippet so\nthe mention could be a real anchor.\n\nCo-Authored-By: Claude Fable 5 <noreply@anthropic.com>\nClaude-Session: https://claude.ai/code/session_01KvMrEJy2nWjYvgkPqQ26eD",
+    "files_changed": 7
+  },
+  {
+    "hash": "adc0c532fb2f7856dce46777fc317dbf2dd7ade6",
+    "short_hash": "adc0c53",
+    "author": "Bryan Guffey",
+    "date": "2026-08-06T10:23:09-07:00",
+    "message": "feat: pre-flight invite check on handle submit — uninvited handles learn before the PDS auth dance\n\nNew GET /api/invited?handle= resolves the handle to a DID (so pinned DIDs\nstill match after handle changes) and peeks the allowlist read-only. The\nsign-in sheet calls it before login(); an uninvited handle gets the polite\ninvite-only note inline instead of a full OAuth round-trip. Every failure\nmode (endpoint down, resolution failed, no DB) fails open — real\nenforcement stays server-side after auth.\n\nCo-Authored-By: Claude Fable 5 <noreply@anthropic.com>\nClaude-Session: https://claude.ai/code/session_01KvMrEJy2nWjYvgkPqQ26eD",
+    "files_changed": 6
+  },
+  {
+    "hash": "3b49b971c4b3c6c73c3624b71beb26b260425550",
+    "short_hash": "3b49b97",
+    "author": "Bryan Guffey",
+    "date": "2026-08-06T06:12:20-07:00",
+    "message": "fix: enforce allowlist at sign-in, not just submit\n\nA non-invited account (e.g. atproto.la) could sign in and browse the whole\nsurvey, only hitting the allowlist 403 at final submit. The page load now\nchecks the allowlist too: non-invited sign-ins keep the feed sealed and see\nthe polite invite-only note on the hero (with sign-out). The API still\nenforces on write as defense in depth.\n\nCo-Authored-By: Claude Fable 5 <noreply@anthropic.com>\nClaude-Session: https://claude.ai/code/session_01KvMrEJy2nWjYvgkPqQ26eD",
+    "files_changed": 5
+  },
+  {
+    "hash": "4ae0d7de5e31428c9f4adc880d97451dc0dcce13",
+    "short_hash": "4ae0d7d",
+    "author": "Bryan Guffey",
+    "date": "2026-08-05T18:06:00-07:00",
+    "message": "feat: respond-by deadline — Aug 15 2026 11:59:59 PM PT\n\nDEADLINE var drives everything: fifth ledger row on the hero, close-date\nnotes at the submit button, warm closed states on hero and review, and the\nresponse API rejecting writes after the deadline.\n\nCo-Authored-By: Claude Fable 5 <noreply@anthropic.com>\nClaude-Session: https://claude.ai/code/session_01XFGCtqAaDnhNsZDkybtFRB",
+    "files_changed": 8
+  },
+  {
+    "hash": "b93d14c4ced9c042d90d0293c278cfc1e8ad2858",
+    "short_hash": "b93d14c",
+    "author": "Bryan Guffey",
+    "date": "2026-08-05T16:29:23-07:00",
+    "message": "feat: smoke-test feedback round — locked pre-auth feed, next affordances, ZIP lookup, handle typeahead, welcome-back, numeric-globe favicon\n\n1. Signed-out feed is sealed at the hero: no scroll, rail dimmed to a faint\n   map, dots hidden; everything unlocks at sign-in.\n2. Every question grows a Next chip when answered; Enter advances (fields\n   chain name→email→location→next).\n3. Location field resolves 5-digit ZIPs to 'City, ST' via zippopotam.us,\n   graceful fallback to free text.\n4. Sign-in handle field is a typeahead (typeahead.waow.tech, debounced,\n   keyboard-navigable, opens upward from the bottom sheet; degrades to a\n   plain input if the experimental service is down). A 180-day identity-hint\n   cookie greets returning visitors — 'Hey, it's you' — with one-tap\n   continue, surviving logout.\n5. Favicon: original numeric-globe homage to atproto.com's ASCII Earth.\n\nCo-Authored-By: Claude Fable 5 <noreply@anthropic.com>\nClaude-Session: https://claude.ai/code/session_01XFGCtqAaDnhNsZDkybtFRB",
+    "files_changed": 12
+  },
+  {
+    "hash": "c60faa5c13e5c5a797e6731b5b56abaa7cb7f386",
+    "short_hash": "c60faa5",
+    "author": "Bryan Guffey",
+    "date": "2026-08-05T16:05:55-07:00",
+    "message": "fix: resolve workerd export conditions in Vite SSR build\n\nVite's SSR resolver defaults to node conditions, baking @atcute's\nnode-flavored builds (bare Buffer.prototype.base64urlSlice.call) into the\nworker bundle; workerd's stricter Buffer polyfill throws 'The \"start\"\nargument must be of type number' on every OAuth login. Resolve with\nworkerd/worker conditions so the packages' own pure-JS web builds ship.\n\nRoot-caused from Bryan's smoke-test HAR + local workerd repro.\n\nCo-Authored-By: Claude Fable 5 <noreply@anthropic.com>\nClaude-Session: https://claude.ai/code/session_01XFGCtqAaDnhNsZDkybtFRB",
+    "files_changed": 2
+  },
+  {
     "hash": "c847a8e154e2a700eead8f4aa11aa2dd75334105",
     "short_hash": "c847a8e",
     "author": "Bryan Guffey",

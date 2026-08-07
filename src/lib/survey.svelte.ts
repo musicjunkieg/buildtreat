@@ -1,6 +1,8 @@
 import {
 	feedItems,
 	locationQuestion,
+	locations,
+	NO_PREFERENCE,
 	type AvailabilityRange,
 	type FeedItemId,
 	type InterestValue,
@@ -74,11 +76,22 @@ export class SurveyState {
 		this.ranges = this.ranges.map((r, i) => (i === index ? { ...r, ...patch } : r));
 	}
 
+	noPreference = $derived(this.ranking.includes(NO_PREFERENCE));
+
 	toggleRank(id: string) {
-		if (this.ranking.includes(id)) {
-			this.ranking = this.ranking.filter((r) => r !== id);
-		} else if (this.ranking.length < locationQuestion.maxRank) {
-			this.ranking = [...this.ranking, id];
+		// "No preference" is exclusive: it clears any ranking, and ranking a
+		// real place clears it.
+		if (id === NO_PREFERENCE) {
+			this.ranking = this.noPreference ? [] : [NO_PREFERENCE];
+			return;
+		}
+		const real = this.ranking.filter((r) => r !== NO_PREFERENCE);
+		if (real.includes(id)) {
+			this.ranking = real.filter((r) => r !== id);
+		} else if (real.length < locationQuestion.maxRank) {
+			this.ranking = [...real, id];
+		} else {
+			this.ranking = real;
 		}
 	}
 
@@ -106,7 +119,15 @@ export class SurveyState {
 		if (d.interest === 'yes' || d.interest === 'no' || d.interest === 'maybe') this.interest = d.interest;
 		if (d.travel === 'yes' || d.travel === 'no' || d.travel === 'partial') this.travel = d.travel;
 		if (Array.isArray(d.ranges)) this.ranges = normalizeRanges(d.ranges.filter(isRange));
-		if (Array.isArray(d.ranking)) this.ranking = d.ranking.filter((x): x is string => typeof x === 'string').slice(0, 3);
+		if (Array.isArray(d.ranking)) {
+			// Untrusted storage: only real location ids (or the sentinel) count,
+			// so junk can't fake locationComplete past server validation.
+			const known = new Set<string>(locations.map((l) => l.id));
+			const arr = [
+				...new Set(d.ranking.filter((x): x is string => typeof x === 'string' && (x === NO_PREFERENCE || known.has(x))))
+			];
+			this.ranking = arr.includes(NO_PREFERENCE) ? [NO_PREFERENCE] : arr.slice(0, 3);
+		}
 	}
 
 	saveLocal() {
@@ -122,8 +143,10 @@ export class SurveyState {
 			const raw = localStorage.getItem(DRAFT_KEY);
 			if (raw) this.loadDraft(JSON.parse(raw));
 		} catch {
-			// Corrupt draft — start clean rather than crash.
-			localStorage.removeItem(DRAFT_KEY);
+			// Corrupt draft — start clean rather than crash. clearLocal guards
+			// its own storage access: if storage itself is denied, removeItem
+			// here would rethrow and abort the caller's onMount.
+			this.clearLocal();
 		}
 	}
 

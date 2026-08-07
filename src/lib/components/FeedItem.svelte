@@ -8,6 +8,7 @@
 		mediaAlt = '',
 		eager = false,
 		darker = false,
+		inert = false,
 		labelledby,
 		children
 	}: {
@@ -17,6 +18,8 @@
 		mediaAlt?: string;
 		eager?: boolean;
 		darker?: boolean;
+		/** Sealed-feed state: removes the item from tab order and the a11y tree. */
+		inert?: boolean;
 		labelledby?: string;
 		children: Snippet;
 	} = $props();
@@ -45,7 +48,7 @@
 	});
 </script>
 
-<section class="item" {id} aria-labelledby={labelledby} class:darker class:settled bind:this={section}>
+<section class="item" {id} {inert} aria-labelledby={labelledby} class:darker class:settled bind:this={section}>
 	{#if media}
 		<picture>
 			{#if mediaWide}
