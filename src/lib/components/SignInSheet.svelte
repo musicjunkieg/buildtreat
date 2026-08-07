@@ -142,6 +142,12 @@
 			dropdownOpen = false;
 			results = [];
 			highlighted = -1;
+			// Fresh state next open: back to welcome-back, no stale errors.
+			// The typed handle is deliberately kept — an accidental dismissal
+			// shouldn't eat what the visitor typed.
+			useDifferent = false;
+			deniedHandle = null;
+			localError = null;
 			restoreTo?.focus();
 			restoreTo = null;
 		}

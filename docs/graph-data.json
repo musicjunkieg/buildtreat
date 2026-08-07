@@ -439,6 +439,17 @@
       "created_at": "2026-08-06T19:42:53.621372-07:00",
       "updated_at": "2026-08-06T19:42:53.621372-07:00",
       "metadata_json": "{\"branch\":\"feature/feedback-round\",\"confidence\":100}"
+    },
+    {
+      "id": 41,
+      "change_id": "a8d2b263-5d78-4ff6-af8d-32bb0ef9ad2a",
+      "node_type": "action",
+      "title": "CodeRabbit round 4: modal focus mgmt, search invalidation, pre-check timeout, IP hashing",
+      "description": null,
+      "status": "pending",
+      "created_at": "2026-08-06T19:51:42.844903-07:00",
+      "updated_at": "2026-08-06T19:51:42.844903-07:00",
+      "metadata_json": "{\"branch\":\"feature/feedback-round\",\"commit\":\"199f93f\",\"confidence\":95}"
     }
   ],
   "edges": [
@@ -881,6 +892,17 @@
       "weight": 1.0,
       "rationale": "Review loop converged",
       "created_at": "2026-08-06T19:42:53.633958-07:00"
+    },
+    {
+      "id": 41,
+      "from_node_id": 40,
+      "to_node_id": 41,
+      "from_change_id": "f5290271-888f-4537-87c7-a61b6acd501a",
+      "to_change_id": "a8d2b263-5d78-4ff6-af8d-32bb0ef9ad2a",
+      "edge_type": "leads_to",
+      "weight": 1.0,
+      "rationale": "Approval was premature — overlapping review runs surfaced round 4",
+      "created_at": "2026-08-06T19:51:42.854603-07:00"
     }
   ]
 }

@@ -1,6 +1,7 @@
 import {
 	feedItems,
 	locationQuestion,
+	locations,
 	NO_PREFERENCE,
 	type AvailabilityRange,
 	type FeedItemId,
@@ -119,7 +120,10 @@ export class SurveyState {
 		if (d.travel === 'yes' || d.travel === 'no' || d.travel === 'partial') this.travel = d.travel;
 		if (Array.isArray(d.ranges)) this.ranges = normalizeRanges(d.ranges.filter(isRange));
 		if (Array.isArray(d.ranking)) {
-			const arr = d.ranking.filter((x): x is string => typeof x === 'string');
+			// Untrusted storage: only real location ids (or the sentinel) count,
+			// so junk can't fake locationComplete past server validation.
+			const known = new Set<string>(locations.map((l) => l.id));
+			const arr = d.ranking.filter((x): x is string => typeof x === 'string' && (x === NO_PREFERENCE || known.has(x)));
 			this.ranking = arr.includes(NO_PREFERENCE) ? [NO_PREFERENCE] : arr.slice(0, 3);
 		}
 	}

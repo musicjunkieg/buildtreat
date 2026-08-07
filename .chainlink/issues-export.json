@@ -1,10 +1,10 @@
 {
   "version": 1,
-  "exported_at": "2026-08-07T02:51:38.399248+00:00",
+  "exported_at": "2026-08-07T03:00:40.045005+00:00",
   "issues": [
     {
-      "id": 44,
-      "title": "CodeRabbit round 4: 10 findings across both overlapping reviews",
+      "id": 45,
+      "title": "CodeRabbit round 5: 3 fixes, 4 reasoned skips",
       "description": null,
       "status": "open",
       "priority": "high",
@@ -13,9 +13,24 @@
         "task"
       ],
       "comments": [],
-      "created_at": "2026-08-07T02:50:48.311586+00:00",
-      "updated_at": "2026-08-07T02:50:48.311586+00:00",
+      "created_at": "2026-08-07T03:00:09.817611+00:00",
+      "updated_at": "2026-08-07T03:00:09.817611+00:00",
       "closed_at": null
+    },
+    {
+      "id": 44,
+      "title": "CodeRabbit round 4: 10 findings across both overlapping reviews",
+      "description": null,
+      "status": "closed",
+      "priority": "high",
+      "parent_id": null,
+      "labels": [
+        "task"
+      ],
+      "comments": [],
+      "created_at": "2026-08-07T02:50:48.311586+00:00",
+      "updated_at": "2026-08-07T02:51:42.862355+00:00",
+      "closed_at": "2026-08-07T02:51:42.862355+00:00"
     },
     {
       "id": 43,

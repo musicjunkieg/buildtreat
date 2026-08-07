@@ -148,8 +148,8 @@ export const load: PageServerLoad = async ({ locals, platform, url, cookies }) =
 		cookies.set(
 			KNOWN_COOKIE,
 			JSON.stringify({ handle: user.handle, displayName: user.displayName, avatar: user.avatar }),
-			// 30 days comfortably covers the survey window (closes Aug 15) while
-			// keeping identity-hint retention short.
+			// 30 days comfortably covers the survey window (see the DEADLINE
+			// binding) while keeping identity-hint retention short.
 			{ path: '/', maxAge: 60 * 60 * 24 * 30, httpOnly: true, sameSite: 'lax', secure: !dev }
 		);
 	}

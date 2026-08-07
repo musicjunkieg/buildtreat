@@ -33,8 +33,17 @@ async function resolveHandle(handle: string): Promise<string | null> {
  */
 const RL_PER_MINUTE = 20;
 
-async function rateLimited(kv: App.Platform['env']['PROFILE_CACHE'] | undefined, ip: string): Promise<boolean> {
-	if (!kv || !ip) return false;
+/**
+ * 'ok' = within budget; 'limited' = over budget; 'unavailable' = the throttle
+ * itself can't run (no KV, no client IP, KV error). Callers treat anything
+ * but 'ok' as "answer the non-answer": if the oracle can't be throttled, it
+ * doesn't get to answer at all — sign-in still proceeds normally.
+ */
+async function rateLimit(
+	kv: App.Platform['env']['PROFILE_CACHE'] | undefined,
+	ip: string
+): Promise<'ok' | 'limited' | 'unavailable'> {
+	if (!kv || !ip) return 'unavailable';
 	try {
 		// Don't persist raw IPs: a truncated SHA-256 keeps the fixed window
 		// working without storing personal data.
@@ -43,9 +52,9 @@ async function rateLimited(kv: App.Platform['env']['PROFILE_CACHE'] | undefined,
 		const key = `rl:invited:${ipHash}:${Math.floor(Date.now() / 60_000)}`;
 		const n = Number((await kv.get(key)) ?? '0') + 1;
 		await kv.put(key, String(n), { expirationTtl: 120 });
-		return n > RL_PER_MINUTE;
+		return n > RL_PER_MINUTE ? 'limited' : 'ok';
 	} catch {
-		return false;
+		return 'unavailable';
 	}
 }
 
@@ -61,9 +70,10 @@ export const GET: RequestHandler = async ({ url, platform, request }) => {
 	const db = platform?.env?.DB;
 	if (!raw || raw.length > 253 || !db) return json({ invited: true });
 
-	// Budget exhausted → the same non-answer as every other soft failure.
+	// Over budget OR throttle unavailable → the same non-answer as every
+	// other soft failure. An unthrottleable oracle answers nothing.
 	const ip = request.headers.get('cf-connecting-ip') ?? '';
-	if (await rateLimited(platform?.env?.PROFILE_CACHE, ip)) return json({ invited: true });
+	if ((await rateLimit(platform?.env?.PROFILE_CACHE, ip)) !== 'ok') return json({ invited: true });
 
 	const isDid = raw.startsWith('did:');
 	if (isDid ? !DID_RE.test(raw) : !HANDLE_RE.test(raw)) return json({ invited: true });

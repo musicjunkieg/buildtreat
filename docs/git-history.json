@@ -1,5 +1,13 @@
 [
   {
+    "hash": "199f93fd3a47ffd42132e51a4cf9fc810572edfb",
+    "short_hash": "199f93f",
+    "author": "Bryan Guffey",
+    "date": "2026-08-06T19:51:38-07:00",
+    "message": "fix: CodeRabbit round 4 — modal focus, search invalidation, pre-check timeout\n\n- SignInSheet is a real modal now: background (feed + rail/dots) goes\n  inert while open, the primary control gets focus in both branches, and\n  focus returns to the trigger on close\n- one invalidateSearch() helper kills pending debounce AND in-flight\n  typeahead responses on input change, Escape, go(), and sheet close —\n  stale results can no longer reopen the dropdown or misdirect a pick;\n  first ArrowUp from the unset state lands on the last result\n- the sheet's /api/invited pre-check gets a 3s timeout so a stalled\n  endpoint can't freeze the Continue button (still fails open to login)\n- Enter on a still-unranked place card keeps native activation (keyboard\n  users can rank 2nd/3rd choices); a ranked one advances instead of\n  un-ranking\n- 'Update my answers' disabled while the draft is invalid\n- allowlist queries bind NULL (not '') for a missing handle; rate-limit\n  keys store a truncated SHA-256 of the IP instead of the raw address;\n  redirect target built by assigning path/search onto the ORIGIN URL;\n  svelte floor raised to ^5.51.5 (lockfile already at 5.56.8)\n\nCo-Authored-By: Claude Fable 5 <noreply@anthropic.com>\nClaude-Session: https://claude.ai/code/session_01KvMrEJy2nWjYvgkPqQ26eD",
+    "files_changed": 10
+  },
+  {
     "hash": "3d5d5db394aa6ee4aa24c5b80e6fe56fcdb308da",
     "short_hash": "3d5d5db",
     "author": "Bryan Guffey",
