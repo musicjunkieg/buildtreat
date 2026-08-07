@@ -33,7 +33,29 @@ const canonicalize: Handle = async ({ event, resolve }) => {
  * (an organizer signing in at /organizer landed on the survey).
  * Until it's fixed upstream, set the cookie ourselves on the way out.
  */
-const RETURN_TO_RE = /^\/(?!\/)/;
+/**
+ * A return path is safe only when, decoded and resolved against our own
+ * origin, it stays on our origin. Prefix checks alone are not enough:
+ * browsers normalize backslashes in Location headers, so "/\evil.example"
+ * (and its %5C-encoded form) resolves to https://evil.example — an open
+ * redirect that startsWith('/') && !startsWith('//') happily admits.
+ */
+function safeReturnTo(raw: string, origin: string): string | null {
+	let decoded: string;
+	try {
+		decoded = decodeURIComponent(raw);
+	} catch {
+		return null;
+	}
+	if (!decoded.startsWith('/') || decoded.startsWith('//') || decoded.includes('\\')) return null;
+	try {
+		if (new URL(decoded, origin).origin !== origin) return null;
+	} catch {
+		return null;
+	}
+	return decoded;
+}
+
 const returnToFix: Handle = async ({ event, resolve }) => {
 	if (event.url.pathname !== '/oauth/login' || event.request.method !== 'POST') {
 		return resolve(event);
@@ -56,15 +78,15 @@ const returnToFix: Handle = async ({ event, resolve }) => {
 
 	const response = await resolve(event);
 
-	// Same safety and lifetime rules as the library's own cookie: relative
-	// path only (no scheme-relative //), 10 minutes, value encoded the way
-	// the callback's decodeURIComponent expects.
-	if (response.ok && returnTo && RETURN_TO_RE.test(returnTo)) {
+	// Validate the DECODED value (that's what the callback redirects to) and
+	// store it re-encoded the way the callback's decodeURIComponent expects.
+	const safe = response.ok && returnTo ? safeReturnTo(returnTo, event.url.origin) : null;
+	if (safe) {
 		// `Secure` only outside dev, mirroring the library (the dev server is
 		// plain http and the browser would drop a Secure cookie there).
 		response.headers.append(
 			'set-cookie',
-			`oauth_return_to=${encodeURIComponent(returnTo)}; Path=/; HttpOnly; SameSite=Lax;${dev ? '' : ' Secure;'} Max-Age=600`
+			`oauth_return_to=${encodeURIComponent(safe)}; Path=/; HttpOnly; SameSite=Lax;${dev ? '' : ' Secure;'} Max-Age=600`
 		);
 	}
 	return response;
