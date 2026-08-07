@@ -1,5 +1,13 @@
 [
   {
+    "hash": "ed35e07b8d859d6e66ccfcb3e39aa99d990a2131",
+    "short_hash": "ed35e07",
+    "author": "Bryan Guffey",
+    "date": "2026-08-06T18:50:38-07:00",
+    "message": "fix: address CodeRabbit review — all 10 comments\n\nActionable:\n- /api/invited: per-IP fixed-window rate limit (20/min on PROFILE_CACHE\n  KV, exhausted budget answers the invited:true non-answer) + 3s timeout\n  on the appview resolver fetch\n- SignInSheet: pending search debounce cleared when the sheet closes so\n  it can't reopen the dropdown; combobox a11y — options are real\n  role=option elements with ids (no nested interactive button),\n  aria-activedescendant on the input, arrow keys scroll the highlighted\n  option into view\n- YouItem: leaving the ZIP shape invalidates in-flight lookups (seq bump\n  + status reset); lookup status messages are a role=status live region\n\nNitpicks:\n- KnownUser type moved to $lib/types (route module decoupled from client\n  component)\n- deadlineStatus() shared helper — page and response API can no longer\n  disagree about closed-ness or the displayed date\n- canonicalize redirects with 308 (PUT keeps method+body) and guards\n  ORIGIN with URL.canParse\n- vite ssr conditions keep Vite's defaults behind workerd/worker;\n  verified the bundle still resolves @atcute workerd builds (no bare\n  Buffer internals present)\n\nCo-Authored-By: Claude Fable 5 <noreply@anthropic.com>\nClaude-Session: https://claude.ai/code/session_01KvMrEJy2nWjYvgkPqQ26eD",
+    "files_changed": 12
+  },
+  {
     "hash": "fd365f2b7eea08fee449f1f559b28ac001d11af7",
     "short_hash": "fd365f2",
     "author": "Bryan Guffey",

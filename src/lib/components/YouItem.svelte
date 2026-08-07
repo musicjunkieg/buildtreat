@@ -19,7 +19,8 @@
 	} = $props();
 
 	function fieldEnter(e: KeyboardEvent, nextId: string | null) {
-		if (e.key !== 'Enter') return;
+		// isComposing: Enter is committing an IME composition, not submitting.
+		if (e.key !== 'Enter' || e.isComposing) return;
 		e.preventDefault();
 		if (nextId) {
 			document.getElementById(nextId)?.focus();
@@ -29,7 +30,7 @@
 	}
 
 	/** ZIP lookup: five digits resolve to "City, ST" via zippopotam.us. */
-	let zipStatus = $state<'idle' | 'looking' | 'notfound'>('idle');
+	let zipStatus = $state<'idle' | 'looking' | 'notfound' | 'error'>('idle');
 	let zipTimer: ReturnType<typeof setTimeout> | undefined;
 	let zipSeq = 0;
 
@@ -37,10 +38,18 @@
 		const seq = ++zipSeq;
 		zipStatus = 'looking';
 		try {
-			const res = await fetch(`https://api.zippopotam.us/us/${raw}`);
+			const res = await fetch(`https://api.zippopotam.us/us/${raw}`, {
+				signal: AbortSignal.timeout(5000)
+			});
+			if (seq !== zipSeq) return; // a newer lookup superseded this one
+			if (res.status === 404) {
+				// The one failure that actually means "no such ZIP".
+				zipStatus = 'notfound';
+				return;
+			}
 			if (!res.ok) throw new Error(String(res.status));
 			const data = (await res.json()) as { places?: { 'place name': string; 'state abbreviation': string }[] };
-			if (seq !== zipSeq) return; // a newer lookup superseded this one
+			if (seq !== zipSeq) return;
 			// Only apply if the field still holds exactly what we looked up —
 			// never clobber text the user kept typing (e.g. a ZIP+4).
 			if (survey.homeLocation.trim() !== raw) return;
@@ -53,18 +62,19 @@
 				zipStatus = 'notfound';
 			}
 		} catch {
-			// Offline or unknown ZIP — leave what they typed; it's still an answer.
-			if (seq === zipSeq) zipStatus = 'notfound';
+			// Transport trouble (offline, stall, timeout) — not the ZIP's fault.
+			// What they typed stays; it's still an answer.
+			if (seq === zipSeq) zipStatus = 'error';
 		}
 	}
 
 	function scheduleZip(delay: number) {
 		clearTimeout(zipTimer);
+		// Any edit invalidates an in-flight lookup — including one valid ZIP
+		// replaced by another — so a late response can't apply stale results.
+		zipSeq++;
 		const raw = survey.homeLocation.trim();
 		if (!/^\d{5}$/.test(raw)) {
-			// The field no longer holds a plain ZIP — invalidate any in-flight
-			// lookup so a late response can't flip the status back.
-			zipSeq++;
 			if (zipStatus === 'looking') zipStatus = 'idle';
 			return;
 		}
@@ -72,7 +82,7 @@
 	}
 
 	function locationInput() {
-		if (zipStatus === 'notfound') zipStatus = 'idle';
+		if (zipStatus === 'notfound' || zipStatus === 'error') zipStatus = 'idle';
 		scheduleZip(400);
 	}
 </script>
@@ -120,7 +130,8 @@
 		/>
 		<p class="zip-hint" role="status">
 			{#if zipStatus === 'looking'}Looking up that ZIP…{:else if zipStatus === 'notfound'}Couldn’t match
-				that ZIP — city and state works too.{/if}
+				that ZIP — city and state works too.{:else if zipStatus === 'error'}Couldn’t look up that ZIP
+				right now — city and state works too.{/if}
 		</p>
 	</div>
 </QuestionScaffold>
