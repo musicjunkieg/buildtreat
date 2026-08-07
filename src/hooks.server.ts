@@ -9,10 +9,12 @@ import { atproto } from '$lib/atproto';
  */
 const canonicalize: Handle = async ({ event, resolve }) => {
 	const origin = event.platform?.env?.ORIGIN;
-	if (origin) {
+	if (origin && URL.canParse(origin)) {
 		const canonicalHost = new URL(origin).hostname;
 		if (event.url.hostname.endsWith('.workers.dev') && event.url.hostname !== canonicalHost) {
-			redirect(301, origin + event.url.pathname + event.url.search);
+			// 308, not 301: a redirected PUT /api/response must keep its method
+			// and body.
+			redirect(308, origin + event.url.pathname + event.url.search);
 		}
 	}
 	return resolve(event);

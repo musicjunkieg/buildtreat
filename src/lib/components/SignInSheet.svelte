@@ -2,7 +2,7 @@
 	import { login } from '@svelte-atproto/oauth/client';
 	import Icon from '$lib/components/Icon.svelte';
 	import { retreat } from '$lib/content';
-	import type { KnownUser } from '../../routes/+page.server';
+	import type { KnownUser } from '$lib/types';
 
 	let {
 		open = $bindable(),
@@ -86,11 +86,13 @@
 			if (e.key === 'ArrowDown') {
 				e.preventDefault();
 				highlighted = (highlighted + 1) % results.length;
+				document.getElementById(`handle-opt-${highlighted}`)?.scrollIntoView({ block: 'nearest' });
 				return;
 			}
 			if (e.key === 'ArrowUp') {
 				e.preventDefault();
 				highlighted = (highlighted - 1 + results.length) % results.length;
+				document.getElementById(`handle-opt-${highlighted}`)?.scrollIntoView({ block: 'nearest' });
 				return;
 			}
 			if (e.key === 'Escape') {
@@ -118,7 +120,9 @@
 
 	$effect(() => {
 		if (!open) {
-			// A stale open dropdown would block window-level Escape forever.
+			// A stale open dropdown would block window-level Escape forever —
+			// and a pending debounced search could reopen it after close.
+			clearTimeout(searchTimer);
 			dropdownOpen = false;
 			results = [];
 			highlighted = -1;
@@ -241,30 +245,33 @@
 						aria-expanded={dropdownOpen}
 						aria-controls="handle-results"
 						aria-autocomplete="list"
+						aria-activedescendant={dropdownOpen && highlighted >= 0 ? `handle-opt-${highlighted}` : undefined}
 						oninput={onHandleInput}
 						onkeydown={onInputKeydown}
 					/>
 					{#if dropdownOpen}
 						<ul class="results" id="handle-results" role="listbox">
 							{#each results as actor, i (actor.handle)}
-								<li role="option" aria-selected={i === highlighted}>
-									<button
-										type="button"
-										class="result"
-										class:hl={i === highlighted}
-										onclick={() => pick(actor)}
-										onmouseenter={() => (highlighted = i)}
-									>
-										{#if actor.avatar}
-											<img class="result-avatar" src={actor.avatar} alt="" loading="lazy" />
-										{:else}
-											<span class="result-avatar fallback" aria-hidden="true"><Icon name="person" size={14} /></span>
-										{/if}
-										<span class="result-info">
-											<span class="result-name">{actor.displayName || actor.handle}</span>
-											<span class="result-handle">@{actor.handle}</span>
-										</span>
-									</button>
+								<!-- svelte-ignore a11y_click_events_have_key_events -- combobox pattern: keyboard interaction lives on the input -->
+								<li
+									id="handle-opt-{i}"
+									class="result"
+									class:hl={i === highlighted}
+									role="option"
+									aria-selected={i === highlighted}
+									onmousedown={(e) => e.preventDefault()}
+									onclick={() => pick(actor)}
+									onmouseenter={() => (highlighted = i)}
+								>
+									{#if actor.avatar}
+										<img class="result-avatar" src={actor.avatar} alt="" loading="lazy" />
+									{:else}
+										<span class="result-avatar fallback" aria-hidden="true"><Icon name="person" size={14} /></span>
+									{/if}
+									<span class="result-info">
+										<span class="result-name">{actor.displayName || actor.handle}</span>
+										<span class="result-handle">@{actor.handle}</span>
+									</span>
 								</li>
 							{/each}
 						</ul>
@@ -458,6 +465,7 @@
 		padding: 0.55rem 0.8rem;
 		text-align: left;
 		color: var(--ink);
+		cursor: pointer;
 		transition: background 0.15s var(--ease-out);
 	}
 

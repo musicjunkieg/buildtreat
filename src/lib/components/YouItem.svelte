@@ -61,7 +61,13 @@
 	function scheduleZip(delay: number) {
 		clearTimeout(zipTimer);
 		const raw = survey.homeLocation.trim();
-		if (!/^\d{5}$/.test(raw)) return;
+		if (!/^\d{5}$/.test(raw)) {
+			// The field no longer holds a plain ZIP — invalidate any in-flight
+			// lookup so a late response can't flip the status back.
+			zipSeq++;
+			if (zipStatus === 'looking') zipStatus = 'idle';
+			return;
+		}
 		zipTimer = setTimeout(() => void resolveZip(raw), delay);
 	}
 
@@ -112,11 +118,10 @@
 			}}
 			onkeydown={(e) => fieldEnter(e, null)}
 		/>
-		{#if zipStatus === 'looking'}
-			<p class="zip-hint">Looking up that ZIP…</p>
-		{:else if zipStatus === 'notfound'}
-			<p class="zip-hint">Couldn’t match that ZIP — city and state works too.</p>
-		{/if}
+		<p class="zip-hint" role="status">
+			{#if zipStatus === 'looking'}Looking up that ZIP…{:else if zipStatus === 'notfound'}Couldn’t match
+				that ZIP — city and state works too.{/if}
+		</p>
 	</div>
 </QuestionScaffold>
 

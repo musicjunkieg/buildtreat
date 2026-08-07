@@ -1,5 +1,5 @@
 import { sveltekit } from '@sveltejs/kit/vite';
-import { defineConfig } from 'vite';
+import { defaultExternalConditions, defaultServerConditions, defineConfig } from 'vite';
 
 export default defineConfig({
 	plugins: [sveltekit()],
@@ -15,8 +15,8 @@ export default defineConfig({
 			// `#bases/base64`) to their node builds, which call internal Buffer
 			// methods bare (`base64urlSlice.call(bytes)`) — workerd's stricter
 			// polyfill throws `The "start" argument must be of type number`.
-			conditions: ['workerd', 'worker'],
-			externalConditions: ['workerd', 'worker']
+			conditions: ['workerd', 'worker', ...defaultServerConditions],
+			externalConditions: ['workerd', 'worker', ...defaultExternalConditions]
 		}
 	}
 });

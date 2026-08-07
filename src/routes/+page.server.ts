@@ -6,6 +6,8 @@ import { cloudflareKV } from '@svelte-atproto/oauth/server/stores/cloudflare';
 import { retreat } from '$lib/content';
 import { checkAllowlist, getResponse } from '$lib/server/db';
 import type { SurveyDraft } from '$lib/survey.svelte';
+import type { KnownUser } from '$lib/types';
+import { deadlineStatus } from '$lib/server/deadline';
 
 export interface PageUser {
 	did: string;
@@ -16,13 +18,6 @@ export interface PageUser {
 
 export interface Organizer {
 	handle: string;
-	avatar: string | null;
-}
-
-/** Non-auth identity hint so returning visitors get a one-tap sign-in. */
-export interface KnownUser {
-	handle: string;
-	displayName: string | null;
 	avatar: string | null;
 }
 
@@ -66,8 +61,7 @@ export const load: PageServerLoad = async ({ locals, platform, url, cookies }) =
 	// The OAuth library redirects back with ?error=... when a login fails.
 	const authError = url.searchParams.get('error');
 
-	const deadline = platform?.env?.DEADLINE ?? null;
-	const closed = deadline !== null && Date.now() > Date.parse(deadline);
+	const { deadline, closed } = deadlineStatus(platform?.env?.DEADLINE);
 
 	const profileCache = platform?.env?.PROFILE_CACHE
 		? cloudflareKV(platform.env.PROFILE_CACHE, { ttl: 3600 })

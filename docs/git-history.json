@@ -1,5 +1,13 @@
 [
   {
+    "hash": "fd365f2b7eea08fee449f1f559b28ac001d11af7",
+    "short_hash": "fd365f2",
+    "author": "Bryan Guffey",
+    "date": "2026-08-06T13:42:05-07:00",
+    "message": "fix: code-review findings — invited-endpoint hardening, Enter semantics, sealed-feed inert, ZIP race\n\n- /api/invited resolves handles via public.api.bsky.app only (actorToDid\n  would fetch https://<caller-string>/.well-known/atproto-did — an open\n  request-forgery primitive on an unauthenticated endpoint) and validates\n  handle/DID shape before touching anything\n- Enter now advances from focused answer controls (place cards, radios)\n  instead of re-activating them — Enter on a just-ranked location was\n  un-ranking it while the chip promised 'press Enter'; also makes the\n  affordance real on interest/travel where radio focus swallowed it\n- sealed feed gets inert on non-hero items: overflow:hidden alone still\n  let Tab-focus scroll the feed and screen readers read everything\n- ZIP lookup debounced 400ms with staleness + sequence guards — no more\n  clobbering a ZIP+4 mid-keystroke; retyping the same ZIP works again\n- abr_known cookie only set for allowed users, strict shape/length checks\n  on read (it renders in the sheet and seeds login())\n- typeahead results deduped by handle (keyed each crashed on dupes);\n  dropdown closes on focusout and resets when the sheet closes, so a\n  stale dropdown can't block window Escape\n- response API's closed message derives its date from the DEADLINE\n  binding instead of hardcoding August 15\n\nCo-Authored-By: Claude Fable 5 <noreply@anthropic.com>\nClaude-Session: https://claude.ai/code/session_01KvMrEJy2nWjYvgkPqQ26eD",
+    "files_changed": 10
+  },
+  {
     "hash": "1a4180cad77cf9e66c780573e4b4a49b44ffe6ce",
     "short_hash": "1a4180c",
     "author": "Bryan Guffey",

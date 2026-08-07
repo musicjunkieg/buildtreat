@@ -384,6 +384,17 @@
       "created_at": "2026-08-06T13:39:31.850962-07:00",
       "updated_at": "2026-08-06T13:39:31.850962-07:00",
       "metadata_json": "{\"branch\":\"feature/feedback-round\",\"commit\":\"1a4180c\",\"confidence\":95}"
+    },
+    {
+      "id": 36,
+      "change_id": "e19ee928-7b0b-4591-96e7-53488a7f403a",
+      "node_type": "action",
+      "title": "Code-review fixes: invited endpoint hardening, Enter semantics, inert seal, ZIP race, cookie hardening",
+      "description": null,
+      "status": "pending",
+      "created_at": "2026-08-06T13:42:09.993489-07:00",
+      "updated_at": "2026-08-06T13:42:09.993489-07:00",
+      "metadata_json": "{\"branch\":\"feature/feedback-round\",\"commit\":\"fd365f2\",\"confidence\":95}"
     }
   ],
   "edges": [
@@ -771,6 +782,17 @@
       "weight": 1.0,
       "rationale": "Pre-merge review hardening",
       "created_at": "2026-08-06T13:39:31.859252-07:00"
+    },
+    {
+      "id": 36,
+      "from_node_id": 35,
+      "to_node_id": 36,
+      "from_change_id": "7da0aa49-2adf-4adf-b339-07642d710d70",
+      "to_change_id": "e19ee928-7b0b-4591-96e7-53488a7f403a",
+      "edge_type": "leads_to",
+      "weight": 1.0,
+      "rationale": "Second reviewer's findings",
+      "created_at": "2026-08-06T13:42:10.001626-07:00"
     }
   ]
 }

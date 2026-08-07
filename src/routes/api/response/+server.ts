@@ -2,18 +2,14 @@ import { error, json } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
 import { loadHandle } from '@svelte-atproto/oauth/helper';
 import { checkAllowlist, upsertResponse, validateDraft, ValidationError } from '$lib/server/db';
+import { deadlineStatus } from '$lib/server/deadline';
 
 export const PUT: RequestHandler = async ({ request, locals, platform }) => {
 	if (!locals.did) {
 		error(401, { message: 'Sign in with Atmosphere first' });
 	}
-	const deadline = platform?.env?.DEADLINE;
-	if (deadline && Date.now() > Date.parse(deadline)) {
-		const display = new Date(deadline).toLocaleDateString('en-US', {
-			timeZone: 'America/Los_Angeles',
-			month: 'long',
-			day: 'numeric'
-		});
+	const { closed, display } = deadlineStatus(platform?.env?.DEADLINE);
+	if (closed) {
 		error(403, {
 			message: `The survey closed on ${display} — answers are locked. Ping @chaosgreml.in if something needs fixing.`
 		});
