@@ -1,5 +1,13 @@
 [
   {
+    "hash": "777caa9afec9f77ffea255ea809aa430e8dfd823",
+    "short_hash": "777caa9",
+    "author": "Bryan Guffey",
+    "date": "2026-08-07T10:55:10-07:00",
+    "message": "docs: DESIGN.md records the organizer surface; regenerate sidecar\n\nThe Dusk world now documents both surfaces: the survey feed and the\norganizer command rail. New recorded devices: computed-ink heatmap rule,\nheight-interpolated stat step, surface-conditional grain, switch and\nsegmented-filter components. Sidecar regenerated wholesale.\n\nCo-Authored-By: Claude Fable 5 <noreply@anthropic.com>\nClaude-Session: https://claude.ai/code/session_014GrGCvMtG1jntmgmLjWmvh",
+    "files_changed": 5
+  },
+  {
     "hash": "d39c6dd4fd742a156d1fd28cf16b88ea04714a59",
     "short_hash": "d39c6dd",
     "author": "Bryan Guffey",

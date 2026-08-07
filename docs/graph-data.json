@@ -593,6 +593,17 @@
       "created_at": "2026-08-07T10:46:51.200675-07:00",
       "updated_at": "2026-08-07T10:46:51.200675-07:00",
       "metadata_json": "{\"branch\":\"feature/organizer\",\"commit\":\"d39c6dd\",\"confidence\":90}"
+    },
+    {
+      "id": 55,
+      "change_id": "ab9268a2-5dc8-4b79-8bbd-b67a91ac391e",
+      "node_type": "outcome",
+      "title": "Shipped: finish review verdict=ship, DESIGN.md extended, PR #4 opened; migration 0002 applied to prod D1",
+      "description": null,
+      "status": "pending",
+      "created_at": "2026-08-07T10:55:43.409627-07:00",
+      "updated_at": "2026-08-07T10:55:43.409627-07:00",
+      "metadata_json": "{\"branch\":\"feature/organizer\",\"commit\":\"777caa9\",\"confidence\":95}"
     }
   ],
   "edges": [
@@ -1178,6 +1189,17 @@
       "weight": 1.0,
       "rationale": "Review outcome",
       "created_at": "2026-08-07T10:46:51.208134-07:00"
+    },
+    {
+      "id": 54,
+      "from_node_id": 54,
+      "to_node_id": 55,
+      "from_change_id": "a14fdcfb-3fa8-4a82-a00d-7c7640f10e47",
+      "to_change_id": "ab9268a2-5dc8-4b79-8bbd-b67a91ac391e",
+      "edge_type": "leads_to",
+      "weight": 1.0,
+      "rationale": "Ship outcome",
+      "created_at": "2026-08-07T10:55:43.416627-07:00"
     }
   ]
 }

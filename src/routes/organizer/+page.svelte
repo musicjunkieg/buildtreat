@@ -102,18 +102,15 @@
 
 	let message = $derived(form && 'message' in form ? (form.message as string) : null);
 	let latePassesOpen = $state(false);
-</script>
 
-<svelte:head>
-	<title>Organizer — the Atmospheric Builders’ Retreat</title>
-	<meta name="robots" content="noindex" />
-</svelte:head>
-
-<!--
+	// The direction contract must survive the production build; the compiler
+	// strips literal HTML comments, so it is emitted with @html like the
+	// layout's survey contract.
+	const contract = `<!--
 THESIS: One room where the organizer reads the whole survey; the availability
 heatmap answers "when can they come" at a glance. Refuses the KPI-card
 dashboard-on-gray.
-OWN-WORLD: The Dusk Feed world at Operate density — solid #0b0908 with the
+OWN-WORLD: The Dusk Feed world at Operate density - solid #0b0908 with the
 grain tile, one white ink stepped 100/70/45/35/12, Big Shoulders caps for the
 rail title and section heads, Hanken Grotesk for data, hairline ledgers, the
 white pill for real actions. No cards, no shadows, no second color.
@@ -121,13 +118,21 @@ STORY: Bryan signs in, reads the counts, sees the bright band in October,
 picks a window, checks who needs travel help, manages the list, exports.
 FIRST VIEWPORT: fixed left rail (title, deadline, stat stack, location tally,
 overrides, export) | content: WHEN CAN THEY COME heatmap + best windows.
-FORM: Command rail — approved comp .impeccable/mocks/org-b.png, option B of 3
+FORM: Command rail - approved comp .impeccable/mocks/org-b.png, option B of 3
 visualize comps. No concept-seed roll was run: composition was fixed by the
 confirmed shape brief (Operate, established world) and Bryan's comp choice;
 recorded here so the absent seed key reads as a decision, not an omission.
 FINISH: unreviewed and undocumented is unfinished; this build ends with the
 finish review, the verdict, and DESIGN.md.
--->
+-->`;
+</script>
+
+<svelte:head>
+	<title>Organizer — the Atmospheric Builders’ Retreat</title>
+	<meta name="robots" content="noindex" />
+</svelte:head>
+
+{@html contract}
 
 {#if data.authState === 'signed-out'}
 	<main class="gate">
