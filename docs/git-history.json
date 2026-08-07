@@ -1,5 +1,13 @@
 [
   {
+    "hash": "77b57673333ab963a73952d0c175763777eaca12",
+    "short_hash": "77b5767",
+    "author": "Bryan Guffey",
+    "date": "2026-08-06T20:09:18-07:00",
+    "message": "chore: CodeRabbit round 6 — six small cleanups\n\n- allowlist checks are one D1 round trip (count + match combined;\n  semantics verified against production data)\n- error logs carry truncated DIDs, not full identifiers\n- loadDraft dedupes ranking ids before the three-slot limit\n- 403 messages interpolate retreat.organizerHandle\n- explicit type=button on the sheet's two pill buttons\n- CHANGELOG #19 entry describes the shipped OAuth fix, not the\n  diagnostic work\n\nCo-Authored-By: Claude Fable 5 <noreply@anthropic.com>\nClaude-Session: https://claude.ai/code/session_01KvMrEJy2nWjYvgkPqQ26eD",
+    "files_changed": 9
+  },
+  {
     "hash": "99af46d2b08acfc1c629733dcdf4899251ba8ee4",
     "short_hash": "99af46d",
     "author": "Bryan Guffey",

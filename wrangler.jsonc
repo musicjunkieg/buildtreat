@@ -16,7 +16,9 @@
 		// exactly where the app is served.
 		"ORIGIN": "https://buildersretre.at",
 		// Respond-by deadline: Aug 15 2026, 11:59:59 PM Pacific (PDT = UTC-7).
-		"DEADLINE": "2026-08-16T06:59:59Z"
+		"DEADLINE": "2026-08-16T06:59:59Z",
+		// DIDs allowed into /organizer (comma-separated). Bryan (@chaosgreml.in).
+		"ORGANIZER_DIDS": "did:plc:h3wpawnrlptr4534chevddo6"
 	},
 	"kv_namespaces": [
 		{ "binding": "OAUTH_SESSIONS", "id": "b54ff92b5d6c4d53bf6126663f0e5077" },
