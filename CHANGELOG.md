@@ -8,7 +8,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Added
 - Organizer backend: allowlist, responses table, availability heatmap, CSV export (#48)
-- Organizer backend: allowlist, responses table, availability heatmap, CSV export (#48)
 - Review: answers-updated confirmation + sign-out at end (#41)
 - Location question: add no-preference option (#40)
 - Linkify DM @chaosgreml.in mentions via aturi.to profile waypoint (#38)
