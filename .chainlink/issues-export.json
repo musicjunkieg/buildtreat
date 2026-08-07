@@ -1,12 +1,74 @@
 {
   "version": 1,
-  "exported_at": "2026-08-07T03:09:18.778219+00:00",
+  "exported_at": "2026-08-07T18:00:09.445619+00:00",
   "issues": [
+    {
+      "id": 48,
+      "title": "Organizer backend: allowlist, responses table, availability heatmap, CSV export",
+      "description": null,
+      "status": "open",
+      "priority": "high",
+      "parent_id": null,
+      "labels": [
+        "feature"
+      ],
+      "comments": [
+        {
+          "content": "[action] Shape interview done: ATProto-DID auth, Dusk/Operate density, override=both. Writing brief.",
+          "created_at": "2026-08-07T17:02:23.100144+00:00",
+          "kind": "note"
+        },
+        {
+          "content": "[action] UI built + committed; spawning finish reviewer",
+          "created_at": "2026-08-07T17:39:01.297326+00:00",
+          "kind": "note"
+        },
+        {
+          "content": "PR #4 open: https://github.com/musicjunkieg/buildtreat/pull/4 — impeccable pipeline complete (comp B approved, finish review ship, DESIGN.md extended). Migration 0002 applied to prod D1 (additive). ORGANIZER_DIDS var in wrangler.jsonc gates /organizer.",
+          "created_at": "2026-08-07T17:55:43.422067+00:00",
+          "kind": "note"
+        },
+        {
+          "content": "[action] Organizer backend shipped to PR #4; awaiting merge + deploy",
+          "created_at": "2026-08-07T17:55:43.428622+00:00",
+          "kind": "note"
+        }
+      ],
+      "created_at": "2026-08-07T16:59:42.978403+00:00",
+      "updated_at": "2026-08-07T16:59:42.978403+00:00",
+      "closed_at": null
+    },
+    {
+      "id": 47,
+      "title": "Clean up merged/stale git branches",
+      "description": null,
+      "status": "closed",
+      "priority": "low",
+      "parent_id": null,
+      "labels": [
+        "chore"
+      ],
+      "comments": [
+        {
+          "content": "Audit complete: feature/survey (PR1 merged), feature/feedback-round (PR3 merged), chore/deploy-workers-dev (PR2 open but fully contained in PR3 squash — verified c60faa5 ancestor of 77b5767). Hook forbids git mutations this session; deletion commands handed to Bryan.",
+          "created_at": "2026-08-07T15:18:11.160016+00:00",
+          "kind": "note"
+        },
+        {
+          "content": "[auto] Session resumed after context compression.",
+          "created_at": "2026-08-07T15:55:49.982976+00:00",
+          "kind": "note"
+        }
+      ],
+      "created_at": "2026-08-07T15:16:47.477804+00:00",
+      "updated_at": "2026-08-07T15:18:11.167035+00:00",
+      "closed_at": "2026-08-07T15:18:11.167035+00:00"
+    },
     {
       "id": 46,
       "title": "CodeRabbit round 6: six trivia fixes",
       "description": null,
-      "status": "open",
+      "status": "closed",
       "priority": "medium",
       "parent_id": null,
       "labels": [
@@ -14,8 +76,8 @@
       ],
       "comments": [],
       "created_at": "2026-08-07T03:08:10.267902+00:00",
-      "updated_at": "2026-08-07T03:08:10.267902+00:00",
-      "closed_at": null
+      "updated_at": "2026-08-07T03:09:23.718406+00:00",
+      "closed_at": "2026-08-07T03:09:23.718406+00:00"
     },
     {
       "id": 45,

@@ -461,6 +461,149 @@
       "created_at": "2026-08-06T20:00:44.893098-07:00",
       "updated_at": "2026-08-06T20:00:44.893098-07:00",
       "metadata_json": "{\"branch\":\"feature/feedback-round\",\"commit\":\"99af46d\",\"confidence\":95}"
+    },
+    {
+      "id": 43,
+      "change_id": "746b2cb6-3161-4f0d-8bba-8b775ab7f8d7",
+      "node_type": "action",
+      "title": "CodeRabbit round 6: six trivia cleanups (single-query allowlist, log hygiene)",
+      "description": null,
+      "status": "pending",
+      "created_at": "2026-08-06T20:09:23.701635-07:00",
+      "updated_at": "2026-08-06T20:09:23.701635-07:00",
+      "metadata_json": "{\"branch\":\"feature/feedback-round\",\"commit\":\"77b5767\",\"confidence\":95}"
+    },
+    {
+      "id": 44,
+      "change_id": "c0a273ec-2bc0-43a1-a702-3c19825daf11",
+      "node_type": "outcome",
+      "title": "PR #3 merged + deployed to buildersretre.at — production verified: pre-flight invite check live (tyler.fun yes / atproto.la no), 308 redirect, no-preference option serving",
+      "description": null,
+      "status": "pending",
+      "created_at": "2026-08-07T08:15:29.685437-07:00",
+      "updated_at": "2026-08-07T08:15:29.685437-07:00",
+      "metadata_json": "{\"branch\":\"feature/feedback-round\",\"confidence\":100}"
+    },
+    {
+      "id": 45,
+      "change_id": "4e3c360a-c0f0-4a15-a207-d2f194834fb1",
+      "node_type": "goal",
+      "title": "Organizer backend: allowlist, responses, heatmap, override, CSV",
+      "description": null,
+      "status": "pending",
+      "created_at": "2026-08-07T10:02:17.846620-07:00",
+      "updated_at": "2026-08-07T10:02:17.846620-07:00",
+      "metadata_json": "{\"branch\":\"main\",\"confidence\":95,\"prompt\":\"howdy, shape the backend!\"}"
+    },
+    {
+      "id": 46,
+      "change_id": "0b02bcab-e14c-456c-9606-1e6a84ea1624",
+      "node_type": "option",
+      "title": "Organizer auth: ATProto OAuth + organizer DID list",
+      "description": null,
+      "status": "pending",
+      "created_at": "2026-08-07T10:02:17.857272-07:00",
+      "updated_at": "2026-08-07T10:02:17.857272-07:00",
+      "metadata_json": "{\"branch\":\"main\",\"confidence\":90}"
+    },
+    {
+      "id": 47,
+      "change_id": "c21c0d8f-3d3e-4c7d-bd12-699835cf928d",
+      "node_type": "option",
+      "title": "Organizer auth: Cloudflare Access",
+      "description": null,
+      "status": "pending",
+      "created_at": "2026-08-07T10:02:17.867946-07:00",
+      "updated_at": "2026-08-07T10:02:17.867946-07:00",
+      "metadata_json": "{\"branch\":\"main\",\"confidence\":40}"
+    },
+    {
+      "id": 48,
+      "change_id": "50de8937-9958-4f82-ad21-bc00981d407c",
+      "node_type": "option",
+      "title": "Organizer auth: secret link + passphrase",
+      "description": null,
+      "status": "pending",
+      "created_at": "2026-08-07T10:02:17.877619-07:00",
+      "updated_at": "2026-08-07T10:02:17.877619-07:00",
+      "metadata_json": "{\"branch\":\"main\",\"confidence\":20}"
+    },
+    {
+      "id": 49,
+      "change_id": "5382359d-ff41-49e0-baaa-612a8d2b7c94",
+      "node_type": "decision",
+      "title": "Reuse ATProto OAuth gated by organizer DIDs; Dusk world at Operate density; override = global reopen + per-person late passes (Bryan chose all three)",
+      "description": null,
+      "status": "pending",
+      "created_at": "2026-08-07T10:02:17.888417-07:00",
+      "updated_at": "2026-08-07T10:02:17.888417-07:00",
+      "metadata_json": "{\"branch\":\"main\",\"confidence\":95}"
+    },
+    {
+      "id": 50,
+      "change_id": "48fc1c06-9f81-4278-98ac-3c118134033e",
+      "node_type": "action",
+      "title": "Generating 3 organizer-surface comps (org-a ledger stack, org-b command rail, org-c heatmap-hero) per impeccable visualize step",
+      "description": null,
+      "status": "pending",
+      "created_at": "2026-08-07T10:10:45.521575-07:00",
+      "updated_at": "2026-08-07T10:10:45.521575-07:00",
+      "metadata_json": "{\"branch\":\"main\",\"confidence\":90}"
+    },
+    {
+      "id": 51,
+      "change_id": "0e396b4a-b50f-44ff-9bca-2f0633b476e2",
+      "node_type": "decision",
+      "title": "Organizer comp B (command rail) approved by Bryan",
+      "description": null,
+      "status": "pending",
+      "created_at": "2026-08-07T10:24:23.562482-07:00",
+      "updated_at": "2026-08-07T10:24:23.562482-07:00",
+      "metadata_json": "{\"branch\":\"feature/organizer\",\"confidence\":95}"
+    },
+    {
+      "id": 52,
+      "change_id": "fb0ce887-3707-40b7-b90f-047610ebd120",
+      "node_type": "action",
+      "title": "Organizer server layer built: migration 0002, surveyGate overrides, aggregates, CSV",
+      "description": null,
+      "status": "pending",
+      "created_at": "2026-08-07T10:29:42.132789-07:00",
+      "updated_at": "2026-08-07T10:29:42.132789-07:00",
+      "metadata_json": "{\"branch\":\"feature/organizer\",\"commit\":\"e42d0bf\",\"confidence\":92}"
+    },
+    {
+      "id": 53,
+      "change_id": "4bb58e90-b503-49b9-b876-dea84dc9492f",
+      "node_type": "action",
+      "title": "Built /organizer UI per comp B; two inspection rounds done",
+      "description": null,
+      "status": "pending",
+      "created_at": "2026-08-07T10:39:01.284886-07:00",
+      "updated_at": "2026-08-07T10:39:01.284886-07:00",
+      "metadata_json": "{\"branch\":\"feature/organizer\",\"commit\":\"4469f49\",\"confidence\":90}"
+    },
+    {
+      "id": 54,
+      "change_id": "a14fdcfb-3fa8-4a82-a00d-7c7640f10e47",
+      "node_type": "outcome",
+      "title": "Finish reviewer verdict=fix with 7 material findings; all applied in one batch",
+      "description": null,
+      "status": "pending",
+      "created_at": "2026-08-07T10:46:51.200675-07:00",
+      "updated_at": "2026-08-07T10:46:51.200675-07:00",
+      "metadata_json": "{\"branch\":\"feature/organizer\",\"commit\":\"d39c6dd\",\"confidence\":90}"
+    },
+    {
+      "id": 55,
+      "change_id": "ab9268a2-5dc8-4b79-8bbd-b67a91ac391e",
+      "node_type": "outcome",
+      "title": "Shipped: finish review verdict=ship, DESIGN.md extended, PR #4 opened; migration 0002 applied to prod D1",
+      "description": null,
+      "status": "pending",
+      "created_at": "2026-08-07T10:55:43.409627-07:00",
+      "updated_at": "2026-08-07T10:55:43.409627-07:00",
+      "metadata_json": "{\"branch\":\"feature/organizer\",\"commit\":\"777caa9\",\"confidence\":95}"
     }
   ],
   "edges": [
@@ -925,6 +1068,138 @@
       "weight": 1.0,
       "rationale": "External review loop round 5",
       "created_at": "2026-08-06T20:00:44.902415-07:00"
+    },
+    {
+      "id": 43,
+      "from_node_id": 42,
+      "to_node_id": 43,
+      "from_change_id": "00849c5f-b709-4eb8-adde-688fc2fa6613",
+      "to_change_id": "746b2cb6-3161-4f0d-8bba-8b775ab7f8d7",
+      "edge_type": "leads_to",
+      "weight": 1.0,
+      "rationale": "External review loop round 6 — final fed round",
+      "created_at": "2026-08-06T20:09:23.711539-07:00"
+    },
+    {
+      "id": 44,
+      "from_node_id": 43,
+      "to_node_id": 44,
+      "from_change_id": "746b2cb6-3161-4f0d-8bba-8b775ab7f8d7",
+      "to_change_id": "c0a273ec-2bc0-43a1-a702-3c19825daf11",
+      "edge_type": "leads_to",
+      "weight": 1.0,
+      "rationale": "Feedback round shipped",
+      "created_at": "2026-08-07T08:15:29.693249-07:00"
+    },
+    {
+      "id": 45,
+      "from_node_id": 45,
+      "to_node_id": 46,
+      "from_change_id": "4e3c360a-c0f0-4a15-a207-d2f194834fb1",
+      "to_change_id": "0b02bcab-e14c-456c-9606-1e6a84ea1624",
+      "edge_type": "leads_to",
+      "weight": 1.0,
+      "rationale": "auth option",
+      "created_at": "2026-08-07T10:02:23.072674-07:00"
+    },
+    {
+      "id": 46,
+      "from_node_id": 45,
+      "to_node_id": 47,
+      "from_change_id": "4e3c360a-c0f0-4a15-a207-d2f194834fb1",
+      "to_change_id": "c21c0d8f-3d3e-4c7d-bd12-699835cf928d",
+      "edge_type": "leads_to",
+      "weight": 1.0,
+      "rationale": "auth option",
+      "created_at": "2026-08-07T10:02:23.080572-07:00"
+    },
+    {
+      "id": 47,
+      "from_node_id": 45,
+      "to_node_id": 48,
+      "from_change_id": "4e3c360a-c0f0-4a15-a207-d2f194834fb1",
+      "to_change_id": "50de8937-9958-4f82-ad21-bc00981d407c",
+      "edge_type": "leads_to",
+      "weight": 1.0,
+      "rationale": "auth option",
+      "created_at": "2026-08-07T10:02:23.087314-07:00"
+    },
+    {
+      "id": 48,
+      "from_node_id": 46,
+      "to_node_id": 49,
+      "from_change_id": "0b02bcab-e14c-456c-9606-1e6a84ea1624",
+      "to_change_id": "5382359d-ff41-49e0-baaa-612a8d2b7c94",
+      "edge_type": "leads_to",
+      "weight": 1.0,
+      "rationale": "chosen",
+      "created_at": "2026-08-07T10:02:23.093842-07:00"
+    },
+    {
+      "id": 49,
+      "from_node_id": 49,
+      "to_node_id": 50,
+      "from_change_id": "5382359d-ff41-49e0-baaa-612a8d2b7c94",
+      "to_change_id": "48fc1c06-9f81-4278-98ac-3c118134033e",
+      "edge_type": "leads_to",
+      "weight": 1.0,
+      "rationale": "Implementation begins with visualize approval gate",
+      "created_at": "2026-08-07T10:10:45.528975-07:00"
+    },
+    {
+      "id": 50,
+      "from_node_id": 50,
+      "to_node_id": 51,
+      "from_change_id": "48fc1c06-9f81-4278-98ac-3c118134033e",
+      "to_change_id": "0e396b4a-b50f-44ff-9bca-2f0633b476e2",
+      "edge_type": "leads_to",
+      "weight": 1.0,
+      "rationale": "Comp approval",
+      "created_at": "2026-08-07T10:24:23.569786-07:00"
+    },
+    {
+      "id": 51,
+      "from_node_id": 51,
+      "to_node_id": 52,
+      "from_change_id": "0e396b4a-b50f-44ff-9bca-2f0633b476e2",
+      "to_change_id": "fb0ce887-3707-40b7-b90f-047610ebd120",
+      "edge_type": "leads_to",
+      "weight": 1.0,
+      "rationale": "Implementation",
+      "created_at": "2026-08-07T10:29:42.139692-07:00"
+    },
+    {
+      "id": 52,
+      "from_node_id": 51,
+      "to_node_id": 53,
+      "from_change_id": "0e396b4a-b50f-44ff-9bca-2f0633b476e2",
+      "to_change_id": "4bb58e90-b503-49b9-b876-dea84dc9492f",
+      "edge_type": "leads_to",
+      "weight": 1.0,
+      "rationale": "Implementation",
+      "created_at": "2026-08-07T10:39:01.291324-07:00"
+    },
+    {
+      "id": 53,
+      "from_node_id": 53,
+      "to_node_id": 54,
+      "from_change_id": "4bb58e90-b503-49b9-b876-dea84dc9492f",
+      "to_change_id": "a14fdcfb-3fa8-4a82-a00d-7c7640f10e47",
+      "edge_type": "leads_to",
+      "weight": 1.0,
+      "rationale": "Review outcome",
+      "created_at": "2026-08-07T10:46:51.208134-07:00"
+    },
+    {
+      "id": 54,
+      "from_node_id": 54,
+      "to_node_id": 55,
+      "from_change_id": "a14fdcfb-3fa8-4a82-a00d-7c7640f10e47",
+      "to_change_id": "ab9268a2-5dc8-4b79-8bbd-b67a91ac391e",
+      "edge_type": "leads_to",
+      "weight": 1.0,
+      "rationale": "Ship outcome",
+      "created_at": "2026-08-07T10:55:43.416627-07:00"
     }
   ]
 }

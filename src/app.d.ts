@@ -16,6 +16,7 @@ declare global {
 			env: {
 				ORIGIN?: string;
 				DEADLINE?: string;
+				ORGANIZER_DIDS?: string;
 				OAUTH_SESSIONS: KVNamespace;
 				OAUTH_STATES: KVNamespace;
 				PROFILE_CACHE: KVNamespace;

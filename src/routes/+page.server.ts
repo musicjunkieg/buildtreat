@@ -7,7 +7,7 @@ import { retreat } from '$lib/content';
 import { checkAllowlist, getResponse } from '$lib/server/db';
 import type { SurveyDraft } from '$lib/survey.svelte';
 import type { KnownUser } from '$lib/types';
-import { deadlineStatus } from '$lib/server/deadline';
+import { surveyGate } from '$lib/server/organizer';
 
 /** Enough of a DID to correlate log lines without logging the full identifier. */
 const logDid = (did: string) => `${did.slice(0, 14)}…`;
@@ -64,7 +64,11 @@ export const load: PageServerLoad = async ({ locals, platform, url, cookies }) =
 	// The OAuth library redirects back with ?error=... when a login fails.
 	const authError = url.searchParams.get('error');
 
-	const { deadline, closed } = deadlineStatus(platform?.env?.DEADLINE);
+	const db = platform?.env?.DB;
+
+	// Base gate (no respondent yet): deadline + the organizer's reopen switch.
+	// A signed-in respondent gets a second look below for a late pass.
+	const { deadline, closed } = await surveyGate(db, platform?.env?.DEADLINE, null);
 
 	const profileCache = platform?.env?.PROFILE_CACHE
 		? cloudflareKV(platform.env.PROFILE_CACHE, { ttl: 3600 })
@@ -120,7 +124,11 @@ export const load: PageServerLoad = async ({ locals, platform, url, cookies }) =
 		avatar: profile?.avatar ?? null
 	};
 
-	const db = platform?.env?.DB;
+	// Late passes are per-respondent: only now that we know who this is can
+	// the gate answer for them specifically.
+	const userGate =
+		closed && db ? await surveyGate(db, platform?.env?.DEADLINE, { did: locals.did, handle: user.handle }) : null;
+	const closedForUser = userGate ? userGate.closed : closed;
 
 	// The allowlist gates the whole survey, not just submission: a signed-in
 	// account that isn't invited sees the polite invite-only state and the
@@ -172,7 +180,7 @@ export const load: PageServerLoad = async ({ locals, platform, url, cookies }) =
 		existingResponse: stored !== null,
 		organizer,
 		deadline,
-		closed,
+		closed: closedForUser,
 		knownUser,
 		authError
 	};
