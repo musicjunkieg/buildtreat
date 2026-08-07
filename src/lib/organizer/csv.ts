@@ -1,10 +1,16 @@
 import { NO_PREFERENCE } from '$lib/content';
 import type { OrganizerResponse } from '$lib/server/organizer';
 
-/** RFC 4180-style CSV: quote fields containing commas, quotes, or newlines. */
+/**
+ * RFC 4180-style CSV: quote fields containing commas, quotes, or newlines.
+ * Respondent-controlled text (names, locations) also gets a leading
+ * apostrophe when it starts with a formula trigger (= + - @ tab), so the
+ * export can't run formulas when opened in Excel/Sheets.
+ */
 function field(v: string | number | null): string {
 	if (v === null) return '';
-	const s = String(v);
+	let s = String(v);
+	if (/^[=+\-@\t\r]/.test(s)) s = `'${s}`;
 	return /[",\n\r]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s;
 }
 

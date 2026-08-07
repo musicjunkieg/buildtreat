@@ -1,5 +1,13 @@
 [
   {
+    "hash": "e42d0bf7b339d5befad8edab5727f2a5c63eb707",
+    "short_hash": "e42d0bf",
+    "author": "Bryan Guffey",
+    "date": "2026-08-07T10:29:39-07:00",
+    "message": "feat: organizer server layer — overrides, aggregates, CSV export\n\nMigration 0002 adds settings (global reopen switch) and late_passes.\nsurveyGate() is now the single deadline authority for respondent writes:\nDEADLINE, overridden by the organizer's reopen switch for everyone or a\nlate pass for one respondent. /organizer route gated by ORGANIZER_DIDS\n(404 for non-organizers), with form actions for allowlist and override\nmanagement and CSV endpoints for responses + availability ranges.\n\nCo-Authored-By: Claude Fable 5 <noreply@anthropic.com>\nClaude-Session: https://claude.ai/code/session_014GrGCvMtG1jntmgmLjWmvh",
+    "files_changed": 14
+  },
+  {
     "hash": "77b57673333ab963a73952d0c175763777eaca12",
     "short_hash": "77b5767",
     "author": "Bryan Guffey",
