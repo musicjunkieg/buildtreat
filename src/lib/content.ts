@@ -81,7 +81,7 @@ export const locations: RetreatLocation[] = [
 
 export const datesQuestion = {
 	title: 'When are you free?',
-	prompt: 'Select the dates you’re available. Add as many ranges as you like — drag across days or type them in.',
+	prompt: 'Select the dates you’re available. Tap your first and last day and we’ll fill in the rest — add as many ranges as you like.',
 	halfDayHint: 'On the first and last day of a range, you can mark yourself available for only the first or second half of the day.'
 } as const;
 

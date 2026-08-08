@@ -1,5 +1,13 @@
 [
   {
+    "hash": "7c466659008028303bbffdd7130be7904992905f",
+    "short_hash": "7c46665",
+    "author": "chaos gremlin",
+    "date": "2026-08-07T17:03:06-07:00",
+    "message": "fix: organizer sign-in returns to /organizer, not the survey (#6)",
+    "files_changed": 4
+  },
+  {
     "hash": "777caa9afec9f77ffea255ea809aa430e8dfd823",
     "short_hash": "777caa9",
     "author": "Bryan Guffey",
