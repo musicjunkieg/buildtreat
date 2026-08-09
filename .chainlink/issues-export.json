@@ -1,7 +1,52 @@
 {
   "version": 1,
-  "exported_at": "2026-08-09T01:51:48.786227+00:00",
+  "exported_at": "2026-08-09T02:37:32.331545+00:00",
   "issues": [
+    {
+      "id": 60,
+      "title": "Read CodeRabbit's reply on the gitattributes thread (PR #9)",
+      "description": null,
+      "status": "closed",
+      "priority": "low",
+      "parent_id": null,
+      "labels": [
+        "review"
+      ],
+      "comments": [],
+      "created_at": "2026-08-09T02:13:54.269702+00:00",
+      "updated_at": "2026-08-09T02:15:47.781152+00:00",
+      "closed_at": "2026-08-09T02:15:47.781152+00:00"
+    },
+    {
+      "id": 59,
+      "title": "Reply to CodeRabbit's three PR #9 comments with resolution rationale",
+      "description": null,
+      "status": "closed",
+      "priority": "low",
+      "parent_id": null,
+      "labels": [
+        "review"
+      ],
+      "comments": [],
+      "created_at": "2026-08-09T02:09:41.554459+00:00",
+      "updated_at": "2026-08-09T02:10:38.193668+00:00",
+      "closed_at": "2026-08-09T02:10:38.193668+00:00"
+    },
+    {
+      "id": 58,
+      "title": "Review new CodeRabbit comments on PRs 9 and 10",
+      "description": null,
+      "status": "closed",
+      "priority": "medium",
+      "parent_id": null,
+      "labels": [
+        "review"
+      ],
+      "comments": [],
+      "created_at": "2026-08-09T02:05:31.645747+00:00",
+      "updated_at": "2026-08-09T02:08:04.078384+00:00",
+      "closed_at": "2026-08-09T02:08:04.078384+00:00"
+    },
     {
       "id": 57,
       "title": "Diagnose PR #9 merge conflicts and prepare resolution steps",

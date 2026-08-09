@@ -1,17 +1,33 @@
-# Machine-generated tracker exports. The pre-commit hook regenerates these
-# from the local chainlink/deciduous databases on every commit, so at merge
-# time the branch's own copy is always the correct resolution — whichever
-# side git picked would be overwritten by the next commit's fresh export
-# anyway. The `keep-ours` custom driver (wired per-clone by
-# scripts/install-hooks.sh: `git config merge.keep-ours.driver true`) keeps
-# the current branch's version and ends the guaranteed every-PR conflict on
-# these files. Note: custom drivers only run in local merges — GitHub's UI
-# can't use them, so update branches locally when these conflict.
-.chainlink/issues-export.json merge=keep-ours
+# Machine-generated tracker exports and how they merge.
+#
+# The deciduous docs exports are DERIVED artifacts with a mergeable source
+# of truth elsewhere: deciduous syncs multi-user/multi-worktree history
+# through git-merged event files (`deciduous events rebuild`), and the
+# pre-commit hook regenerates these JSONs from the rebuilt database on
+# every commit. So at merge time the branch's own copy is always an
+# acceptable resolution — whichever side git picked would be overwritten
+# by the next commit's fresh export anyway. The `keep-ours` custom driver
+# (wired per-clone by scripts/install-hooks.sh:
+# `git config merge.keep-ours.driver true`) keeps the current branch's
+# version and ends the guaranteed every-PR conflict on these files.
+# Note: custom drivers only run in local merges — GitHub's UI can't use
+# them, so update branches locally when these conflict.
 docs/graph-data.json merge=keep-ours
 docs/git-history.json merge=keep-ours
 
+# .chainlink/issues-export.json deliberately gets NO merge driver
+# (data-integrity review, PR #9). Unlike deciduous, chainlink has no
+# tracked event log: this export is the ONLY git-visible carrier of issue
+# records, and linked worktrees / cloud sandboxes each have their own
+# untracked issues.db — so two branches genuinely can hold disjoint
+# record sets, and keep-ours would silently discard one side before it
+# was ever imported. A conflict on this file is signal, not noise.
+# To resolve one: `git checkout --theirs .chainlink/issues-export.json`,
+# then `chainlink import .chainlink/issues-export.json` (folds the other
+# side's records into the local db), then commit — the pre-commit hook
+# regenerates a true union export from the merged database.
+
 # Chainlink appends an entry on every session end, on whatever branch is
-# checked out; two branches touching the changelog is the normal case, not
-# a conflict. The built-in union driver keeps both sides' lines.
+# checked out; two branches touching the changelog is the normal case,
+# not a conflict. The built-in union driver keeps both sides' lines.
 CHANGELOG.md merge=union
