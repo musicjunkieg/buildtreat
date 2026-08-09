@@ -1,0 +1,544 @@
+<title>Anatomy of a Vanishing Cookie</title>
+<style>
+	:root {
+		--ground: #fbf8f3;
+		--panel: #f3ecdf;
+		--panel-edge: #e2d6c2;
+		--ink: #241a12;
+		--muted: #6f5f4c;
+		--faint: #9c8b74;
+		--caramel: #a05f1c;
+		--caramel-soft: #f0e0c8;
+		--flame: #e63c00;
+		--flame-soft: #fde4da;
+		--moss: #3c7a3f;
+		--moss-soft: #e2eedd;
+		--code-ground: #2a2018;
+		--code-ink: #f0e6d6;
+		--code-muted: #a08c72;
+		--code-hl: #4a3117;
+		--code-hl-edge: #c9822e;
+		--serif: 'Charter', 'Bitstream Charter', 'Iowan Old Style', Georgia, 'Times New Roman', serif;
+		--sans: system-ui, -apple-system, 'Segoe UI', sans-serif;
+		--mono: ui-monospace, 'SF Mono', 'Cascadia Code', Menlo, Consolas, monospace;
+	}
+	@media (prefers-color-scheme: dark) {
+		:root:not([data-theme="light"]) {
+			--ground: #171009;
+			--panel: #211812;
+			--panel-edge: #3a2c1e;
+			--ink: #f2e8d9;
+			--muted: #b3a086;
+			--faint: #83705a;
+			--caramel: #dc9c4a;
+			--caramel-soft: #332615;
+			--flame: #ff6230;
+			--flame-soft: #3a1c10;
+			--moss: #86c07e;
+			--moss-soft: #1e2b1a;
+			--code-ground: #100b07;
+			--code-ink: #ead9c0;
+			--code-muted: #8a7659;
+			--code-hl: #3c2a12;
+			--code-hl-edge: #dc9c4a;
+		}
+	}
+	:root[data-theme="dark"] {
+		--ground: #171009;
+		--panel: #211812;
+		--panel-edge: #3a2c1e;
+		--ink: #f2e8d9;
+		--muted: #b3a086;
+		--faint: #83705a;
+		--caramel: #dc9c4a;
+		--caramel-soft: #332615;
+		--flame: #ff6230;
+		--flame-soft: #3a1c10;
+		--moss: #86c07e;
+		--moss-soft: #1e2b1a;
+		--code-ground: #100b07;
+		--code-ink: #ead9c0;
+		--code-muted: #8a7659;
+		--code-hl: #3c2a12;
+		--code-hl-edge: #dc9c4a;
+	}
+
+	body {
+		background: var(--ground);
+		color: var(--ink);
+		font-family: var(--serif);
+		line-height: 1.6;
+		font-size: 1.0625rem;
+		margin: 0;
+	}
+	.wrap {
+		max-width: 46rem;
+		margin: 0 auto;
+		padding: 3rem 1.25rem 5rem;
+	}
+	.eyebrow {
+		font-family: var(--sans);
+		font-size: 0.6875rem;
+		font-weight: 600;
+		letter-spacing: 0.14em;
+		text-transform: uppercase;
+		color: var(--caramel);
+		margin: 0 0 0.75rem;
+	}
+	h1 {
+		font-size: clamp(2.1rem, 6vw, 3.1rem);
+		line-height: 1.08;
+		margin: 0 0 1rem;
+		letter-spacing: -0.01em;
+		text-wrap: balance;
+	}
+	.dek {
+		font-size: 1.2rem;
+		line-height: 1.5;
+		color: var(--muted);
+		margin: 0 0 1.5rem;
+		text-wrap: balance;
+	}
+	.meta {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.4rem 1.4rem;
+		font-family: var(--sans);
+		font-size: 0.8125rem;
+		color: var(--faint);
+		border-top: 1px solid var(--panel-edge);
+		border-bottom: 1px solid var(--panel-edge);
+		padding: 0.7rem 0;
+		margin-bottom: 3rem;
+	}
+	.meta code { font-family: var(--mono); font-size: 0.78rem; color: var(--muted); }
+
+	h2 {
+		font-size: 1.55rem;
+		line-height: 1.2;
+		margin: 3.2rem 0 0.9rem;
+		letter-spacing: -0.005em;
+		text-wrap: balance;
+	}
+	h2 .no {
+		color: var(--caramel);
+		font-variant-numeric: tabular-nums;
+		margin-right: 0.35em;
+	}
+	h3 {
+		font-family: var(--sans);
+		font-size: 0.75rem;
+		font-weight: 700;
+		letter-spacing: 0.12em;
+		text-transform: uppercase;
+		color: var(--muted);
+		margin: 2.2rem 0 0.7rem;
+	}
+	p { margin: 0 0 1.05rem; }
+	a { color: var(--caramel); }
+	strong { font-weight: 700; }
+	.wrap > p code, li code, td code, .story code, .tldr code, .callout code {
+		font-family: var(--mono);
+		font-size: 0.85em;
+		background: var(--panel);
+		border: 1px solid var(--panel-edge);
+		border-radius: 4px;
+		padding: 0.08em 0.32em;
+		white-space: nowrap;
+	}
+
+	/* TL;DR */
+	.tldr {
+		background: var(--panel);
+		border: 1px solid var(--panel-edge);
+		border-left: 4px solid var(--caramel);
+		border-radius: 8px;
+		padding: 1.1rem 1.3rem;
+		margin: 0 0 1rem;
+	}
+	.tldr .eyebrow { margin-bottom: 0.4rem; }
+	.tldr p { margin: 0; }
+	.tldr p + p { margin-top: 0.7rem; }
+
+	/* Storybook voice */
+	.story {
+		font-size: 1.17rem;
+		line-height: 1.65;
+		border-left: 3px solid var(--caramel);
+		padding: 0.2rem 0 0.2rem 1.4rem;
+		margin: 1.6rem 0;
+		font-style: italic;
+	}
+	.story em { font-style: normal; }
+	.story p { margin-bottom: 0.9rem; }
+	.story p:last-child { margin-bottom: 0; }
+
+	/* Cast table + generic tables */
+	.tablewrap { overflow-x: auto; margin: 1.4rem 0; }
+	table {
+		border-collapse: collapse;
+		width: 100%;
+		font-family: var(--sans);
+		font-size: 0.875rem;
+		line-height: 1.45;
+	}
+	th {
+		text-align: left;
+		font-size: 0.6875rem;
+		letter-spacing: 0.1em;
+		text-transform: uppercase;
+		color: var(--faint);
+		font-weight: 600;
+		padding: 0 0.9rem 0.45rem 0;
+		border-bottom: 1px solid var(--panel-edge);
+	}
+	td {
+		padding: 0.55rem 0.9rem 0.55rem 0;
+		border-bottom: 1px solid var(--panel-edge);
+		vertical-align: top;
+	}
+	td:last-child, th:last-child { padding-right: 0; }
+
+	/* Two-lane diagram */
+	.lanes {
+		display: grid;
+		grid-template-columns: 1fr 1fr;
+		gap: 1rem;
+		margin: 1.8rem 0;
+		font-family: var(--sans);
+	}
+	@media (max-width: 620px) { .lanes { grid-template-columns: 1fr; } }
+	.lane {
+		border: 1px solid var(--panel-edge);
+		border-radius: 10px;
+		overflow: hidden;
+		background: var(--panel);
+		display: flex;
+		flex-direction: column;
+	}
+	.lane-head {
+		padding: 0.75rem 1rem;
+		font-size: 0.8125rem;
+		font-weight: 700;
+		letter-spacing: 0.02em;
+	}
+	.lane-head small {
+		display: block;
+		font-weight: 400;
+		font-family: var(--mono);
+		font-size: 0.72rem;
+		margin-top: 0.15rem;
+		opacity: 0.85;
+	}
+	.lane.good .lane-head { background: var(--moss-soft); color: var(--moss); }
+	.lane.bad .lane-head { background: var(--flame-soft); color: var(--flame); }
+	.lane ol {
+		list-style: none;
+		margin: 0;
+		padding: 0.9rem 1rem 1rem;
+		display: flex;
+		flex-direction: column;
+		flex: 1;
+	}
+	.lane li {
+		font-size: 0.84rem;
+		line-height: 1.45;
+		padding-left: 1.35rem;
+		position: relative;
+		padding-bottom: 0.85rem;
+	}
+	.lane li::before {
+		content: '';
+		position: absolute;
+		left: 0.32rem;
+		top: 0.45em;
+		width: 0.5rem;
+		height: 0.5rem;
+		border-radius: 999px;
+		background: var(--faint);
+	}
+	.lane li::after {
+		content: '';
+		position: absolute;
+		left: 0.54rem;
+		top: calc(0.45em + 0.6rem);
+		bottom: 0.1rem;
+		width: 1px;
+		background: var(--panel-edge);
+	}
+	.lane li:last-child { padding-bottom: 0; }
+	.lane li:last-child::after { display: none; }
+	.lane li.hinge { font-weight: 700; }
+	.lane.good li.hinge::before { background: var(--moss); }
+	.lane.bad li.hinge::before { background: var(--flame); }
+	.lane.good li.outcome::before { background: var(--moss); }
+	.lane.bad li.outcome::before { background: var(--flame); }
+	.lane li.outcome {
+		margin-top: auto;
+		font-weight: 700;
+	}
+	.lane.good li.outcome { color: var(--moss); }
+	.lane.bad li.outcome { color: var(--flame); }
+	.lane li .ref {
+		display: block;
+		font-family: var(--mono);
+		font-size: 0.68rem;
+		color: var(--faint);
+		margin-top: 0.1rem;
+		font-weight: 400;
+	}
+
+	/* Code excerpts */
+	.code {
+		margin: 1.4rem 0 1.8rem;
+		border-radius: 10px;
+		overflow: hidden;
+		border: 1px solid var(--panel-edge);
+	}
+	.code-head {
+		display: flex;
+		justify-content: space-between;
+		align-items: baseline;
+		gap: 1rem;
+		font-family: var(--mono);
+		font-size: 0.72rem;
+		padding: 0.55rem 1rem;
+		background: var(--panel);
+		color: var(--muted);
+		border-bottom: 1px solid var(--panel-edge);
+	}
+	.code-head .who {
+		font-family: var(--sans);
+		font-weight: 600;
+		letter-spacing: 0.08em;
+		text-transform: uppercase;
+		font-size: 0.64rem;
+		color: var(--caramel);
+		white-space: nowrap;
+	}
+	.code-body { overflow-x: auto; background: var(--code-ground); }
+	.code pre {
+		margin: 0;
+		padding: 0.9rem 0;
+		font-family: var(--mono);
+		font-size: 0.8rem;
+		line-height: 1.55;
+		color: var(--code-ink);
+		min-width: max-content;
+	}
+	.code .ln {
+		display: inline-block;
+		width: 3.2em;
+		padding-right: 1em;
+		text-align: right;
+		color: var(--code-muted);
+		user-select: none;
+	}
+	.code .row { display: block; padding: 0 1rem 0 0.4rem; }
+	.code .row.hl {
+		background: var(--code-hl);
+		box-shadow: inset 3px 0 0 var(--code-hl-edge);
+	}
+	.code .cm { color: var(--code-muted); font-style: italic; }
+	.code .note {
+		display: block;
+		padding: 0.5rem 1rem 0.55rem 3.6em;
+		font-family: var(--sans);
+		font-size: 0.78rem;
+		font-style: italic;
+		color: var(--caramel);
+	}
+
+	/* Callouts */
+	.callout {
+		background: var(--panel);
+		border: 1px solid var(--panel-edge);
+		border-radius: 8px;
+		padding: 1rem 1.2rem;
+		margin: 1.4rem 0;
+		font-size: 0.98rem;
+	}
+	.callout .eyebrow { margin-bottom: 0.35rem; }
+	.callout p { margin: 0 0 0.6rem; }
+	.callout p:last-child { margin: 0; }
+	.callout.flame { border-left: 4px solid var(--flame); }
+	.callout.flame .eyebrow { color: var(--flame); }
+	.callout.moss { border-left: 4px solid var(--moss); }
+	.callout.moss .eyebrow { color: var(--moss); }
+
+	ul.plain { padding-left: 1.2rem; margin: 0 0 1.05rem; }
+	ul.plain li { margin-bottom: 0.5rem; }
+
+	.foot {
+		margin-top: 3.5rem;
+		border-top: 1px solid var(--panel-edge);
+		padding-top: 1rem;
+		font-family: var(--sans);
+		font-size: 0.8125rem;
+		color: var(--faint);
+		line-height: 1.6;
+	}
+	.foot code { font-family: var(--mono); font-size: 0.76rem; }
+
+	:focus-visible { outline: 2px solid var(--caramel); outline-offset: 2px; }
+</style>
+
+<div class="wrap">
+	<header>
+		<p class="eyebrow">buildtreat · bug walkthrough · rebuilt 2026-08-08</p>
+		<h1>Anatomy of a Vanishing Cookie</h1>
+		<p class="dek">Why <code>@svelte-atproto/oauth</code> loses the <code>oauth_return_to</code> cookie, why an organizer signing in at <code>/organizer</code> got dumped on the survey — and why our fix writes a <code>Set-Cookie</code> header by hand instead of asking the library nicely.</p>
+		<div class="meta">
+			<span><code>@svelte-atproto/oauth ^0.3.0</code></span>
+			<span><code>@sveltejs/kit 2.50.2</code></span>
+			<span>Fixed in PR&nbsp;#6 · <code>src/hooks.server.ts</code></span>
+		</div>
+	</header>
+
+	<div class="tldr">
+		<p class="eyebrow">The whole bug in two sentences</p>
+		<p><code>event.cookies.set()</code> doesn't put a cookie on any response — it puts a note in SvelteKit's <em>cookie jar</em>, and SvelteKit only empties the jar onto responses <strong>it</strong> builds. The library's login handler builds its own <code>Response</code> and returns it straight from the <code>handle</code> hook, so the jar is never emptied, the browser never receives <code>oauth_return_to</code>, and the OAuth callback falls back to redirecting to <code>/</code>.</p>
+	</div>
+
+	<h2><span class="no">1</span>Like you're five</h2>
+	<div class="story">
+		<p>The kitchen (SvelteKit) has one rule: <em>every box that leaves the shop goes through the packing table (<code>resolve()</code>), and the packer tucks in whatever cookies are on the sticky-note list (<code>event.cookies.set()</code> writes to that list).</em></p>
+		<p>The OAuth library is a guest baker. When you ask to log in, it writes on the sticky-note list — <em>"please pack a cookie that says <code>/organizer</code>"</em> — and then it packs its own box, seals it, and walks it out the side door. It never passes the packing table.</p>
+		<p>The note is still on the list. The cookie is still in the kitchen. The box is gone. When you come back later and the shop asks "where were we sending you?", your hands are empty, so it shrugs and sends you to the front door: <code>/</code>.</p>
+	</div>
+	<p>Everything below is just this story with file names and line numbers.</p>
+
+	<h2><span class="no">2</span>The cast</h2>
+	<div class="tablewrap">
+		<table>
+			<thead><tr><th>Who</th><th>File</th><th>Role in the story</th></tr></thead>
+			<tbody>
+				<tr>
+					<td><strong>The sticky-note list</strong></td>
+					<td><code>@sveltejs/kit — cookie.js</code></td>
+					<td><code>event.cookies.set()</code> appends to an in-memory map (<code>new_cookies</code>). It does <em>not</em> touch any <code>Response</code>.</td>
+				</tr>
+				<tr>
+					<td><strong>The packing table</strong></td>
+					<td><code>@sveltejs/kit — respond.js</code></td>
+					<td><code>add_cookies_to_headers()</code> turns the list into real <code>Set-Cookie</code> headers. It runs in exactly <strong>two</strong> places.</td>
+				</tr>
+				<tr>
+					<td><strong>The guest baker</strong></td>
+					<td><code>@svelte-atproto/oauth — dist/server/index.mjs</code></td>
+					<td>Intercepts <code>/oauth/*</code> inside its <code>handle</code> hook and returns hand-built responses.</td>
+				</tr>
+				<tr>
+					<td><strong>Our fix</strong></td>
+					<td><code>src/hooks.server.ts</code></td>
+					<td>Catches the sealed box on its way out and tapes the cookie to it.</td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+
+	<h2><span class="no">3</span>Two cookies, two fates</h2>
+	<p>The confusing part of this bug: the library sets its <em>session</em> cookies with the exact same <code>cookies.set()</code> API, and those work fine. Only <code>oauth_return_to</code> vanishes. The difference isn't the cookie — it's <strong>how each handler exits</strong>.</p>
+
+	<div class="lanes">
+		<div class="lane bad" role="group" aria-label="The cookie that vanished">
+			<div class="lane-head">The cookie that vanished<small>POST /oauth/login · oauth_return_to</small></div>
+			<ol>
+				<li>Sign-in form posts <code>returnTo: "/organizer"</code>.</li>
+				<li>Library queues the cookie in the jar.<span class="ref">index.mjs:228 — cookies.set(COOKIE_RETURN_TO, …)</span></li>
+				<li class="hinge">Handler <strong>returns</strong> its own <code>json({ url })</code> Response from the handle hook.<span class="ref">index.mjs:331 → 351</span></li>
+				<li>Returned object skips both packing-table call sites. Jar never emptied.<span class="ref">respond.js:421 and :478 — neither runs</span></li>
+				<li class="outcome">Browser gets no Set-Cookie. Callback finds nothing → redirect to “/”. Organizer lands on the survey.</li>
+			</ol>
+		</div>
+		<div class="lane good" role="group" aria-label="The cookie that shipped">
+			<div class="lane-head">The cookie that shipped<small>GET /oauth/callback · did + scope</small></div>
+			<ol>
+				<li>PDS sends the browser back with an auth code.</li>
+				<li>Library queues signed <code>did</code> / <code>scope</code> cookies in the jar.<span class="ref">index.mjs:302–303 — setSignedCookie(…)</span></li>
+				<li class="hinge">Handler <strong>throws</strong> <code>redirect(303, …)</code> instead of returning.<span class="ref">index.mjs:312–314</span></li>
+				<li>SvelteKit catches the throw, builds the 303 <em>itself</em>, and empties the jar onto it.<span class="ref">respond.js:413–421</span></li>
+				<li class="outcome">Browser gets the session cookies. You're signed in.</li>
+			</ol>
+		</div>
+	</div>
+
+	<p>Same jar, same API. One handler exits by <em>throwing</em>, so SvelteKit builds the response and packs the cookies; the other exits by <em>returning</em> a finished response, and nobody packs anything.</p>
+
+	<h2><span class="no">4</span>The trace, with receipts</h2>
+
+	<h3>Step 1 — the library queues the cookie</h3>
+	<p>Inside <code>startLogin</code>, the library validates <code>returnTo</code> and writes it… to the jar:</p>
+	<div class="code">
+		<div class="code-head"><span>node_modules/@svelte-atproto/oauth/dist/server/index.mjs</span><span class="who">the guest baker</span></div>
+		<div class="code-body"><pre><span class="row"><span class="ln">228</span>if (input.returnTo &amp;&amp; isSafeReturnTo(input.returnTo)) getRequestEvent().cookies.set(COOKIE_RETURN_TO, input.returnTo, {</span><span class="row"><span class="ln">229</span>    path: "/",</span><span class="row"><span class="ln">230</span>    httpOnly: true,</span><span class="row"><span class="ln">231</span>    sameSite: "lax",</span><span class="row"><span class="ln">232</span>    secure: !config.dev,</span><span class="row"><span class="ln">233</span>    maxAge: RETURN_TO_TTL</span><span class="row"><span class="ln">234</span>});</span></pre></div>
+	</div>
+	<p>This looks like "set a cookie". It is actually "add a sticky note to a list that someone else may or may not read later". That distinction is the entire bug.</p>
+
+	<h3>Step 2 — then it seals its own box</h3>
+	<p>The login handler builds a <code>Response</code> with SvelteKit's <code>json()</code> helper and hands it straight back out of the <code>handle</code> hook:</p>
+	<div class="code">
+		<div class="code-head"><span>node_modules/@svelte-atproto/oauth/dist/server/index.mjs</span><span class="who">the guest baker</span></div>
+		<div class="code-body"><pre><span class="row"><span class="ln">316</span>const login = async ({ request }) =&gt; {</span><span class="row"><span class="ln">…</span>  <span class="cm">// parse handle / signup / returnTo from the body</span></span><span class="row hl"><span class="ln">331</span>    return json(await api.startLogin(body));</span><span class="row"><span class="ln">332</span>};</span></pre><span class="note">json() builds a plain Response object. Nothing about it knows the jar exists.</span></div>
+	</div>
+	<div class="code">
+		<div class="code-head"><span>node_modules/@svelte-atproto/oauth/dist/server/index.mjs</span><span class="who">the side door</span></div>
+		<div class="code-body"><pre><span class="row"><span class="ln">348</span>return async ({ event, resolve }) =&gt; {</span><span class="row"><span class="ln">349</span>    if (!building) {</span><span class="row"><span class="ln">350</span>        const intercepted = matchHandler(event, config, handlers);</span><span class="row hl"><span class="ln">351</span>        if (intercepted) return await intercepted;</span><span class="row"><span class="ln">…</span>    }</span><span class="row"><span class="ln">358</span>    return resolve(event);</span><span class="row"><span class="ln">359</span>};</span></pre><span class="note">Line 351 is the side door: the response leaves the hook without resolve() ever being called.</span></div>
+	</div>
+
+	<h3>Step 3 — the only two packing tables in SvelteKit</h3>
+	<p>Search SvelteKit's request pipeline for the function that converts the jar into <code>Set-Cookie</code> headers and you find exactly two call sites:</p>
+	<div class="code">
+		<div class="code-head"><span>node_modules/@sveltejs/kit/src/runtime/server/respond.js</span><span class="who">the packing table</span></div>
+		<div class="code-body"><pre><span class="row"><span class="ln">413</span>if (e instanceof Redirect) {</span><span class="row"><span class="ln">…</span>    <span class="cm">// a redirect() THROWN anywhere — including inside a handle hook —</span></span><span class="row"><span class="ln">…</span>    <span class="cm">// is caught here, and SvelteKit builds the response itself:</span></span><span class="row hl"><span class="ln">421</span>    add_cookies_to_headers(response.headers, new_cookies.values());</span><span class="row"><span class="ln">422</span>    return response;</span></pre></div>
+	</div>
+	<div class="code">
+		<div class="code-head"><span>node_modules/@sveltejs/kit/src/runtime/server/respond.js</span><span class="who">the packing table</span></div>
+		<div class="code-body"><pre><span class="row"><span class="ln">459</span>resolve: (event, opts) =&gt; {</span><span class="row"><span class="ln">…</span>    <span class="cm">// every response produced BY resolve() passes through this .then():</span></span><span class="row hl"><span class="ln">478</span>    add_cookies_to_headers(response.headers, new_cookies.values());</span></pre></div>
+	</div>
+	<p>That's the complete list. A cookie queued with <code>event.cookies.set()</code> reaches the browser only if the response <strong>came out of <code>resolve()</code></strong> (line 478) or <strong>was built by SvelteKit from a thrown redirect or error</strong> (line 421). A <code>Response</code> you construct yourself and <code>return</code> from a handle hook takes neither road — SvelteKit passes it through byte-for-byte, sticky notes unread.</p>
+
+	<h3>Step 4 — the empty-handed callback</h3>
+	<div class="code">
+		<div class="code-head"><span>node_modules/@svelte-atproto/oauth/dist/server/index.mjs</span><span class="who">the guest baker</span></div>
+		<div class="code-body"><pre><span class="row"><span class="ln">308</span>const returnTo = cookies.get(COOKIE_RETURN_TO);   <span class="cm">// undefined — it never shipped</span></span><span class="row"><span class="ln">309</span>if (returnTo) {</span><span class="row"><span class="ln">…</span>    <span class="cm">// would redirect to /organizer here</span></span><span class="row"><span class="ln">313</span>}</span><span class="row hl"><span class="ln">314</span>redirect(303, "/");                               <span class="cm">// the fallback we always hit</span></span></pre></div>
+	</div>
+
+	<h2><span class="no">5</span>Your actual question: why does the fix build the header by hand?</h2>
+	<p>Our <code>returnToFix</code> hook sits <em>in front of</em> the library in the <code>sequence()</code>. When it calls <code>await resolve(event)</code>, that "resolve" is just the next link in the chain — it runs the library's handle, which returns the sealed <code>json({ url })</code> box from line 351. So the fix is now holding a <strong>finished <code>Response</code> object</strong>, and at that point there are only bad options and one good one:</p>
+	<ul class="plain">
+		<li><strong>"Use <code>event.cookies.set()</code> ourselves"</strong> — queues into the very same jar nobody will ever empty. The real <code>resolve()</code> (line 478) never runs for this request, because the chain short-circuited at the library. Same bug, now written by us.</li>
+		<li><strong>"Use the library part that formally adds the cookies"</strong> — there isn't one for a response it has already returned. The library's cookie helpers (<code>cookieOptions</code>, <code>setSignedCookie</code>) aren't exported, and even if they were, they also just call <code>cookies.set()</code> — they write sticky notes too. The library has no code path that stamps a cookie onto an existing <code>Response</code>; the "formal" machinery it relies on is SvelteKit's, and SvelteKit is out of the loop the moment line 351 returns.</li>
+		<li><strong>The one interface a finished <code>Response</code> actually has: its headers.</strong> So we do, by hand, precisely what <code>add_cookies_to_headers</code> would have done — append a serialized <code>Set-Cookie</code> header:</li>
+	</ul>
+	<div class="code">
+		<div class="code-head"><span>src/hooks.server.ts</span><span class="who">our fix</span></div>
+		<div class="code-body"><pre><span class="row"><span class="ln">79</span>const response = await resolve(event);   <span class="cm">// ← the library's sealed box comes back here</span></span><span class="row"><span class="ln">…</span></span><span class="row"><span class="ln">83</span>const safe = response.ok &amp;&amp; returnTo ? safeReturnTo(returnTo, event.url.origin) : null;</span><span class="row"><span class="ln">84</span>if (safe) {</span><span class="row hl"><span class="ln">87</span>    response.headers.append(</span><span class="row hl"><span class="ln">88</span>        'set-cookie',</span><span class="row hl"><span class="ln">89</span>        `oauth_return_to=${encodeURIComponent(safe)}; Path=/; HttpOnly; SameSite=Lax;${dev ? '' : ' Secure;'} Max-Age=600`</span><span class="row hl"><span class="ln">90</span>    );</span><span class="row"><span class="ln">91</span>}</span><span class="row"><span class="ln">92</span>return response;</span></pre><span class="note">Hand-rolled because we're downstream of the side door: once a Response exists, headers are the only way in. The attributes deliberately mirror the library's own (index.mjs:228–234), including Secure-only-in-prod.</span></div>
+	</div>
+	<p>One nuance in there: we read <code>returnTo</code> from a <em>clone</em> of the request body before resolving (the library consumes the original), and we re-encode with <code>encodeURIComponent</code> because the library's callback runs <code>decodeURIComponent</code> on whatever it finds in the cookie (index.mjs:311).</p>
+
+	<div class="callout moss">
+		<p class="eyebrow">So, in one line</p>
+		<p>The fix hand-builds the header because <strong>the "formal" cookie machinery is a queue, not a stamp</strong> — and for this request, the only worker who ever empties the queue went home when the library returned its own response.</p>
+	</div>
+
+	<h2><span class="no">6</span>Bonus bug we fixed while in there</h2>
+	<p>The library's own safety check for <code>returnTo</code> is a prefix test (index.mjs:213–222): <em>starts with <code>/</code>, doesn't start with <code>//</code></em>. That admits <code>/\evil.example</code> — and browsers normalize backslashes in <code>Location</code> headers, so it resolves to <code>https://evil.example</code>. An open redirect.</p>
+	<div class="callout flame">
+		<p class="eyebrow">The hole</p>
+		<p><code>isSafeReturnTo("/\\evil.example")</code> → <strong>true</strong> in the library. Our <code>safeReturnTo()</code> (hooks.server.ts:43–57) rejects backslashes outright <em>and</em> resolves the decoded value against our origin with <code>new URL(decoded, origin).origin !== origin</code>, which catches the whole class, encoded forms included.</p>
+	</div>
+
+	<h2><span class="no">7</span>What upstream should do</h2>
+	<p>For the issue write-up, the library has three clean options — any one of them fixes it:</p>
+	<ul class="plain">
+		<li><strong>Attach the header directly</strong> in the login handler: build the <code>Set-Cookie</code> string and put it on the <code>json()</code> response it's already constructing (what our workaround does from outside).</li>
+		<li><strong>Exit by throwing</strong>: SvelteKit empties the jar for thrown redirects (respond.js:421) — the callback handler proves this path works. Less natural for a JSON endpoint, but it's why half the library already behaves.</li>
+		<li><strong>Ship real routes</strong> instead of intercepting inside <code>handle</code>: responses from <code>+server.ts</code> endpoints come out of <code>resolve()</code> and hit line 478, so <code>cookies.set()</code> would just work — and this is the fix that also makes every <em>future</em> cookie in the library safe by construction.</li>
+		<li>Separately: harden <code>isSafeReturnTo</code> against backslash normalization (reject <code>\</code>, resolve against origin).</li>
+	</ul>
+
+	<p class="foot">
+		Rebuilt from source on 2026-08-08 · line numbers verified against <code>@svelte-atproto/oauth</code> <code>dist/server/index.mjs</code> (0.3.x) and <code>@sveltejs/kit</code> <code>src/runtime/server/respond.js</code> (2.50.2) in this repo's <code>node_modules</code> · app fix shipped in PR&nbsp;#6, <code>src/hooks.server.ts</code> (<code>returnToFix</code>). The original edition of this page lived in your artifact gallery under the same title.
+	</p>
+</div>
