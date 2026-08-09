@@ -147,6 +147,7 @@ export interface RetreatWindow {
  * representative, so the organizer sees `top` genuinely distinct options.
  */
 export function bestWindows(respondents: RespondentAvailability[], top = 3): RetreatWindow[] {
+	if (top <= 0) return [];
 	const withDates = respondents.filter((r) => r.ranges.length > 0);
 	const sets = withDates.map((r) => slotSet(r.ranges));
 	const totalDays = diffDays(retreat.window.start, retreat.window.end);
