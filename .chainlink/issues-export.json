@@ -1,12 +1,27 @@
 {
   "version": 1,
-  "exported_at": "2026-08-09T03:20:05.941595+00:00",
+  "exported_at": "2026-08-09T03:34:34.298756+00:00",
   "issues": [
+    {
+      "id": 63,
+      "title": "Debug missing .gitattributes on Bryan's origin/main checkout",
+      "description": null,
+      "status": "open",
+      "priority": "high",
+      "parent_id": null,
+      "labels": [
+        "bug"
+      ],
+      "comments": [],
+      "created_at": "2026-08-09T03:32:42.736367+00:00",
+      "updated_at": "2026-08-09T03:32:42.736367+00:00",
+      "closed_at": null
+    },
     {
       "id": 62,
       "title": "Assess PR #7 (calendar tap-tap) state: mergeability, drift vs main, unaddressed review comments",
       "description": null,
-      "status": "open",
+      "status": "closed",
       "priority": "medium",
       "parent_id": null,
       "labels": [
@@ -14,8 +29,8 @@
       ],
       "comments": [],
       "created_at": "2026-08-09T03:17:26.785685+00:00",
-      "updated_at": "2026-08-09T03:17:26.785685+00:00",
-      "closed_at": null
+      "updated_at": "2026-08-09T03:20:24.358715+00:00",
+      "closed_at": "2026-08-09T03:20:24.358715+00:00"
     },
     {
       "id": 61,
