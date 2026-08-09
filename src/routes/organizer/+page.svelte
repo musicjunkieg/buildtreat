@@ -315,7 +315,7 @@ finish review, the verdict, and DESIGN.md.
 
 					<Heatmap {loads} total={withDates} {overlap} />
 
-					<ol class="windows" aria-label="Best 3-night windows">
+					<ol class="windows" class:with-anchors={anchors.length > 0} aria-label="Best 3-night windows">
 						{#each windows as w, i (w.start)}
 							{@const fit = anchors.length > 0 ? windowFitCount(anchorSets, w.start) : 0}
 							<li class="window-row" class:best={i === 0}>
@@ -861,12 +861,44 @@ finish review, the verdict, and DESIGN.md.
 
 	.window-row {
 		display: grid;
-		grid-template-columns: 7.5rem 1fr auto auto;
+		grid-template-columns: 7.5rem 1fr auto;
+		grid-template-areas: 'kicker dates count';
 		align-items: baseline;
 		gap: var(--space-3);
 		padding: 0.65rem 0;
 		border-top: var(--hairline);
 		font-size: 0.9375rem;
+	}
+
+	.windows.with-anchors .window-row {
+		grid-template-columns: 7.5rem 1fr auto auto;
+		grid-template-areas: 'kicker dates count anchors';
+	}
+
+	.window-kicker {
+		grid-area: kicker;
+	}
+
+	.window-dates {
+		grid-area: dates;
+	}
+
+	.window-count {
+		grid-area: count;
+	}
+
+	/* Narrow screens: the row stacks into two lines so the dates keep a full
+	   measure instead of wrapping word-per-line beside three other columns. */
+	@media (max-width: 640px) {
+		.window-row,
+		.windows.with-anchors .window-row {
+			grid-template-columns: 1fr auto;
+			grid-template-areas:
+				'kicker anchors'
+				'dates dates'
+				'count count';
+			row-gap: 0.2rem;
+		}
 	}
 
 	/* ── anchor scenario ── */
@@ -908,12 +940,15 @@ finish review, the verdict, and DESIGN.md.
 	}
 
 	.window-anchors {
+		grid-area: anchors;
 		display: inline-flex;
 		align-items: center;
 		gap: 0.4rem;
 		font-size: 0.8125rem;
 		font-variant-numeric: tabular-nums;
-		color: var(--ink-45);
+		/* ink-70, not ink-45: the count is data and must clear AA contrast;
+		   the hollow-vs-filled dot still separates partial from full. */
+		color: var(--ink-70);
 		white-space: nowrap;
 	}
 

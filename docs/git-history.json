@@ -1,5 +1,13 @@
 [
   {
+    "hash": "ff4051a6e35b9162013cef44e982ad914ed60b73",
+    "short_hash": "ff4051a",
+    "author": "Bryan Guffey",
+    "date": "2026-08-08T18:00:32-07:00",
+    "message": "feat: anchor-people scenario mode in the organizer view\n\nToggle a ring next to any respondent to anchor them; the view answers\n'when can THESE people make it' in place:\n\n- Heatmap outlines every day all anchors share — full-cell ring for\n  full days, half-cell ring for a shared half, echoing the split-cell\n  language. Legend gains an 'all anchored people available' key.\n- Each of the 5 best windows gets an n/n anchors marker: bright filled\n  dot when every anchor fits, dim ring otherwise, tooltip explains.\n- A scenario line above the heatmap names the anchors, counts the full\n  days they all share, and clears with one click.\n- Anchors are independent of the all/yes filter; respondents with no\n  dates can't be anchored (disabled ring, explanatory title).\n\nPure client state over the existing aggregate slot-set math; bestWindows\nrefactored onto a shared windowSlots() so the window shape has one\ndefinition. Verified in-browser against ?preview fixtures: rings render\nfor solo and paired anchors, chips count 0/2 and 1/2 correctly, clear\nrestores the neutral view; no console errors.\n\nCo-Authored-By: Claude Fable 5 <noreply@anthropic.com>\nClaude-Session: https://claude.ai/code/session_014GrGCvMtG1jntmgmLjWmvh",
+    "files_changed": 7
+  },
+  {
     "hash": "b216045c703d57c8634d91f32f46dca10adae7af",
     "short_hash": "b216045",
     "author": "Bryan Guffey",

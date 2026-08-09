@@ -245,6 +245,15 @@
 		height: 1.6rem;
 		border-radius: 999px;
 		flex-shrink: 0;
+		position: relative;
+	}
+
+	/* Invisible hit-area extension: the visual ring stays 1.6rem inside the
+	   row's rhythm, but the touch target reaches ~44px. */
+	.anchor::before {
+		content: '';
+		position: absolute;
+		inset: -0.6rem;
 	}
 
 	.anchor-dot {
