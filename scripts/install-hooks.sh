@@ -492,6 +492,22 @@ elif [ -e "$LOCAL_IGNORE" ] || [ -h "$EXCLUDE_FILE" ]; then
     fi
 fi
 
+# ── Merge driver for machine-generated exports ───────────────────────
+#
+# .gitattributes marks the chainlink/deciduous export files with
+# `merge=keep-ours`. The pre-commit hook above regenerates those files
+# from the local databases on every commit, so at merge time the current
+# branch's copy is always the right resolution — whichever side git chose
+# would be overwritten by the next commit anyway. Without this driver,
+# every PR conflicts on them.
+#
+# Merge drivers live in git CONFIG, not in .gitattributes, so each clone
+# wires it here (same per-clone contract as the exclude symlink above).
+# The driver command `true` exits 0 and leaves %A — the current branch's
+# version — in place as the merge result.
+(cd "$REPO_ROOT" && git config merge.keep-ours.driver true)
+echo "  ✓ merge.keep-ours driver (generated-export merges keep the branch's copy)"
+
 echo ""
 echo "Done. Both hooks are installed."
 echo "Bypass any hook with --no-verify (emergency only)."
