@@ -24,6 +24,19 @@ export function compareIso(a: string, b: string): number {
 	return a < b ? -1 : a > b ? 1 : 0;
 }
 
+/** ISO date `n` days after `s` (negative n allowed). */
+export function addDays(s: string, n: number): string {
+	const { y, m, d } = parseIso(s);
+	const t = new Date(Date.UTC(y, m - 1, d + n));
+	return iso(t.getUTCFullYear(), t.getUTCMonth() + 1, t.getUTCDate());
+}
+
+/** 0 = Sunday … 6 = Saturday. */
+export function dayOfWeek(s: string): number {
+	const { y, m, d } = parseIso(s);
+	return new Date(Date.UTC(y, m - 1, d)).getUTCDay();
+}
+
 export function clampToWindow(s: string): string {
 	if (s < retreat.window.start) return retreat.window.start;
 	if (s > retreat.window.end) return retreat.window.end;

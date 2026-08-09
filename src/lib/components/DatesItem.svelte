@@ -2,7 +2,17 @@
 	import Icon from '$lib/components/Icon.svelte';
 	import NextChip from '$lib/components/NextChip.svelte';
 	import { datesQuestion, retreat, type AvailabilityRange, type DayPortion } from '$lib/content';
-	import { formatDay, formatRange, inRange, portionLabel, rangeNights, windowMonths } from '$lib/dates';
+	import {
+		addDays,
+		clampToWindow,
+		dayOfWeek,
+		formatDay,
+		formatRange,
+		inRange,
+		portionLabel,
+		rangeNights,
+		windowMonths
+	} from '$lib/dates';
 	import type { SurveyState } from '$lib/survey.svelte';
 
 	let {
@@ -20,10 +30,26 @@
 	const months = windowMonths();
 	const weekdays = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
 
-	/** In-progress drag selection. */
+	/**
+	 * Pending range start (bits-ui style tap-anchor / tap-complete flow).
+	 * Set by the first tap/Enter on an empty day; the next tap completes
+	 * the range, filling in every day between.
+	 */
+	let anchor = $state<string | null>(null);
+
+	/** Day under the pointer or keyboard focus — drives the range preview. */
+	let hovered = $state<string | null>(null);
+
+	/** In-progress drag selection (mouse only; touch taps + scrolls instead). */
 	let dragStart = $state<string | null>(null);
 	let dragEnd = $state<string | null>(null);
 	let dragging = $state(false);
+
+	/** Swallows the synthetic click that follows a completed drag. */
+	let suppressClick = false;
+
+	/** Roving-tabindex focus target so arrow keys walk the grid. */
+	let focusDate = $state<string>(retreat.window.start);
 
 	/** Index into survey.ranges currently open in the editor; null = closed. */
 	let editing = $state<number | null>(null);
@@ -36,6 +62,10 @@
 	const dragLo = $derived(dragStart && dragEnd ? (dragStart < dragEnd ? dragStart : dragEnd) : null);
 	const dragHi = $derived(dragStart && dragEnd ? (dragStart < dragEnd ? dragEnd : dragStart) : null);
 
+	/** Prospective range while an anchor is set and the pointer/focus roams. */
+	const previewLo = $derived(anchor && hovered ? (anchor < hovered ? anchor : hovered) : null);
+	const previewHi = $derived(anchor && hovered ? (anchor < hovered ? hovered : anchor) : null);
+
 	function rangeIndexOf(day: string): number {
 		return survey.ranges.findIndex((r) => inRange(day, r));
 	}
@@ -44,30 +74,34 @@
 		return dragLo !== null && dragHi !== null && day >= dragLo && day <= dragHi;
 	}
 
-	function pointerDown(day: string, e: PointerEvent) {
-		if (!signedIn) return;
-		const existing = rangeIndexOf(day);
-		if (existing !== -1) {
-			editing = editing === existing ? null : existing;
-			return;
-		}
-		editing = null;
-		dragging = true;
-		dragStart = day;
-		dragEnd = day;
-		(e.target as HTMLElement).releasePointerCapture?.(e.pointerId);
+	function inPreview(day: string): boolean {
+		return previewLo !== null && previewHi !== null && day >= previewLo && day <= previewHi;
 	}
 
-	function pointerEnter(day: string) {
-		if (dragging) dragEnd = day;
+	function pointerDown(day: string, e: PointerEvent) {
+		if (!signedIn || e.pointerType !== 'mouse') return;
+		if (anchor !== null || rangeIndexOf(day) !== -1) return;
+		editing = null;
+		dragStart = day;
+		dragEnd = day;
+	}
+
+	function pointerEnter(day: string, e: PointerEvent) {
+		if (dragStart !== null && e.buttons === 1) {
+			dragging = true;
+			dragEnd = day;
+		} else {
+			hovered = day;
+		}
 	}
 
 	function pointerUp() {
-		if (!dragging || !dragLo || !dragHi) {
-			dragging = false;
-			return;
+		if (dragging && dragLo && dragHi) {
+			commitRange(dragLo, dragHi);
+			announce(`Added ${formatDay(dragLo)} to ${formatDay(dragHi)}.`);
+			suppressClick = true;
+			setTimeout(() => (suppressClick = false), 0);
 		}
-		commitRange(dragLo, dragHi);
 		dragging = false;
 		dragStart = null;
 		dragEnd = null;
@@ -79,31 +113,89 @@
 		survey.saveLocal();
 	}
 
-	/** Announced to assistive tech as the keyboard flow progresses. */
+	function cancelPending() {
+		anchor = null;
+		dragging = false;
+		dragStart = null;
+		dragEnd = null;
+	}
+
+	/** Announced to assistive tech as the selection flow progresses. */
 	let anchorMessage = $state('');
 
-	/** Keyboard flow on day cells: first Enter anchors, second completes. */
-	function dayKey(day: string, e: KeyboardEvent) {
-		if (!signedIn) return;
-		if (e.key !== 'Enter' && e.key !== ' ') return;
-		e.preventDefault();
+	function announce(msg: string) {
+		anchorMessage = msg;
+	}
+
+	/**
+	 * Shared tap/Enter flow (bits-ui RangeCalendar model): first activation
+	 * anchors the start, the second fills in the range between — in either
+	 * direction. Activating a committed range opens its editor.
+	 */
+	function dayActivate(day: string) {
+		if (suppressClick) {
+			suppressClick = false;
+			return;
+		}
+		if (!signedIn || dragging) return;
 		const existing = rangeIndexOf(day);
 		if (existing !== -1) {
+			anchor = null;
 			editing = editing === existing ? null : existing;
 			return;
 		}
-		if (dragStart === null) {
-			dragStart = day;
-			dragEnd = day;
-			anchorMessage = `Range starts ${formatDay(day)}. Choose an end date and press Enter again.`;
+		if (anchor === null) {
+			editing = null;
+			anchor = day;
+			announce(
+				`Range starts ${formatDay(day)}. Choose an end date — or the same date for a single day.`
+			);
 		} else {
-			const lo = dragStart < day ? dragStart : day;
-			const hi = dragStart < day ? day : dragStart;
+			const lo = anchor < day ? anchor : day;
+			const hi = anchor < day ? day : anchor;
 			commitRange(lo, hi);
-			anchorMessage = `Added ${formatDay(lo)} to ${formatDay(hi)}.`;
-			dragStart = null;
-			dragEnd = null;
+			announce(lo === hi ? `Added ${formatDay(lo)}.` : `Added ${formatDay(lo)} to ${formatDay(hi)}.`);
+			anchor = null;
 		}
+	}
+
+	/** Move roving focus to `day`, clamped into the availability window. */
+	function moveFocus(day: string) {
+		const target = clampToWindow(day);
+		focusDate = target;
+		document
+			.querySelector<HTMLButtonElement>(`.calendar button[data-date="${target}"]`)
+			?.focus();
+	}
+
+	function dayKey(day: string, e: KeyboardEvent) {
+		if (!signedIn) return;
+		if (e.key === 'Enter' || e.key === ' ') {
+			e.preventDefault();
+			dayActivate(day);
+			return;
+		}
+		const step: Record<string, number> = {
+			ArrowLeft: -1,
+			ArrowRight: 1,
+			ArrowUp: -7,
+			ArrowDown: 7
+		};
+		if (e.key in step) {
+			e.preventDefault();
+			moveFocus(addDays(day, step[e.key]));
+		} else if (e.key === 'Home') {
+			e.preventDefault();
+			moveFocus(addDays(day, -dayOfWeek(day)));
+		} else if (e.key === 'End') {
+			e.preventDefault();
+			moveFocus(addDays(day, 6 - dayOfWeek(day)));
+		}
+	}
+
+	function dayFocus(day: string) {
+		focusDate = day;
+		hovered = day;
 	}
 
 	function addTyped() {
@@ -139,16 +231,29 @@
 		survey.saveLocal();
 	}
 
-	function cellState(day: string): { selected: boolean; portion: DayPortion; isEdge: boolean; active: boolean } {
+	function cellState(day: string): {
+		selected: boolean;
+		preview: boolean;
+		portion: DayPortion;
+		isEdge: boolean;
+		active: boolean;
+	} {
 		const i = rangeIndexOf(day);
 		if (i !== -1) {
 			const r = survey.ranges[i];
 			const isStart = day === r.start;
 			const isEnd = day === r.end;
 			const portion: DayPortion = isStart && r.startPortion !== 'full' ? r.startPortion : isEnd && r.endPortion !== 'full' ? r.endPortion : 'full';
-			return { selected: true, portion, isEdge: isStart || isEnd, active: editing === i };
+			return { selected: true, preview: false, portion, isEdge: isStart || isEnd, active: editing === i };
 		}
-		return { selected: inDrag(day), portion: 'full', isEdge: false, active: false };
+		const selected = day === anchor || inDrag(day);
+		return {
+			selected,
+			preview: !selected && inPreview(day),
+			portion: 'full',
+			isEdge: false,
+			active: false
+		};
 	}
 
 	const editingRange = $derived<AvailabilityRange | null>(editing !== null ? (survey.ranges[editing] ?? null) : null);
@@ -160,7 +265,16 @@
 	];
 </script>
 
-<svelte:window onpointerup={pointerUp} onpointercancel={pointerUp} />
+<svelte:window
+	onpointerup={pointerUp}
+	onpointercancel={pointerUp}
+	onkeydown={(e) => {
+		if (e.key === 'Escape' && anchor !== null) {
+			cancelPending();
+			announce('Range start cleared.');
+		}
+	}}
+/>
 
 <div class="dates">
 	<h2 id="dates-title" class="display title">{datesQuestion.title}</h2>
@@ -173,7 +287,17 @@
 		</button>
 	{/if}
 
-	<div class="calendar" class:locked={!signedIn}>
+	<div
+		class="calendar"
+		class:locked={!signedIn}
+		role="presentation"
+		onpointerleave={() => {
+			// Pointer exit must not clear a preview that keyboard focus is
+			// driving: if a day cell still owns focus, keep previewing to it.
+			const active = document.activeElement;
+			hovered = active instanceof HTMLElement && active.dataset.date ? active.dataset.date : null;
+		}}
+	>
 		<p class="visually-hidden" aria-live="polite">{anchorMessage}</p>
 		{#each months as month (month.month)}
 			<div class="month" role="group" aria-labelledby="month-{month.month}">
@@ -191,14 +315,23 @@
 							<button
 								class="day"
 								class:sel={s.selected}
+								class:preview={s.preview}
 								class:first-half={s.portion === 'first_half'}
 								class:second-half={s.portion === 'second_half'}
 								class:active={s.active}
+								data-date={day.iso}
+								tabindex={day.iso === focusDate ? 0 : -1}
+								onclick={() => dayActivate(day.iso)}
 								onpointerdown={(e) => pointerDown(day.iso, e)}
-								onpointerenter={() => pointerEnter(day.iso)}
+								onpointerenter={(e) => pointerEnter(day.iso, e)}
+								onfocusin={() => dayFocus(day.iso)}
 								onkeydown={(e) => dayKey(day.iso, e)}
 								aria-pressed={s.selected}
-								aria-label="{month.name} {day.day}{s.selected ? ', available' + (s.portion === 'full' ? '' : ', ' + portionLabel(s.portion, 'start')) : ''}"
+								aria-label="{month.name} {day.day}{day.iso === anchor
+									? ', range start'
+									: s.selected
+										? ', available' + (s.portion === 'full' ? '' : ', ' + portionLabel(s.portion, 'start'))
+										: ''}"
 								disabled={!signedIn}
 							>
 								<span class="num">{day.day}</span>
@@ -214,7 +347,24 @@
 
 	{#if signedIn}
 		<div class="under">
-			{#if editingRange && editing !== null}
+			{#if anchor !== null}
+				<div class="pending" role="status">
+					<p class="hint">
+						<strong>Starts {formatDay(anchor)}</strong> — tap your last day to fill in the range, or the
+						same day again for just that day.
+					</p>
+					<button
+						class="icon-btn"
+						onclick={() => {
+							cancelPending();
+							announce('Range start cleared.');
+						}}
+						aria-label="Cancel range start"
+					>
+						<Icon name="x" size={16} />
+					</button>
+				</div>
+			{:else if editingRange && editing !== null}
 				<div class="editor" role="group" aria-label="Edit range {formatRange(editingRange)}">
 					<div class="editor-head">
 						<p class="range-label">
@@ -372,19 +522,30 @@
 		font-variant-numeric: tabular-nums;
 		color: var(--ink);
 		border-radius: 6px;
-		touch-action: none;
+		/* pan-y (not none): a touch starting on a day must still scroll the
+		   calendar — selection is tap-tap, not drag, on touch. */
+		touch-action: pan-y;
 		transition:
 			background 0.15s var(--ease-out),
 			color 0.15s var(--ease-out);
 	}
 
-	.day:not(.out):not(:disabled):hover {
+	/* Hover must not repaint selected/preview cells — tap leaves sticky
+	   hover on touch devices, which would gray out the anchored day. */
+	.day:not(.out):not(:disabled):not(.sel):not(.preview):hover {
 		background: var(--ink-12);
 	}
 
 	.day.sel {
 		background: var(--ink);
 		color: var(--on-pill);
+	}
+
+	/* Tentative fill between a pending start and the hovered/focused day —
+	   a mid-step between hover (12%) and committed (full ink). */
+	.day.preview {
+		background: var(--ink-35);
+		color: var(--ink);
 	}
 
 	.day.sel.first-half {
@@ -414,6 +575,15 @@
 
 	.under {
 		min-height: 5.5rem;
+	}
+
+	.pending {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: var(--space-2);
+		border-top: var(--hairline);
+		padding-top: var(--space-2);
 	}
 
 	.editor {
