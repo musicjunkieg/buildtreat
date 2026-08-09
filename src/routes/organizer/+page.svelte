@@ -301,18 +301,22 @@ finish review, the verdict, and DESIGN.md.
 					</div>
 				</div>
 
-				{#if withDates > 0}
-					{#if anchors.length > 0}
-						<p class="scenario" role="status">
-							<span class="scenario-kicker">Scenario</span>
-							<span class="scenario-line">
-								Anchored on {anchorNames.join(', ')} — {sharedFullDays}
-								full day{sharedFullDays === 1 ? '' : 's'} they all share
-							</span>
-							<button class="scenario-clear" onclick={() => (anchors = [])}>Clear</button>
-						</p>
-					{/if}
+				{#if anchors.length > 0}
+					<!-- Outside the withDates gate on purpose: anchors are
+					     filter-independent, so their status line (and the only
+					     Clear affordance) must survive a filter that empties
+					     the dated-response set. -->
+					<p class="scenario" role="status">
+						<span class="scenario-kicker">Scenario</span>
+						<span class="scenario-line">
+							Anchored on {anchorNames.join(', ')} — {sharedFullDays}
+							full day{sharedFullDays === 1 ? '' : 's'} they all share
+						</span>
+						<button class="scenario-clear" onclick={() => (anchors = [])}>Clear</button>
+					</p>
+				{/if}
 
+				{#if withDates > 0}
 					<Heatmap {loads} total={withDates} {overlap} />
 
 					<ol class="windows" class:with-anchors={anchors.length > 0} aria-label="Best 3-night windows">
