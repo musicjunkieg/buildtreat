@@ -1,5 +1,21 @@
 [
   {
+    "hash": "a1818a332698addc947ae45715863a2bca31cf3d",
+    "short_hash": "a1818a3",
+    "author": "Bryan Guffey",
+    "date": "2026-08-07T17:57:52-07:00",
+    "message": "feat: bits-ui style tap-tap range selection in the dates calendar\n\nAdopt the RangeCalendar interaction model from bits-ui while keeping\nmulti-range, half-day portions, and the existing visual language:\n\n- Tap first day to anchor, tap last day to fill in the range (either\n  direction); same day twice = single-day range. Pending state shows a\n  hint row with a cancel button; Escape also cancels.\n- Live preview of the prospective range on hover/focus (ink-35 mid-step\n  between hover and committed).\n- Touch no longer blocks scrolling: day cells use touch-action pan-y\n  and selection is tap-tap on touch; drag-to-select stays for mouse.\n- Roving tabindex + Arrow/Home/End keyboard navigation across months;\n  Enter/Space shares the tap flow; aria-live announcements throughout.\n- Hover no longer repaints selected/preview cells (sticky-hover on iOS\n  grayed out the anchored day).\n\nVerified with Playwright against a dev harness: touch tap-tap commit,\nbackward selection, editor auto-open, half-day editing, multi-range,\nscroll-while-touching-days, mouse drag, hover preview, Escape cancel,\nand keyboard Enter-arrow-Enter flow all pass with no console errors.\n\nCo-Authored-By: Claude Fable 5 <noreply@anthropic.com>\nClaude-Session: https://claude.ai/code/session_014GrGCvMtG1jntmgmLjWmvh",
+    "files_changed": 6
+  },
+  {
+    "hash": "7c466659008028303bbffdd7130be7904992905f",
+    "short_hash": "7c46665",
+    "author": "chaos gremlin",
+    "date": "2026-08-07T17:03:06-07:00",
+    "message": "fix: organizer sign-in returns to /organizer, not the survey (#6)",
+    "files_changed": 4
+  },
+  {
     "hash": "777caa9afec9f77ffea255ea809aa430e8dfd823",
     "short_hash": "777caa9",
     "author": "Bryan Guffey",
