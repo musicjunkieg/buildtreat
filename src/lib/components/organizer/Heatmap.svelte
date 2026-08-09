@@ -200,7 +200,15 @@
 		content: '';
 		position: absolute;
 		pointer-events: none;
-		border: 1.5px solid var(--ink);
+		border: 2px solid var(--ink);
+		/* Punched ring (the world's radio-dot device, not elevation): a
+		   ground-colored halo on both sides of the ink stroke. The days all
+		   anchors share are usually the BRIGHTEST cells — a bare white ring
+		   disappears on their near-white fill; the dark halo keeps it
+		   legible on any alpha. */
+		box-shadow:
+			0 0 0 1.5px var(--ground),
+			inset 0 0 0 1.5px var(--ground);
 	}
 
 	.cell.anchor-full::after {
@@ -268,6 +276,12 @@
 		width: 1.15rem;
 		height: 1.15rem;
 		border-radius: 6px;
-		border: 1.5px solid var(--ink);
+		border: 2px solid var(--ink);
+		/* Mid-alpha fill so the legend demonstrates the halo the way it
+		   appears on a bright cell. */
+		background: rgba(255, 255, 255, 0.45);
+		box-shadow:
+			0 0 0 1.5px var(--ground),
+			inset 0 0 0 1.5px var(--ground);
 	}
 </style>
