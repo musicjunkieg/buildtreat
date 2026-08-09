@@ -494,12 +494,15 @@ fi
 
 # ── Merge driver for machine-generated exports ───────────────────────
 #
-# .gitattributes marks the chainlink/deciduous export files with
-# `merge=keep-ours`. The pre-commit hook above regenerates those files
-# from the local databases on every commit, so at merge time the current
-# branch's copy is always the right resolution — whichever side git chose
-# would be overwritten by the next commit anyway. Without this driver,
-# every PR conflicts on them.
+# .gitattributes marks the deciduous docs exports (docs/graph-data.json,
+# docs/git-history.json) with `merge=keep-ours`. The pre-commit hook
+# above regenerates those files from the local database on every commit,
+# so at merge time the current branch's copy is always the right
+# resolution — whichever side git chose would be overwritten by the next
+# commit anyway. Without this driver, every PR conflicts on them.
+# (.chainlink/issues-export.json deliberately has NO driver: it is the
+# only git-visible carrier of issue records, so conflicts there are real
+# divergence — resolve with scripts/merge-issues-export.mjs.)
 #
 # Merge drivers live in git CONFIG, not in .gitattributes, so each clone
 # wires it here (same per-clone contract as the exclude symlink above).

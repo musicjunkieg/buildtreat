@@ -22,10 +22,12 @@ docs/git-history.json merge=keep-ours
 # untracked issues.db — so two branches genuinely can hold disjoint
 # record sets, and keep-ours would silently discard one side before it
 # was ever imported. A conflict on this file is signal, not noise.
-# To resolve one: `git checkout --theirs .chainlink/issues-export.json`,
-# then `chainlink import .chainlink/issues-export.json` (folds the other
-# side's records into the local db), then commit — the pre-commit hook
-# regenerates a true union export from the merged database.
+# To resolve one: `node scripts/merge-issues-export.mjs` (while the
+# conflict is live). It imports only the records present in theirs and
+# absent from ours — a plain `chainlink import` would DUPLICATE every
+# shared record, since import assigns new ids/timestamps and never
+# dedups — then regenerates the export from the merged database and
+# stages it.
 
 # Chainlink appends an entry on every session end, on whatever branch is
 # checked out; two branches touching the changelog is the normal case,
