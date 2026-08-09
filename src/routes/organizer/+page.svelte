@@ -306,14 +306,17 @@ finish review, the verdict, and DESIGN.md.
 					     filter-independent, so their status line (and the only
 					     Clear affordance) must survive a filter that empties
 					     the dated-response set. -->
-					<p class="scenario" role="status">
+					<div class="scenario">
 						<span class="scenario-kicker">Scenario</span>
-						<span class="scenario-line">
+						<!-- The live region wraps only the changing text: a control
+						     inside role=status would be re-announced on every
+						     update and is mishandled by some assistive tech. -->
+						<span class="scenario-line" role="status">
 							Anchored on {anchorNames.join(', ')} — {sharedFullDays}
 							full day{sharedFullDays === 1 ? '' : 's'} they all share
 						</span>
 						<button class="scenario-clear" onclick={() => (anchors = [])}>Clear</button>
-					</p>
+					</div>
 				{/if}
 
 				{#if withDates > 0}
