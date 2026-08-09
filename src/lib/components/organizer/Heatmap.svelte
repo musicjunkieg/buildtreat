@@ -59,7 +59,7 @@
 		class="months"
 		role="img"
 		aria-label="Availability heatmap, September 1 to November 15. Brighter days mean more people available. {total} respondents gave dates.{overlap
-			? ` Outlined days are the ${overlap.size} where every anchored person is available.`
+			? ` Outlined days are the ${overlap.size} where every anchored person is available — for the whole day, or for the half the outline marks.`
 			: ''}"
 	>
 		{#each months as month (month.month)}

@@ -1,7 +1,52 @@
 {
   "version": 1,
-  "exported_at": "2026-08-09T03:47:56.199084+00:00",
+  "exported_at": "2026-08-09T06:10:46.847581+00:00",
   "issues": [
+    {
+      "id": 67,
+      "title": "Resolve Heatmap aria-label conflict on fix/anchor-scenario-followups pull",
+      "description": null,
+      "status": "closed",
+      "priority": "high",
+      "parent_id": null,
+      "labels": [
+        "bug"
+      ],
+      "comments": [],
+      "created_at": "2026-08-09T05:46:47.354044+00:00",
+      "updated_at": "2026-08-09T05:48:42.483842+00:00",
+      "closed_at": "2026-08-09T05:48:42.483842+00:00"
+    },
+    {
+      "id": 66,
+      "title": "Triage CodeRabbit comments on PR #12",
+      "description": null,
+      "status": "closed",
+      "priority": "medium",
+      "parent_id": null,
+      "labels": [
+        "review"
+      ],
+      "comments": [],
+      "created_at": "2026-08-09T04:53:12.042374+00:00",
+      "updated_at": "2026-08-09T04:54:55.105679+00:00",
+      "closed_at": "2026-08-09T04:54:55.105679+00:00"
+    },
+    {
+      "id": 65,
+      "title": "Post-merge CodeRabbit findings on PR 11: heatmap aria-label half-day wording; scenario bar hidden when filter empties dated responses",
+      "description": null,
+      "status": "closed",
+      "priority": "medium",
+      "parent_id": null,
+      "labels": [
+        "bug"
+      ],
+      "comments": [],
+      "created_at": "2026-08-09T04:06:32.057432+00:00",
+      "updated_at": "2026-08-09T04:08:15.758848+00:00",
+      "closed_at": "2026-08-09T04:08:15.758848+00:00"
+    },
     {
       "id": 64,
       "title": "Resolve aggregate.ts merge conflict on feat/organizer-anchors (guard vs windowSlots refactor)",
