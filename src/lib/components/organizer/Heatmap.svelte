@@ -1,14 +1,20 @@
 <script lang="ts">
 	import { windowMonths, formatDay } from '$lib/dates';
-	import type { DayLoad } from '$lib/organizer/aggregate';
+	import type { DayLoad, HalfOverlap } from '$lib/organizer/aggregate';
 
 	let {
 		loads,
-		total
+		total,
+		overlap = null
 	}: {
 		loads: DayLoad[];
 		/** Denominator: respondents in the current filter with any availability. */
 		total: number;
+		/**
+		 * Anchor-scenario overlap: days where every anchored person is
+		 * available, by half. Null when no scenario is active.
+		 */
+		overlap?: Map<string, HalfOverlap> | null;
 	} = $props();
 
 	const months = windowMonths();
@@ -37,9 +43,11 @@
 	}
 
 	function cellLabel(iso: string, load: DayLoad | undefined): string {
-		if (!load) return formatDay(iso);
-		if (load.first === load.second) return `${formatDay(iso)} — ${load.first} of ${total} available`;
-		return `${formatDay(iso)} — ${load.first} of ${total} first half, ${load.second} second half`;
+		const anchored = overlap?.get(iso);
+		const suffix = anchored ? (anchored.first && anchored.second ? ' · all anchors' : anchored.first ? ' · all anchors (first half)' : ' · all anchors (second half)') : '';
+		if (!load) return formatDay(iso) + suffix;
+		if (load.first === load.second) return `${formatDay(iso)} — ${load.first} of ${total} available${suffix}`;
+		return `${formatDay(iso)} — ${load.first} of ${total} first half, ${load.second} second half${suffix}`;
 	}
 
 	/** Legend stops sampled off the live scale. */
@@ -61,7 +69,15 @@
 					{#each month.days as day (day.iso)}
 						{#if day.inWindow}
 							{@const load = byDay.get(day.iso)}
-							<span class="cell" style={cellStyle(load)} title={cellLabel(day.iso, load)}>
+							{@const a = overlap?.get(day.iso)}
+							<span
+								class="cell"
+								class:anchor-full={a && a.first && a.second}
+								class:anchor-first={a && a.first && !a.second}
+								class:anchor-second={a && !a.first && a.second}
+								style={cellStyle(load)}
+								title={cellLabel(day.iso, load)}
+							>
 								<span class="num">{day.day}</span>
 							</span>
 						{:else}
@@ -88,6 +104,12 @@
 			<span class="split-swatch" aria-hidden="true"></span>
 			<span class="key-label">half-day arrival / departure</span>
 		</div>
+		{#if overlap}
+			<div class="key">
+				<span class="ring-swatch" aria-hidden="true"></span>
+				<span class="key-label">all anchored people available</span>
+			</div>
+		{/if}
 	</div>
 </div>
 
@@ -153,6 +175,43 @@
 		opacity: 0.45;
 	}
 
+	/* Anchor-scenario overlap: the one ink as a ring. Full-day overlap rings
+	   the whole cell; half-day overlap rings only that half, echoing the
+	   split-cell language. */
+	.cell {
+		position: relative;
+	}
+
+	.cell.anchor-full,
+	.cell.anchor-first,
+	.cell.anchor-second {
+		border-color: transparent;
+	}
+
+	.cell.anchor-full::after,
+	.cell.anchor-first::after,
+	.cell.anchor-second::after {
+		content: '';
+		position: absolute;
+		pointer-events: none;
+		border: 1.5px solid var(--ink);
+	}
+
+	.cell.anchor-full::after {
+		inset: 0;
+		border-radius: 6px;
+	}
+
+	.cell.anchor-first::after {
+		inset: 0 0 50% 0;
+		border-radius: 6px 6px 0 0;
+	}
+
+	.cell.anchor-second::after {
+		inset: 50% 0 0 0;
+		border-radius: 0 0 6px 6px;
+	}
+
 	.keys {
 		display: flex;
 		flex-wrap: wrap;
@@ -197,5 +256,12 @@
 		height: 1.15rem;
 		border-radius: 6px;
 		background: linear-gradient(to bottom, var(--ink) 50%, var(--ink-12) 50%);
+	}
+
+	.ring-swatch {
+		width: 1.15rem;
+		height: 1.15rem;
+		border-radius: 6px;
+		border: 1.5px solid var(--ink);
 	}
 </style>

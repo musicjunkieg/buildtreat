@@ -1,5 +1,13 @@
 [
   {
+    "hash": "b216045c703d57c8634d91f32f46dca10adae7af",
+    "short_hash": "b216045",
+    "author": "Bryan Guffey",
+    "date": "2026-08-08T17:46:27-07:00",
+    "message": "fix: bestWindows no longer requires availability on the departure morning\n\nTwo compounding problems made the ranking miss real candidates:\n\n1. The window shape required a day-3 first-half slot — a 4th calendar\n   day of availability for a 3-night stay. The survey's end-portion\n   semantics ('full' vs 'leaving midday') already encode the last\n   night, so anyone who entered exactly the weekend they meant\n   (Fri-Sun) matched zero windows. Verified against prod data: one\n   respondent's six weekend ranges all counted for nothing.\n2. The top list allowed overlapping windows, so shifted copies of one\n   peak crowded out distinct alternatives. The list is now greedily\n   de-clustered (non-overlapping), and the organizer view shows 5.\n\nOn today's data this surfaces Fri Oct 23-26 as the true best window\n(11 of 16, previously invisible) and puts Fri Oct 2-5 (10 of 16) on\nthe board — it previously ranked 8th at 9 and never displayed.\n\nCo-Authored-By: Claude Fable 5 <noreply@anthropic.com>\nClaude-Session: https://claude.ai/code/session_014GrGCvMtG1jntmgmLjWmvh",
+    "files_changed": 5
+  },
+  {
     "hash": "a1818a332698addc947ae45715863a2bca31cf3d",
     "short_hash": "a1818a3",
     "author": "Bryan Guffey",

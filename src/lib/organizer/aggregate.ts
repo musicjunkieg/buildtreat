@@ -49,7 +49,7 @@ function halvesOn(range: AvailabilityRange, day: string): { first: boolean; seco
 }
 
 /** Per-respondent slot lookup, unioned across their ranges. */
-function slotSet(ranges: AvailabilityRange[]): Set<string> {
+export function slotSet(ranges: AvailabilityRange[]): Set<string> {
 	const slots = new Set<string>();
 	for (const r of ranges) {
 		const span = diffDays(r.start, r.end);
@@ -79,6 +79,46 @@ export function dayLoads(respondents: RespondentAvailability[]): DayLoad[] {
 		out.push({ iso: day, first, second });
 	}
 	return out;
+}
+
+/**
+ * The half-day slots a respondent must cover to attend a 3-night window
+ * starting `start`: arrival evening, then two full days. The third night is
+ * day 2's second half (see bestWindows for why day 3 is never required).
+ */
+export function windowSlots(start: string): string[] {
+	const s = parseIso(start);
+	const day = (n: number) => {
+		const d = new Date(Date.UTC(s.y, s.m - 1, s.d + n));
+		return iso(d.getUTCFullYear(), d.getUTCMonth() + 1, d.getUTCDate());
+	};
+	return [`${day(0)}:2`, `${day(1)}:1`, `${day(1)}:2`, `${day(2)}:1`, `${day(2)}:2`];
+}
+
+export interface HalfOverlap {
+	first: boolean;
+	second: boolean;
+}
+
+/**
+ * Days where EVERY given slot set is available, by half. Empty input means
+ * no scenario is active — an empty map, not "everything overlaps".
+ */
+export function fullOverlap(sets: Set<string>[]): Map<string, HalfOverlap> {
+	const out = new Map<string, HalfOverlap>();
+	if (sets.length === 0) return out;
+	for (const day of windowDays()) {
+		const first = sets.every((s) => s.has(`${day}:1`));
+		const second = sets.every((s) => s.has(`${day}:2`));
+		if (first || second) out.set(day, { first, second });
+	}
+	return out;
+}
+
+/** How many of the given slot sets can attend the window starting `start`. */
+export function windowFitCount(sets: Set<string>[], start: string): number {
+	const need = windowSlots(start);
+	return sets.filter((s) => need.every((k) => s.has(k))).length;
 }
 
 export interface RetreatWindow {
@@ -119,15 +159,10 @@ export function bestWindows(respondents: RespondentAvailability[], top = 3): Ret
 			const d = new Date(Date.UTC(start.y, start.m - 1, start.d + i + j));
 			days.push(iso(d.getUTCFullYear(), d.getUTCMonth() + 1, d.getUTCDate()));
 		}
+		const need = windowSlots(days[0]);
 		let count = 0;
 		for (const s of sets) {
-			const ok =
-				s.has(`${days[0]}:2`) &&
-				s.has(`${days[1]}:1`) &&
-				s.has(`${days[1]}:2`) &&
-				s.has(`${days[2]}:1`) &&
-				s.has(`${days[2]}:2`);
-			if (ok) count++;
+			if (need.every((k) => s.has(k))) count++;
 		}
 		windows.push({ start: days[0], end: days[3], count, of: withDates.length });
 	}
