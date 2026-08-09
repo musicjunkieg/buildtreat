@@ -37,7 +37,9 @@
 
 	const filtered = $derived(filter === 'yes' ? data.responses.filter((r) => r.interest === 'yes') : data.responses);
 	const loads = $derived(dayLoads(filtered));
-	const windows = $derived(bestWindows(filtered, 3));
+	// 5 distinct (non-overlapping) candidates — enough to surface real
+	// alternatives beyond the single strongest cluster.
+	const windows = $derived(bestWindows(filtered, 5));
 	const withDates = $derived(filtered.filter((r) => r.ranges.length > 0).length);
 	const tallies = $derived(locationTallies(filtered.map((r) => r.ranking)));
 	const maxPoints = $derived(Math.max(1, ...tallies.tallies.map((t) => t.points)));

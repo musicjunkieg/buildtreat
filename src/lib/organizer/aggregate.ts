@@ -92,12 +92,22 @@ export interface RetreatWindow {
 }
 
 /**
- * Score every possible 3-night window (arrive second half of day 0, two full
- * days, depart first half of day 3). A respondent counts when their slots
- * cover that whole shape — the same arrival/departure nuance the survey
- * collects. Ranked by count, earlier window wins ties.
+ * Score every possible 3-night window: arrive the second half of day 0, two
+ * full days, depart the morning of day 3. A respondent counts when their
+ * slots cover day 0's second half through day 2's second half. The third
+ * night IS day 2's second half — an end portion of "full" means "there
+ * through the day's end" (the survey labels the alternative "leaving
+ * midday"), so departure morning is implied and must NOT be required as a
+ * day-3 availability slot: that would demand a 4th calendar day for a
+ * 3-night stay and silently zero out everyone who entered exactly the
+ * weekend they meant.
+ *
+ * Ranked by count, earlier window wins ties. The returned list is
+ * de-clustered: overlapping shifts of the same peak hide behind their best
+ * representative, so the organizer sees `top` genuinely distinct options.
  */
 export function bestWindows(respondents: RespondentAvailability[], top = 3): RetreatWindow[] {
+	if (top <= 0) return [];
 	const withDates = respondents.filter((r) => r.ranges.length > 0);
 	const sets = withDates.map((r) => slotSet(r.ranges));
 	const totalDays = diffDays(retreat.window.start, retreat.window.end);
@@ -117,14 +127,21 @@ export function bestWindows(respondents: RespondentAvailability[], top = 3): Ret
 				s.has(`${days[1]}:1`) &&
 				s.has(`${days[1]}:2`) &&
 				s.has(`${days[2]}:1`) &&
-				s.has(`${days[2]}:2`) &&
-				s.has(`${days[3]}:1`);
+				s.has(`${days[2]}:2`);
 			if (ok) count++;
 		}
 		windows.push({ start: days[0], end: days[3], count, of: withDates.length });
 	}
 
-	return windows.sort((a, b) => b.count - a.count || (a.start < b.start ? -1 : 1)).slice(0, top);
+	windows.sort((a, b) => b.count - a.count || (a.start < b.start ? -1 : 1));
+
+	const picked: RetreatWindow[] = [];
+	for (const w of windows) {
+		if (picked.some((p) => w.start <= p.end && p.start <= w.end)) continue;
+		picked.push(w);
+		if (picked.length === top) break;
+	}
+	return picked;
 }
 
 export interface LocationTally {

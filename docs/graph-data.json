@@ -692,6 +692,105 @@
       "created_at": "2026-08-07T17:58:01.027421-07:00",
       "updated_at": "2026-08-07T17:58:01.027421-07:00",
       "metadata_json": "{\"branch\":\"feature/calendar-bitsui-interactions\",\"commit\":\"a1818a3\",\"confidence\":95}"
+    },
+    {
+      "id": 64,
+      "change_id": "cbfd3693-155d-47ca-9114-97c484096f58",
+      "node_type": "goal",
+      "title": "Fix bestWindows: departure-morning slot over-required; top list clustered",
+      "description": null,
+      "status": "pending",
+      "created_at": "2026-08-08T17:45:12.334847-07:00",
+      "updated_at": "2026-08-08T17:45:12.334847-07:00",
+      "metadata_json": "{\"branch\":\"fix/best-windows-shape\",\"confidence\":90,\"prompt\":\"I think the logic you're using to sort best date ranges isn't quite right. The first weekend in October should also fit it and should be higher than at least a couple of the current options\"}"
+    },
+    {
+      "id": 65,
+      "change_id": "21b1cb49-2064-4c4e-8249-d3a90a71eefc",
+      "node_type": "action",
+      "title": "Drop day-3 slot from window shape; de-cluster top list; show 5",
+      "description": null,
+      "status": "pending",
+      "created_at": "2026-08-08T17:46:29.729243-07:00",
+      "updated_at": "2026-08-08T17:46:29.729243-07:00",
+      "metadata_json": "{\"branch\":\"fix/best-windows-shape\",\"commit\":\"b216045\",\"confidence\":90,\"files\":[\"src/lib/organizer/aggregate.ts\",\"src/routes/organizer/+page.svelte\"]}"
+    },
+    {
+      "id": 66,
+      "change_id": "679824be-472a-4b3f-992d-1c7557a39838",
+      "node_type": "outcome",
+      "title": "Prod-data sim: Oct 23-26 new best (11/16); Oct 2-5 now 10/16 and displayed; check clean",
+      "description": null,
+      "status": "pending",
+      "created_at": "2026-08-08T17:46:29.746268-07:00",
+      "updated_at": "2026-08-08T17:46:29.746268-07:00",
+      "metadata_json": "{\"branch\":\"fix/best-windows-shape\",\"confidence\":95}"
+    },
+    {
+      "id": 67,
+      "change_id": "f21d06dc-5f17-4363-9903-2fb33d60d014",
+      "node_type": "goal",
+      "title": "Organizer scenario mode: anchor people, light up overlap + top-5 fit",
+      "description": null,
+      "status": "pending",
+      "created_at": "2026-08-08T17:55:58.014385-07:00",
+      "updated_at": "2026-08-08T17:55:58.014385-07:00",
+      "metadata_json": "{\"branch\":\"feat/organizer-anchors\",\"confidence\":90,\"prompt\":\"Amazing! Also is there a way we could make it so we could build scenarios based on anchoring around a few people, like I could put a check or a dot or a toggle next to them and then it would light up all the dates where they all overlapped and if it was one of the top five?\"}"
+    },
+    {
+      "id": 68,
+      "change_id": "19abf6b4-deaf-4a56-a301-8364169030ef",
+      "node_type": "option",
+      "title": "Anchor toggles inline in responses table + ink-ring overlap in heatmap + n/n chips on windows",
+      "description": null,
+      "status": "pending",
+      "created_at": "2026-08-08T17:56:09.211611-07:00",
+      "updated_at": "2026-08-08T17:56:09.211611-07:00",
+      "metadata_json": "{\"branch\":\"feat/organizer-anchors\",\"confidence\":90}"
+    },
+    {
+      "id": 69,
+      "change_id": "7bc76536-ce53-4ffa-aeeb-dd46969cf15d",
+      "node_type": "option",
+      "title": "Separate scenario panel with its own checkbox list and mini-calendar",
+      "description": null,
+      "status": "pending",
+      "created_at": "2026-08-08T17:56:09.226202-07:00",
+      "updated_at": "2026-08-08T17:56:09.226202-07:00",
+      "metadata_json": "{\"branch\":\"feat/organizer-anchors\",\"confidence\":40}"
+    },
+    {
+      "id": 70,
+      "change_id": "0e224637-9161-40b2-b88e-13dcfbc5cee9",
+      "node_type": "decision",
+      "title": "Inline toggles; overlap rendered in the existing heatmap and windows list",
+      "description": null,
+      "status": "pending",
+      "created_at": "2026-08-08T17:56:09.238757-07:00",
+      "updated_at": "2026-08-08T17:56:09.238757-07:00",
+      "metadata_json": "{\"branch\":\"feat/organizer-anchors\",\"confidence\":90}"
+    },
+    {
+      "id": 71,
+      "change_id": "e2fd1fd4-4d31-4d98-bc92-58085a9a4282",
+      "node_type": "action",
+      "title": "Implement anchors: aggregate helpers, Heatmap overlap rings, table toggles, window fit chips",
+      "description": null,
+      "status": "pending",
+      "created_at": "2026-08-08T17:56:09.274336-07:00",
+      "updated_at": "2026-08-08T17:56:09.274336-07:00",
+      "metadata_json": "{\"branch\":\"feat/organizer-anchors\",\"confidence\":85,\"files\":[\"src/lib/organizer/aggregate.ts\",\"src/lib/components/organizer/Heatmap.svelte\",\"src/lib/components/organizer/ResponsesTable.svelte\",\"src/routes/organizer/+page.svelte\"]}"
+    },
+    {
+      "id": 72,
+      "change_id": "2c7b2085-282b-4733-a27c-637eddb50e9c",
+      "node_type": "outcome",
+      "title": "Anchors shipped: rings, chips, scenario bar verified in preview; check+build clean",
+      "description": null,
+      "status": "pending",
+      "created_at": "2026-08-08T18:00:34.358613-07:00",
+      "updated_at": "2026-08-08T18:00:34.358613-07:00",
+      "metadata_json": "{\"branch\":\"feat/organizer-anchors\",\"commit\":\"ff4051a\",\"confidence\":95}"
     }
   ],
   "edges": [
@@ -1376,6 +1475,94 @@
       "weight": 1.0,
       "rationale": "verified via Playwright interaction tests",
       "created_at": "2026-08-07T17:58:01.035267-07:00"
+    },
+    {
+      "id": 63,
+      "from_node_id": 64,
+      "to_node_id": 65,
+      "from_change_id": "cbfd3693-155d-47ca-9114-97c484096f58",
+      "to_change_id": "21b1cb49-2064-4c4e-8249-d3a90a71eefc",
+      "edge_type": "leads_to",
+      "weight": 1.0,
+      "rationale": "fix implementing the corrected shape",
+      "created_at": "2026-08-08T17:46:29.736106-07:00"
+    },
+    {
+      "id": 64,
+      "from_node_id": 65,
+      "to_node_id": 66,
+      "from_change_id": "21b1cb49-2064-4c4e-8249-d3a90a71eefc",
+      "to_change_id": "679824be-472a-4b3f-992d-1c7557a39838",
+      "edge_type": "leads_to",
+      "weight": 1.0,
+      "rationale": "verified on production data",
+      "created_at": "2026-08-08T17:46:29.753145-07:00"
+    },
+    {
+      "id": 65,
+      "from_node_id": 67,
+      "to_node_id": 68,
+      "from_change_id": "f21d06dc-5f17-4363-9903-2fb33d60d014",
+      "to_change_id": "19abf6b4-deaf-4a56-a301-8364169030ef",
+      "edge_type": "leads_to",
+      "weight": 1.0,
+      "rationale": "approach",
+      "created_at": "2026-08-08T17:56:09.246364-07:00"
+    },
+    {
+      "id": 66,
+      "from_node_id": 67,
+      "to_node_id": 69,
+      "from_change_id": "f21d06dc-5f17-4363-9903-2fb33d60d014",
+      "to_change_id": "7bc76536-ce53-4ffa-aeeb-dd46969cf15d",
+      "edge_type": "leads_to",
+      "weight": 1.0,
+      "rationale": "approach",
+      "created_at": "2026-08-08T17:56:09.252433-07:00"
+    },
+    {
+      "id": 67,
+      "from_node_id": 68,
+      "to_node_id": 70,
+      "from_change_id": "19abf6b4-deaf-4a56-a301-8364169030ef",
+      "to_change_id": "0e224637-9161-40b2-b88e-13dcfbc5cee9",
+      "edge_type": "leads_to",
+      "weight": 1.0,
+      "rationale": "chosen: zero new surfaces, stays in the one-ink world, scenario reads in place",
+      "created_at": "2026-08-08T17:56:09.258061-07:00"
+    },
+    {
+      "id": 68,
+      "from_node_id": 69,
+      "to_node_id": 70,
+      "from_change_id": "7bc76536-ce53-4ffa-aeeb-dd46969cf15d",
+      "to_change_id": "0e224637-9161-40b2-b88e-13dcfbc5cee9",
+      "edge_type": "leads_to",
+      "weight": 1.0,
+      "rationale": "rejected: duplicate calendar violates the no-cards single-room thesis",
+      "created_at": "2026-08-08T17:56:09.264098-07:00"
+    },
+    {
+      "id": 69,
+      "from_node_id": 70,
+      "to_node_id": 71,
+      "from_change_id": "0e224637-9161-40b2-b88e-13dcfbc5cee9",
+      "to_change_id": "e2fd1fd4-4d31-4d98-bc92-58085a9a4282",
+      "edge_type": "leads_to",
+      "weight": 1.0,
+      "rationale": "implementation",
+      "created_at": "2026-08-08T17:56:09.281073-07:00"
+    },
+    {
+      "id": 70,
+      "from_node_id": 71,
+      "to_node_id": 72,
+      "from_change_id": "e2fd1fd4-4d31-4d98-bc92-58085a9a4282",
+      "to_change_id": "2c7b2085-282b-4733-a27c-637eddb50e9c",
+      "edge_type": "leads_to",
+      "weight": 1.0,
+      "rationale": "verified via Playwright against preview fixtures",
+      "created_at": "2026-08-08T18:00:34.365630-07:00"
     }
   ]
 }
