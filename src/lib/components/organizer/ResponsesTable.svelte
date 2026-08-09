@@ -6,11 +6,16 @@
 
 	let {
 		responses,
-		avatars
+		avatars,
+		anchors,
+		ontoggleanchor
 	}: {
 		responses: OrganizerResponse[];
 		/** did → avatar URL, resolved client-side from the public appview. */
 		avatars: Map<string, string>;
+		/** DIDs anchored in the current scenario. */
+		anchors: string[];
+		ontoggleanchor: (did: string) => void;
 	} = $props();
 
 	const locationName = new Map(locations.map((l) => [l.id, l.name]));
@@ -94,6 +99,17 @@
 				</td>
 				<td class="who-cell">
 					<span class="who">
+						<button
+							class="anchor"
+							class:on={anchors.includes(r.did)}
+							onclick={() => ontoggleanchor(r.did)}
+							aria-pressed={anchors.includes(r.did)}
+							aria-label="Anchor {r.name} in the date scenario"
+							disabled={r.ranges.length === 0}
+							title={r.ranges.length === 0 ? 'No dates given — nothing to anchor on' : anchors.includes(r.did) ? 'Remove from scenario' : 'Anchor this person: outline the days everyone anchored shares'}
+						>
+							<span class="anchor-dot" aria-hidden="true"></span>
+						</button>
 						{#if avatars.get(r.did)}
 							<img class="avatar" src={avatars.get(r.did)} alt="" loading="lazy" />
 						{:else}
@@ -219,6 +235,50 @@
 		display: inline-flex;
 		align-items: center;
 		gap: 0.55rem;
+	}
+
+	/* Scenario anchor: hairline ring that fills solid when anchored. */
+	.anchor {
+		display: grid;
+		place-items: center;
+		width: 1.6rem;
+		height: 1.6rem;
+		border-radius: 999px;
+		flex-shrink: 0;
+		position: relative;
+	}
+
+	/* Invisible hit-area extension: the visual ring stays 1.6rem inside the
+	   row's rhythm, but the touch target reaches ~44px. */
+	.anchor::before {
+		content: '';
+		position: absolute;
+		inset: -0.6rem;
+	}
+
+	.anchor-dot {
+		width: 0.85rem;
+		height: 0.85rem;
+		border-radius: 999px;
+		border: 1.5px solid var(--ink-45);
+		transition:
+			background 0.15s var(--ease-out),
+			border-color 0.15s var(--ease-out),
+			scale 0.15s var(--ease-out);
+	}
+
+	.anchor:hover:not(:disabled) .anchor-dot {
+		border-color: var(--ink);
+	}
+
+	.anchor.on .anchor-dot {
+		background: var(--ink);
+		border-color: var(--ink);
+		scale: 1.08;
+	}
+
+	.anchor:disabled .anchor-dot {
+		border-color: var(--ink-12);
 	}
 
 	.avatar {

@@ -5,7 +5,7 @@
 	import Icon from '$lib/components/Icon.svelte';
 	import Heatmap from '$lib/components/organizer/Heatmap.svelte';
 	import ResponsesTable from '$lib/components/organizer/ResponsesTable.svelte';
-	import { bestWindows, dayLoads, locationTallies } from '$lib/organizer/aggregate';
+	import { bestWindows, dayLoads, fullOverlap, locationTallies, slotSet, windowFitCount } from '$lib/organizer/aggregate';
 	import { locations, retreat } from '$lib/content';
 	import { formatDay, parseIso } from '$lib/dates';
 	import type { ActionData, PageData } from './$types';
@@ -45,6 +45,27 @@
 	const maxPoints = $derived(Math.max(1, ...tallies.tallies.map((t) => t.points)));
 
 	const locationName = new Map(locations.map((l) => [l.id, l.name]));
+
+	/* ── anchor scenario ──
+	   Anchors are chosen from ALL responses, independent of the all/yes
+	   filter: the scenario asks "when can THESE people make it", and that
+	   answer shouldn't shift when the denominator toggle does. */
+
+	let anchors = $state<string[]>([]);
+
+	function toggleAnchor(did: string) {
+		anchors = anchors.includes(did) ? anchors.filter((d) => d !== did) : [...anchors, did];
+	}
+
+	const anchorPeople = $derived(
+		anchors
+			.map((did) => data.responses.find((r) => r.did === did))
+			.filter((r): r is (typeof data.responses)[number] => r !== undefined)
+	);
+	const anchorSets = $derived(anchorPeople.map((r) => slotSet(r.ranges)));
+	const overlap = $derived(anchors.length > 0 ? fullOverlap(anchorSets) : null);
+	const sharedFullDays = $derived(overlap ? [...overlap.values()].filter((o) => o.first && o.second).length : 0);
+	const anchorNames = $derived(anchorPeople.map((r) => (r.handle ? `@${r.handle}` : r.name)));
 
 	const stats = $derived({
 		total: data.responses.length,
@@ -281,14 +302,38 @@ finish review, the verdict, and DESIGN.md.
 				</div>
 
 				{#if withDates > 0}
-					<Heatmap {loads} total={withDates} />
+					{#if anchors.length > 0}
+						<p class="scenario" role="status">
+							<span class="scenario-kicker">Scenario</span>
+							<span class="scenario-line">
+								Anchored on {anchorNames.join(', ')} — {sharedFullDays}
+								full day{sharedFullDays === 1 ? '' : 's'} they all share
+							</span>
+							<button class="scenario-clear" onclick={() => (anchors = [])}>Clear</button>
+						</p>
+					{/if}
 
-					<ol class="windows" aria-label="Best 3-night windows">
+					<Heatmap {loads} total={withDates} {overlap} />
+
+					<ol class="windows" class:with-anchors={anchors.length > 0} aria-label="Best 3-night windows">
 						{#each windows as w, i (w.start)}
+							{@const fit = anchors.length > 0 ? windowFitCount(anchorSets, w.start) : 0}
 							<li class="window-row" class:best={i === 0}>
 								<span class="window-kicker">{i === 0 ? 'Best window' : `№ ${i + 1}`}</span>
 								<span class="window-dates">{fmtWindow(w.start, w.end)}</span>
 								<span class="window-count">{w.count} of {w.of} available</span>
+								{#if anchors.length > 0}
+									<span
+										class="window-anchors"
+										class:full={fit === anchors.length}
+										title={fit === anchors.length
+											? 'Every anchored person can make this window'
+											: `${fit} of ${anchors.length} anchored people can make this window`}
+									>
+										<span class="window-anchor-dot" aria-hidden="true"></span>
+										{fit}/{anchors.length} anchors
+									</span>
+								{/if}
 							</li>
 						{/each}
 					</ol>
@@ -301,7 +346,7 @@ finish review, the verdict, and DESIGN.md.
 				<div class="section-head">
 					<h2 class="display section-title" id="resp-head">Responses</h2>
 				</div>
-				<ResponsesTable responses={data.responses} {avatars} />
+				<ResponsesTable responses={data.responses} {avatars} {anchors} ontoggleanchor={toggleAnchor} />
 			</section>
 
 			<section aria-labelledby="allow-head">
@@ -817,11 +862,110 @@ finish review, the verdict, and DESIGN.md.
 	.window-row {
 		display: grid;
 		grid-template-columns: 7.5rem 1fr auto;
+		grid-template-areas: 'kicker dates count';
 		align-items: baseline;
 		gap: var(--space-3);
 		padding: 0.65rem 0;
 		border-top: var(--hairline);
 		font-size: 0.9375rem;
+	}
+
+	.windows.with-anchors .window-row {
+		grid-template-columns: 7.5rem 1fr auto auto;
+		grid-template-areas: 'kicker dates count anchors';
+	}
+
+	.window-kicker {
+		grid-area: kicker;
+	}
+
+	.window-dates {
+		grid-area: dates;
+	}
+
+	.window-count {
+		grid-area: count;
+	}
+
+	/* Narrow screens: the row stacks into two lines so the dates keep a full
+	   measure instead of wrapping word-per-line beside three other columns. */
+	@media (max-width: 640px) {
+		.window-row,
+		.windows.with-anchors .window-row {
+			grid-template-columns: 1fr auto;
+			grid-template-areas:
+				'kicker anchors'
+				'dates dates'
+				'count count';
+			row-gap: 0.2rem;
+		}
+	}
+
+	/* ── anchor scenario ── */
+
+	.scenario {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: baseline;
+		gap: 0.6rem var(--space-3);
+		padding: 0.55rem 0;
+		border-top: var(--hairline);
+		border-bottom: var(--hairline);
+		margin-bottom: var(--space-3);
+		font-size: 0.9375rem;
+	}
+
+	.scenario-kicker {
+		font-size: 0.6875rem;
+		font-weight: 500;
+		letter-spacing: 0.18em;
+		text-transform: uppercase;
+		color: var(--ink);
+	}
+
+	.scenario-line {
+		color: var(--ink-70);
+	}
+
+	.scenario-clear {
+		margin-left: auto;
+		font-size: 0.8125rem;
+		color: var(--ink-70);
+		text-decoration: underline;
+		text-underline-offset: 3px;
+	}
+
+	.scenario-clear:hover {
+		color: var(--ink);
+	}
+
+	.window-anchors {
+		grid-area: anchors;
+		display: inline-flex;
+		align-items: center;
+		gap: 0.4rem;
+		font-size: 0.8125rem;
+		font-variant-numeric: tabular-nums;
+		/* ink-70, not ink-45: the count is data and must clear AA contrast;
+		   the hollow-vs-filled dot still separates partial from full. */
+		color: var(--ink-70);
+		white-space: nowrap;
+	}
+
+	.window-anchors.full {
+		color: var(--ink);
+	}
+
+	.window-anchor-dot {
+		width: 0.6rem;
+		height: 0.6rem;
+		border-radius: 999px;
+		border: 1.5px solid currentColor;
+		align-self: center;
+	}
+
+	.window-anchors.full .window-anchor-dot {
+		background: var(--ink);
 	}
 
 	.window-row:last-child {
