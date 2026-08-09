@@ -1,5 +1,29 @@
 [
   {
+    "hash": "ff4051a6e35b9162013cef44e982ad914ed60b73",
+    "short_hash": "ff4051a",
+    "author": "Bryan Guffey",
+    "date": "2026-08-08T18:00:32-07:00",
+    "message": "feat: anchor-people scenario mode in the organizer view\n\nToggle a ring next to any respondent to anchor them; the view answers\n'when can THESE people make it' in place:\n\n- Heatmap outlines every day all anchors share — full-cell ring for\n  full days, half-cell ring for a shared half, echoing the split-cell\n  language. Legend gains an 'all anchored people available' key.\n- Each of the 5 best windows gets an n/n anchors marker: bright filled\n  dot when every anchor fits, dim ring otherwise, tooltip explains.\n- A scenario line above the heatmap names the anchors, counts the full\n  days they all share, and clears with one click.\n- Anchors are independent of the all/yes filter; respondents with no\n  dates can't be anchored (disabled ring, explanatory title).\n\nPure client state over the existing aggregate slot-set math; bestWindows\nrefactored onto a shared windowSlots() so the window shape has one\ndefinition. Verified in-browser against ?preview fixtures: rings render\nfor solo and paired anchors, chips count 0/2 and 1/2 correctly, clear\nrestores the neutral view; no console errors.\n\nCo-Authored-By: Claude Fable 5 <noreply@anthropic.com>\nClaude-Session: https://claude.ai/code/session_014GrGCvMtG1jntmgmLjWmvh",
+    "files_changed": 7
+  },
+  {
+    "hash": "b216045c703d57c8634d91f32f46dca10adae7af",
+    "short_hash": "b216045",
+    "author": "Bryan Guffey",
+    "date": "2026-08-08T17:46:27-07:00",
+    "message": "fix: bestWindows no longer requires availability on the departure morning\n\nTwo compounding problems made the ranking miss real candidates:\n\n1. The window shape required a day-3 first-half slot — a 4th calendar\n   day of availability for a 3-night stay. The survey's end-portion\n   semantics ('full' vs 'leaving midday') already encode the last\n   night, so anyone who entered exactly the weekend they meant\n   (Fri-Sun) matched zero windows. Verified against prod data: one\n   respondent's six weekend ranges all counted for nothing.\n2. The top list allowed overlapping windows, so shifted copies of one\n   peak crowded out distinct alternatives. The list is now greedily\n   de-clustered (non-overlapping), and the organizer view shows 5.\n\nOn today's data this surfaces Fri Oct 23-26 as the true best window\n(11 of 16, previously invisible) and puts Fri Oct 2-5 (10 of 16) on\nthe board — it previously ranked 8th at 9 and never displayed.\n\nCo-Authored-By: Claude Fable 5 <noreply@anthropic.com>\nClaude-Session: https://claude.ai/code/session_014GrGCvMtG1jntmgmLjWmvh",
+    "files_changed": 5
+  },
+  {
+    "hash": "a1818a332698addc947ae45715863a2bca31cf3d",
+    "short_hash": "a1818a3",
+    "author": "Bryan Guffey",
+    "date": "2026-08-07T17:57:52-07:00",
+    "message": "feat: bits-ui style tap-tap range selection in the dates calendar\n\nAdopt the RangeCalendar interaction model from bits-ui while keeping\nmulti-range, half-day portions, and the existing visual language:\n\n- Tap first day to anchor, tap last day to fill in the range (either\n  direction); same day twice = single-day range. Pending state shows a\n  hint row with a cancel button; Escape also cancels.\n- Live preview of the prospective range on hover/focus (ink-35 mid-step\n  between hover and committed).\n- Touch no longer blocks scrolling: day cells use touch-action pan-y\n  and selection is tap-tap on touch; drag-to-select stays for mouse.\n- Roving tabindex + Arrow/Home/End keyboard navigation across months;\n  Enter/Space shares the tap flow; aria-live announcements throughout.\n- Hover no longer repaints selected/preview cells (sticky-hover on iOS\n  grayed out the anchored day).\n\nVerified with Playwright against a dev harness: touch tap-tap commit,\nbackward selection, editor auto-open, half-day editing, multi-range,\nscroll-while-touching-days, mouse drag, hover preview, Escape cancel,\nand keyboard Enter-arrow-Enter flow all pass with no console errors.\n\nCo-Authored-By: Claude Fable 5 <noreply@anthropic.com>\nClaude-Session: https://claude.ai/code/session_014GrGCvMtG1jntmgmLjWmvh",
+    "files_changed": 6
+  },
+  {
     "hash": "7c466659008028303bbffdd7130be7904992905f",
     "short_hash": "7c46665",
     "author": "chaos gremlin",

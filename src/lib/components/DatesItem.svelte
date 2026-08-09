@@ -291,7 +291,12 @@
 		class="calendar"
 		class:locked={!signedIn}
 		role="presentation"
-		onpointerleave={() => (hovered = null)}
+		onpointerleave={() => {
+			// Pointer exit must not clear a preview that keyboard focus is
+			// driving: if a day cell still owns focus, keep previewing to it.
+			const active = document.activeElement;
+			hovered = active instanceof HTMLElement && active.dataset.date ? active.dataset.date : null;
+		}}
 	>
 		<p class="visually-hidden" aria-live="polite">{anchorMessage}</p>
 		{#each months as month (month.month)}
