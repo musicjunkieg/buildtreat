@@ -42,6 +42,20 @@ export async function joinWaitlist(
 		.run();
 }
 
+/**
+ * Self-heal a stored handle from the caller's freshly-resolved one. A
+ * transient profile-lookup failure at join time stores handle = null; a
+ * later handle change makes it stale. Backfilling on every authenticated
+ * load keeps the row promotable without any user action — no refresh
+ * button, no dead-end. Only writes when the value actually changed.
+ */
+export async function backfillWaitlistHandle(db: D1Database, did: string, handle: string): Promise<void> {
+	await db
+		.prepare(`UPDATE waitlist SET handle = ?1 WHERE did = ?2 AND (handle IS NULL OR handle != ?1)`)
+		.bind(handle, did)
+		.run();
+}
+
 /** The visitor's own waitlist row, for the confirmation state. */
 export async function getWaitlistEntry(db: D1Database, did: string): Promise<WaitlistEntry | null> {
 	const row = await db
@@ -85,7 +99,10 @@ export async function promoteFromWaitlist(db: D1Database, did: string): Promise<
 				 ON CONFLICT(handle) DO UPDATE SET did = COALESCE(allowlist.did, excluded.did)`
 			)
 			.bind(handle, entry.did),
-		db.prepare(`UPDATE waitlist SET promoted_at = ?1 WHERE did = ?2`).bind(now, did)
+		// COALESCE: a re-promote (retry / double-click) keeps the first
+		// timestamp, so promoted_at stays an accurate audit of when they
+		// were first admitted.
+		db.prepare(`UPDATE waitlist SET promoted_at = COALESCE(promoted_at, ?1) WHERE did = ?2`).bind(now, did)
 	]);
 	return { ok: true, handle };
 }

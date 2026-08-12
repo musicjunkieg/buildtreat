@@ -167,7 +167,8 @@ export const actions: Actions = {
 		const { ok, handle } = await promoteFromWaitlist(db, did);
 		if (!ok) {
 			return fail(400, {
-				message: 'Could not promote — that entry has no resolved handle yet. Ask them to sign in again.'
+				message:
+					'Could not promote — no resolved handle yet. Ask them to reopen the survey while signed in; it refreshes their handle automatically, then Promote will work.'
 			});
 		}
 		return { message: `Promoted @${handle} — they’re on the survey now` };

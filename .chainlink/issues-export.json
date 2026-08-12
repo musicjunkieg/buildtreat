@@ -1,12 +1,27 @@
 {
   "version": 1,
-  "exported_at": "2026-08-12T02:59:12.012126+00:00",
+  "exported_at": "2026-08-12T03:16:25.136524+00:00",
   "issues": [
+    {
+      "id": 76,
+      "title": "Address CodeRabbit review on PR #15 (waitlist), then apply 0003 migration to prod D1",
+      "description": null,
+      "status": "open",
+      "priority": "high",
+      "parent_id": null,
+      "labels": [
+        "review"
+      ],
+      "comments": [],
+      "created_at": "2026-08-12T03:13:32.396961+00:00",
+      "updated_at": "2026-08-12T03:13:32.396961+00:00",
+      "closed_at": null
+    },
     {
       "id": 75,
       "title": "Shape waitlist signup feature (brainstorm + impeccable) for uninvited visitors",
       "description": null,
-      "status": "open",
+      "status": "closed",
       "priority": "high",
       "parent_id": null,
       "labels": [
@@ -14,8 +29,8 @@
       ],
       "comments": [],
       "created_at": "2026-08-12T02:12:18.394142+00:00",
-      "updated_at": "2026-08-12T02:12:18.394142+00:00",
-      "closed_at": null
+      "updated_at": "2026-08-12T02:59:48.524895+00:00",
+      "closed_at": "2026-08-12T02:59:48.524895+00:00"
     },
     {
       "id": 74,

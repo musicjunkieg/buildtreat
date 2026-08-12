@@ -6,7 +6,13 @@ import { actorToDid } from '@svelte-atproto/oauth/helper';
 import { cloudflareKV } from '@svelte-atproto/oauth/server/stores/cloudflare';
 import { retreat } from '$lib/content';
 import { checkAllowlist, getResponse } from '$lib/server/db';
-import { getWaitlistEntry, isValidWaitlistEmail, joinWaitlist, type WaitlistState } from '$lib/server/waitlist';
+import {
+	backfillWaitlistHandle,
+	getWaitlistEntry,
+	isValidWaitlistEmail,
+	joinWaitlist,
+	type WaitlistState
+} from '$lib/server/waitlist';
 import type { SurveyDraft } from '$lib/survey.svelte';
 import type { KnownUser } from '$lib/types';
 import { surveyGate } from '$lib/server/organizer';
@@ -195,6 +201,14 @@ export const load: PageServerLoad = async ({ locals, platform, url, cookies }) =
 		if (entry) {
 			waitlistState = 'member';
 			waitlistEmail = entry.email;
+			// Self-heal a null/stale handle (transient profile failure at join,
+			// or a later handle change) so the row stays promotable. Silent,
+			// no user action — a plain revisit repairs it.
+			if (user.handle && entry.handle !== user.handle) {
+				await backfillWaitlistHandle(db, locals.did, user.handle).catch((e) =>
+					console.error('waitlist handle backfill failed for', logDid(locals.did), e)
+				);
+			}
 		}
 	}
 
