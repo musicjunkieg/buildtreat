@@ -103,6 +103,29 @@ export const youQuestion = {
 	prompt: 'Tell us who you are — we’ll only use this to plan the retreat.'
 } as const;
 
+/**
+ * Waitlist copy for uninvited visitors. Warm, two-track, never a wall —
+ * the door isn't closed, it's a different door. See the design spec at
+ * docs/superpowers/specs/2026-08-11-waitlist-design.md.
+ */
+export const waitlist = {
+	/** Shown under the sign-in CTA before anyone authenticates, so neither
+	 *  audience is surprised by where sign-in lands them. */
+	twoTrack:
+		'Invited builders sign in to answer. Not on the list yet? Sign in to join the waitlist — we’re pulling names as the dates come together.',
+	invite: {
+		body: 'The first invites went to a small group of builders — but the door isn’t closed. Drop your email and we’ll reach out as the dates firm up and space opens.',
+		emailLabel: 'Email',
+		cta: 'Join the waitlist',
+		mistake: 'Think you should be on the list?'
+	},
+	member: {
+		lead: 'You’re on the waitlist.',
+		body: 'We’ll be in touch as the dates lock in and spots open.',
+		change: 'Need to change your email or step off?'
+	}
+} as const;
+
 /** The seven feed items, in order. */
 export const feedItems = ['hero', 'you', 'interest', 'travel', 'dates', 'location', 'review'] as const;
 export type FeedItemId = (typeof feedItems)[number];

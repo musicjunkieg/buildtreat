@@ -1,12 +1,16 @@
 <script lang="ts">
+	import { enhance } from '$app/forms';
 	import { logout } from '@svelte-atproto/oauth/client';
 	import Icon from '$lib/components/Icon.svelte';
-	import { retreat } from '$lib/content';
+	import { retreat, waitlist } from '$lib/content';
 
 	let {
 		signedIn,
 		notInvited = false,
 		deniedHandle = null,
+		waitlistState = 'none',
+		waitlistEmail = null,
+		waitlistError = null,
 		closed = false,
 		deadlineDisplay = null,
 		organizerAvatar = null,
@@ -16,12 +20,17 @@
 		signedIn: boolean;
 		notInvited?: boolean;
 		deniedHandle?: string | null;
+		waitlistState?: 'none' | 'member';
+		waitlistEmail?: string | null;
+		waitlistError?: string | null;
 		closed?: boolean;
 		deadlineDisplay?: string | null;
 		organizerAvatar?: string | null;
 		onsignin: () => void;
 		oncontinue: () => void;
 	} = $props();
+
+	let joining = $state(false);
 </script>
 
 <div class="hero">
@@ -69,12 +78,53 @@
 		{/if}
 	</ul>
 
-	{#if notInvited}
-		<p class="closed-note">
-			This survey is invite-only{deniedHandle ? `, and @${deniedHandle} isn't on the list` : ''}. If that
-			seems wrong, DM
-			<a class="handle" href={retreat.organizerLink} target="_blank" rel="noopener">@{retreat.organizerHandle}</a> on Bluesky.
-		</p>
+	{#if notInvited && waitlistState === 'member'}
+		<div class="waitlist-note">
+			<!-- Live region wraps only the changing text; the DM link stays
+			     outside it (a control inside role=status is re-announced and
+			     mishandled by some assistive tech). -->
+			<p class="closed-note" role="status">
+				<strong>{waitlist.member.lead}</strong>
+				{waitlist.member.body}{waitlistEmail ? ` We’ll reach you at ${waitlistEmail}.` : ''}
+			</p>
+			<p class="waitlist-aside">
+				{waitlist.member.change} DM
+				<a class="handle" href={retreat.organizerLink} target="_blank" rel="noopener">@{retreat.organizerHandle}</a>.
+			</p>
+		</div>
+	{:else if notInvited}
+		<div class="waitlist-join">
+			<p class="closed-note">{waitlist.invite.body}</p>
+			<form method="POST" action="?/joinWaitlist" use:enhance={() => {
+				joining = true;
+				return async ({ update }) => {
+					await update();
+					joining = false;
+				};
+			}}>
+				<label class="waitlist-field">
+					<span class="kicker">{waitlist.invite.emailLabel}</span>
+					<input
+						type="email"
+						name="email"
+						required
+						autocomplete="email"
+						placeholder="you@example.com"
+						aria-invalid={waitlistError ? 'true' : undefined}
+					/>
+				</label>
+				{#if waitlistError}
+					<p class="waitlist-error" role="alert">{waitlistError}</p>
+				{/if}
+				<button class="pill" type="submit" disabled={joining}>
+					{joining ? 'Adding you…' : waitlist.invite.cta}
+				</button>
+			</form>
+			<p class="waitlist-aside">
+				{waitlist.invite.mistake} DM
+				<a class="handle" href={retreat.organizerLink} target="_blank" rel="noopener">@{retreat.organizerHandle}</a>.
+			</p>
+		</div>
 	{:else if closed}
 		<p class="closed-note">
 			Responses closed {deadlineDisplay ?? ''} — thanks to everyone who answered. Need to change something?
@@ -87,6 +137,7 @@
 			{retreat.signIn}
 			<Icon name="butterfly" size={19} />
 		</button>
+		<p class="two-track">{waitlist.twoTrack}</p>
 	{/if}
 
 	<p class="author">
@@ -191,6 +242,93 @@
 	}
 
 	.closed-note .handle {
+		color: var(--ink);
+		font-weight: 550;
+	}
+
+	.closed-note strong {
+		color: var(--ink);
+		font-weight: 650;
+	}
+
+	/* Two-track line under the sign-in CTA: sets expectations before auth so
+	   neither audience is surprised by where sign-in lands them. */
+	.two-track {
+		font-size: var(--text-author);
+		line-height: 1.5;
+		color: var(--ink-70);
+		max-width: 42ch;
+		margin-top: var(--space-2);
+	}
+
+	/* Waitlist join + confirmation share the note measure; the join carries
+	   the survey's underline-input grammar and the one white pill. */
+	.waitlist-join,
+	.waitlist-note {
+		display: flex;
+		flex-direction: column;
+		gap: var(--space-2);
+		max-width: 44ch;
+	}
+
+	.waitlist-join .closed-note,
+	.waitlist-note .closed-note {
+		padding: 0;
+	}
+
+	.waitlist-join form {
+		display: flex;
+		flex-direction: column;
+		gap: var(--space-2);
+	}
+
+	.waitlist-field {
+		display: flex;
+		flex-direction: column;
+		gap: 0.35rem;
+	}
+
+	.waitlist-field .kicker {
+		color: var(--ink-70);
+	}
+
+	.waitlist-field input {
+		background: transparent;
+		border: none;
+		border-bottom: 1px solid var(--ink-45);
+		border-radius: 0;
+		padding: 0.4rem 0;
+		font-size: var(--text-input);
+		color: var(--ink);
+		color-scheme: dark;
+	}
+
+	.waitlist-field input::placeholder {
+		color: var(--ink-45);
+	}
+
+	.waitlist-field input:focus {
+		outline: none;
+		border-bottom-color: var(--ink);
+	}
+
+	.waitlist-field input[aria-invalid='true'] {
+		border-bottom-color: var(--ink);
+	}
+
+	.waitlist-error {
+		font-size: var(--text-author);
+		color: var(--ink);
+		line-height: 1.4;
+	}
+
+	.waitlist-aside {
+		font-size: var(--text-author);
+		color: var(--ink-70);
+		line-height: 1.4;
+	}
+
+	.waitlist-aside .handle {
 		color: var(--ink);
 		font-weight: 550;
 	}

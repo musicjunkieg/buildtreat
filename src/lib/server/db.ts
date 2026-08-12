@@ -10,7 +10,7 @@ import { locations, NO_PREFERENCE, retreat } from '$lib/content';
 
 const LOCATION_IDS = new Set(locations.map((l) => l.id));
 const ISO_RE = /^\d{4}-\d{2}-\d{2}$/;
-const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+export const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 export interface StoredResponse {
 	draft: SurveyDraft;
