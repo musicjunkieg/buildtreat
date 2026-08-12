@@ -1,7 +1,37 @@
 {
   "version": 1,
-  "exported_at": "2026-08-12T03:44:04.577888+00:00",
+  "exported_at": "2026-08-12T04:02:30.355437+00:00",
   "issues": [
+    {
+      "id": 78,
+      "title": "Chainlink-export union merge driver (kill manual resolve step) + port to project-template; branch cleanup",
+      "description": null,
+      "status": "open",
+      "priority": "high",
+      "parent_id": null,
+      "labels": [
+        "enhancement"
+      ],
+      "comments": [],
+      "created_at": "2026-08-12T03:58:51.168864+00:00",
+      "updated_at": "2026-08-12T03:58:51.168864+00:00",
+      "closed_at": null
+    },
+    {
+      "id": 77,
+      "title": "Diagnose remaining PR #15 conflicts",
+      "description": null,
+      "status": "closed",
+      "priority": "high",
+      "parent_id": null,
+      "labels": [
+        "bug"
+      ],
+      "comments": [],
+      "created_at": "2026-08-12T03:46:17.533933+00:00",
+      "updated_at": "2026-08-12T03:50:33.634914+00:00",
+      "closed_at": "2026-08-12T03:50:33.634914+00:00"
+    },
     {
       "id": 76,
       "title": "Address CodeRabbit review on PR #15 (waitlist), then apply 0003 migration to prod D1",
