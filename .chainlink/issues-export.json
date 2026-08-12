@@ -1,12 +1,123 @@
 {
   "version": 1,
-  "exported_at": "2026-08-09T17:26:05.873695+00:00",
+  "exported_at": "2026-08-12T03:44:04.577888+00:00",
   "issues": [
+    {
+      "id": 76,
+      "title": "Address CodeRabbit review on PR #15 (waitlist), then apply 0003 migration to prod D1",
+      "description": null,
+      "status": "closed",
+      "priority": "high",
+      "parent_id": null,
+      "labels": [
+        "review"
+      ],
+      "comments": [
+        {
+          "content": "Round 1 CodeRabbit fixes pushed (6dfc0d3): COALESCE promoted_at + load-time handle backfill. Replied to both threads. Migration to prod D1 pending Bryan's condition: all CodeRabbit issues resolved across successive runs. Awaiting CodeRabbit's re-review of 6dfc0d3.",
+          "created_at": "2026-08-12T03:16:57.921570+00:00",
+          "kind": "note"
+        }
+      ],
+      "created_at": "2026-08-12T03:13:32.396961+00:00",
+      "updated_at": "2026-08-12T03:40:02.761736+00:00",
+      "closed_at": "2026-08-12T03:40:02.761736+00:00"
+    },
+    {
+      "id": 75,
+      "title": "Shape waitlist signup feature (brainstorm + impeccable) for uninvited visitors",
+      "description": null,
+      "status": "closed",
+      "priority": "high",
+      "parent_id": null,
+      "labels": [
+        "enhancement"
+      ],
+      "comments": [],
+      "created_at": "2026-08-12T02:12:18.394142+00:00",
+      "updated_at": "2026-08-12T02:59:48.524895+00:00",
+      "closed_at": "2026-08-12T02:59:48.524895+00:00"
+    },
+    {
+      "id": 74,
+      "title": "Draft SvelteKit cookie-footgun contribution for issue #15138 into notes/",
+      "description": null,
+      "status": "closed",
+      "priority": "medium",
+      "parent_id": null,
+      "labels": [
+        "docs"
+      ],
+      "comments": [],
+      "created_at": "2026-08-09T19:51:26.794348+00:00",
+      "updated_at": "2026-08-09T19:52:52.340354+00:00",
+      "closed_at": "2026-08-09T19:52:52.340354+00:00"
+    },
+    {
+      "id": 73,
+      "title": "Build open-redirect PoC (unit + e2e) in notes/poc for the @svelte-atproto/oauth disclosure",
+      "description": null,
+      "status": "closed",
+      "priority": "medium",
+      "parent_id": null,
+      "labels": [
+        "docs"
+      ],
+      "comments": [],
+      "created_at": "2026-08-09T18:23:18.739294+00:00",
+      "updated_at": "2026-08-09T18:25:52.493480+00:00",
+      "closed_at": "2026-08-09T18:25:52.493480+00:00"
+    },
+    {
+      "id": 72,
+      "title": "Template PR: port merge-driver setup, dedup script, and recipes from buildtreat (template issue #28)",
+      "description": null,
+      "status": "closed",
+      "priority": "high",
+      "parent_id": null,
+      "labels": [
+        "enhancement"
+      ],
+      "comments": [],
+      "created_at": "2026-08-09T18:03:21.878007+00:00",
+      "updated_at": "2026-08-09T18:08:16.532284+00:00",
+      "closed_at": "2026-08-09T18:08:16.532284+00:00"
+    },
+    {
+      "id": 71,
+      "title": "File template-repo issue: generated-export merge conflicts + fixes learned in buildtreat",
+      "description": null,
+      "status": "closed",
+      "priority": "medium",
+      "parent_id": null,
+      "labels": [
+        "chore"
+      ],
+      "comments": [],
+      "created_at": "2026-08-09T17:42:18.863008+00:00",
+      "updated_at": "2026-08-09T17:44:10.031084+00:00",
+      "closed_at": "2026-08-09T17:44:10.031084+00:00"
+    },
+    {
+      "id": 70,
+      "title": "Update project memory: PRs 13-14 merged, run complete",
+      "description": null,
+      "status": "closed",
+      "priority": "low",
+      "parent_id": null,
+      "labels": [
+        "chore"
+      ],
+      "comments": [],
+      "created_at": "2026-08-09T17:41:16.834446+00:00",
+      "updated_at": "2026-08-09T17:41:55.745055+00:00",
+      "closed_at": "2026-08-09T17:41:55.745055+00:00"
+    },
     {
       "id": 69,
       "title": "Anchor overlap rings invisible on bright heatmap cells — punched double-ring fix",
       "description": null,
-      "status": "open",
+      "status": "closed",
       "priority": "high",
       "parent_id": null,
       "labels": [
@@ -14,8 +125,8 @@
       ],
       "comments": [],
       "created_at": "2026-08-09T17:22:31.699411+00:00",
-      "updated_at": "2026-08-09T17:22:31.699411+00:00",
-      "closed_at": null
+      "updated_at": "2026-08-09T17:26:33.434805+00:00",
+      "closed_at": "2026-08-09T17:26:33.434805+00:00"
     },
     {
       "id": 68,

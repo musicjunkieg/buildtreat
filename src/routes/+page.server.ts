@@ -1,10 +1,18 @@
-import type { PageServerLoad } from './$types';
+import { fail } from '@sveltejs/kit';
+import type { Actions, PageServerLoad } from './$types';
 import { dev } from '$app/environment';
 import { loadBskyProfile } from '@svelte-atproto/oauth/bsky';
 import { actorToDid } from '@svelte-atproto/oauth/helper';
 import { cloudflareKV } from '@svelte-atproto/oauth/server/stores/cloudflare';
 import { retreat } from '$lib/content';
 import { checkAllowlist, getResponse } from '$lib/server/db';
+import {
+	backfillWaitlistHandle,
+	getWaitlistEntry,
+	isValidWaitlistEmail,
+	joinWaitlist,
+	type WaitlistState
+} from '$lib/server/waitlist';
 import type { SurveyDraft } from '$lib/survey.svelte';
 import type { KnownUser } from '$lib/types';
 import { surveyGate } from '$lib/server/organizer';
@@ -77,17 +85,22 @@ export const load: PageServerLoad = async ({ locals, platform, url, cookies }) =
 	const organizer = await loadOrganizer(profileCache);
 	const knownUser = readKnownUser(cookies.get(KNOWN_COOKIE));
 
-	// Dev-only design preview of the signed-in state; `dev` is compile-time
-	// false in production builds, so this path cannot ship.
+	// Dev-only design preview; `dev` is compile-time false in production
+	// builds, so this path cannot ship. `?preview` = the signed-in survey;
+	// `?preview=notinvited` / `=member` render the waitlist states.
 	if (dev && url.searchParams.has('preview')) {
+		const variant = url.searchParams.get('preview');
+		const uninvited = variant === 'notinvited' || variant === 'member';
 		return {
 			user: {
 				did: 'did:plc:preview',
-				handle: 'preview.bsky.social',
-				displayName: 'Preview Builder',
+				handle: uninvited ? 'newbuilder.bsky.social' : 'preview.bsky.social',
+				displayName: uninvited ? 'New Builder' : 'Preview Builder',
 				avatar: null
 			} as PageUser,
-			allowed: true,
+			allowed: !uninvited,
+			waitlistState: (variant === 'member' ? 'member' : 'none') as WaitlistState,
+			waitlistEmail: variant === 'member' ? 'you@example.com' : null,
 			answers: null as SurveyDraft | null,
 			existingResponse: false,
 			organizer,
@@ -102,6 +115,8 @@ export const load: PageServerLoad = async ({ locals, platform, url, cookies }) =
 		return {
 			user: null as PageUser | null,
 			allowed: true,
+			waitlistState: 'none' as WaitlistState,
+			waitlistEmail: null as string | null,
 			answers: null as SurveyDraft | null,
 			existingResponse: false,
 			organizer,
@@ -173,9 +188,35 @@ export const load: PageServerLoad = async ({ locals, platform, url, cookies }) =
 				})
 			: null;
 
+	// Uninvited visitors: are they already on the waitlist? Drives the
+	// invitation-vs-confirmation state on the hero. (Promoted people are
+	// `allowed` and never reach this branch.)
+	let waitlistState: WaitlistState = 'none';
+	let waitlistEmail: string | null = null;
+	if (db && !allowed) {
+		const entry = await getWaitlistEntry(db, locals.did).catch((e) => {
+			console.error('waitlist load failed for', logDid(locals.did), e);
+			return null;
+		});
+		if (entry) {
+			waitlistState = 'member';
+			waitlistEmail = entry.email;
+			// Self-heal a null/stale handle (transient profile failure at join,
+			// or a later handle change) so the row stays promotable. Silent,
+			// no user action — a plain revisit repairs it.
+			if (user.handle && entry.handle !== user.handle) {
+				await backfillWaitlistHandle(db, locals.did, user.handle).catch((e) =>
+					console.error('waitlist handle backfill failed for', logDid(locals.did), e)
+				);
+			}
+		}
+	}
+
 	return {
 		user,
 		allowed,
+		waitlistState,
+		waitlistEmail,
 		answers: stored?.draft ?? null,
 		existingResponse: stored !== null,
 		organizer,
@@ -184,4 +225,36 @@ export const load: PageServerLoad = async ({ locals, platform, url, cookies }) =
 		knownUser,
 		authError
 	};
+};
+
+export const actions: Actions = {
+	// Join the waitlist. Requires an authenticated session; the handle is
+	// resolved from the DID server-side (never trusted from the form) so a
+	// later promotion allowlists the right identity. On success the load
+	// re-runs and the hero flips to the confirmation state.
+	joinWaitlist: async ({ locals, platform, request }) => {
+		if (!locals.did) return fail(401, { waitlistError: 'Sign in first, then add your name.' });
+		const db = platform?.env?.DB;
+		if (!db) return fail(503, { waitlistError: 'Storage is not available right now — try again shortly.' });
+
+		const email = String((await request.formData()).get('email') ?? '')
+			.trim()
+			.slice(0, 320);
+		if (!isValidWaitlistEmail(email)) {
+			return fail(400, { waitlistError: 'Enter a valid email so we can reach you.' });
+		}
+
+		const profileCache = platform?.env?.PROFILE_CACHE
+			? cloudflareKV(platform.env.PROFILE_CACHE, { ttl: 3600 })
+			: undefined;
+		const profile = await loadBskyProfile(locals.did, { cache: profileCache }).catch(() => undefined);
+
+		try {
+			await joinWaitlist(db, { did: locals.did, handle: profile?.handle ?? null, email });
+		} catch (e) {
+			console.error('waitlist join failed for', logDid(locals.did), e);
+			return fail(500, { waitlistError: 'Something went wrong adding you — please try again.' });
+		}
+		return { joined: true };
+	}
 };

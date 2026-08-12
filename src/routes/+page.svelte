@@ -20,7 +20,9 @@
 	} from '$lib/content';
 	import { SurveyState } from '$lib/survey.svelte';
 
-	let { data } = $props();
+	let { data, form } = $props();
+
+	const waitlistError = $derived(form && 'waitlistError' in form ? (form.waitlistError as string) : null);
 
 	const survey = new SurveyState();
 
@@ -179,7 +181,7 @@
 		eager
 		labelledby="hero-title"
 	>
-		<HeroItem {signedIn} {notInvited} deniedHandle={data.user?.handle ?? null} {closed} {deadlineDisplay} organizerAvatar={data.organizer.avatar} onsignin={openSignIn} oncontinue={() => jump('you')} />
+		<HeroItem {signedIn} {notInvited} deniedHandle={data.user?.handle ?? null} waitlistState={data.waitlistState} waitlistEmail={data.waitlistEmail} {waitlistError} {closed} {deadlineDisplay} organizerAvatar={data.organizer.avatar} onsignin={openSignIn} oncontinue={() => jump('you')} />
 	</FeedItem>
 
 	<FeedItem id="you" inert={!signedIn || closed} media="/media/item-you.png" labelledby="you-title">
