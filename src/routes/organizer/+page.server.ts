@@ -18,6 +18,7 @@ import {
 	type LatePass,
 	type OrganizerResponse
 } from '$lib/server/organizer';
+import { listWaitlist, promoteFromWaitlist, type WaitlistEntry } from '$lib/server/waitlist';
 
 /**
  * /organizer — Bryan's side of the survey. Access policy:
@@ -33,6 +34,7 @@ export interface OrganizerPageData {
 	responses: OrganizerResponse[];
 	allowlist: AllowlistEntry[];
 	latePasses: LatePass[];
+	waitlist: WaitlistEntry[];
 	reopened: boolean;
 	deadline: string | null;
 	deadlineDisplay: string | null;
@@ -44,6 +46,7 @@ const EMPTY: Omit<OrganizerPageData, 'authState'> = {
 	responses: [],
 	allowlist: [],
 	latePasses: [],
+	waitlist: [],
 	reopened: false,
 	deadline: null,
 	deadlineDisplay: null,
@@ -78,10 +81,11 @@ export const load: PageServerLoad = async ({ locals, platform, url }): Promise<O
 	if (!db) error(503, { message: 'Storage is not available right now' });
 
 	const base = deadlineStatus(platform?.env?.DEADLINE);
-	const [responses, allowlist, latePasses, reopened] = await Promise.all([
+	const [responses, allowlist, latePasses, waitlist, reopened] = await Promise.all([
 		getAllResponses(db),
 		listAllowlist(db),
 		listLatePasses(db),
+		listWaitlist(db),
 		isReopened(db)
 	]);
 
@@ -91,6 +95,7 @@ export const load: PageServerLoad = async ({ locals, platform, url }): Promise<O
 		responses,
 		allowlist,
 		latePasses,
+		waitlist,
 		reopened,
 		deadline: base.deadline,
 		deadlineDisplay: base.display,
@@ -151,6 +156,22 @@ export const actions: Actions = {
 		if (!handle) return fail(400, { message: 'Missing handle' });
 		await revokeLatePass(db, handle);
 		return { message: `Late pass revoked for @${handle}` };
+	},
+
+	promoteWaitlist: async ({ request, locals, platform }) => {
+		requireOrganizer(locals, platform);
+		const db = platform?.env?.DB;
+		if (!db) return fail(503, { message: 'Storage is not available right now' });
+		const did = String((await request.formData()).get('did') ?? '');
+		if (!did) return fail(400, { message: 'Missing waitlist entry' });
+		const { ok, handle } = await promoteFromWaitlist(db, did);
+		if (!ok) {
+			return fail(400, {
+				message:
+					'Could not promote — no resolved handle yet. Ask them to reopen the survey while signed in; it refreshes their handle automatically, then Promote will work.'
+			});
+		}
+		return { message: `Promoted @${handle} — they’re on the survey now` };
 	}
 };
 
@@ -235,6 +256,12 @@ function previewData(): Omit<OrganizerPageData, 'authState' | 'preview' | 'deadl
 			{ handle: 'buildwithbeck.com', did: null, responded: false }
 		],
 		latePasses: [{ handle: 'waverly.bsky.social', did: null, grantedAt: '2026-08-06T21:04:00Z' }],
+		waitlist: [
+			{ did: 'did:plc:wl0', handle: 'juno.bsky.social', email: 'juno@example.com', createdAt: '2026-08-10T15:22:00Z', promotedAt: null },
+			{ did: 'did:plc:wl1', handle: 'rafi.dev', email: 'rafi@example.com', createdAt: '2026-08-10T18:40:00Z', promotedAt: null },
+			{ did: 'did:plc:wl2', handle: 'm.harbor.social', email: 'harbor@example.com', createdAt: '2026-08-11T09:05:00Z', promotedAt: null },
+			{ did: 'did:plc:wl3', handle: 'okoye.bsky.social', email: 'okoye@example.com', createdAt: '2026-08-09T12:00:00Z', promotedAt: '2026-08-11T17:30:00Z' }
+		],
 		reopened: false,
 		deadlinePassed: false
 	};
