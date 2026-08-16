@@ -1,12 +1,150 @@
 {
   "version": 1,
-  "exported_at": "2026-08-12T04:08:52.601655+00:00",
+  "exported_at": "2026-08-16T23:15:08.552313+00:00",
   "issues": [
+    {
+      "id": 86,
+      "title": "Backfill CHANGELOG Unreleased with shipped work (issues #48-79)",
+      "description": null,
+      "status": "open",
+      "priority": "low",
+      "parent_id": null,
+      "labels": [
+        "docs"
+      ],
+      "comments": [],
+      "created_at": "2026-08-16T23:14:46.344417+00:00",
+      "updated_at": "2026-08-16T23:14:46.344417+00:00",
+      "closed_at": null
+    },
+    {
+      "id": 85,
+      "title": "organizer: URI-encode waitlist email before building mailto: href (BCC/param injection)",
+      "description": null,
+      "status": "open",
+      "priority": "low",
+      "parent_id": null,
+      "labels": [
+        "security"
+      ],
+      "comments": [
+        {
+          "content": "src/routes/organizer/+page.svelte ~L430: href=\"mailto:{w.email}\" interpolates the raw stored email. If isValidWaitlistEmail admits URI delimiters (e.g. person@example.com?bcc=attacker@evil.org), an organizer clicking the link gets a pre-filled BCC. Fix: encodeURIComponent(w.email) in the href, and/or tighten isValidWaitlistEmail. Source: CodeRabbit PR #16.",
+          "created_at": "2026-08-16T21:03:49.257402+00:00",
+          "kind": "note"
+        }
+      ],
+      "created_at": "2026-08-16T21:03:40.031143+00:00",
+      "updated_at": "2026-08-16T21:03:40.031143+00:00",
+      "closed_at": null
+    },
+    {
+      "id": 84,
+      "title": "waitlist: joinWaitlist action doesn't reject already-allowlisted accounts (direct POST creates a row)",
+      "description": null,
+      "status": "open",
+      "priority": "low",
+      "parent_id": null,
+      "labels": [
+        "bug"
+      ],
+      "comments": [
+        {
+          "content": "src/routes/+page.server.ts ?/joinWaitlist action gates on locals.did + email validity but not allowlist status, so an already-allowlisted account can POST directly and create a waitlist row. UI hides the form but doesn't protect the endpoint. Fix: call checkAllowlist(did, handle) before joinWaitlist; no-op/redirect if already allowed. Source: CodeRabbit PR #16.",
+          "created_at": "2026-08-16T21:03:49.250648+00:00",
+          "kind": "note"
+        }
+      ],
+      "created_at": "2026-08-16T21:03:40.024791+00:00",
+      "updated_at": "2026-08-16T21:03:40.024791+00:00",
+      "closed_at": null
+    },
+    {
+      "id": 83,
+      "title": "waitlist: joinWaitlist ON CONFLICT nulls a good handle on transient profile failure",
+      "description": null,
+      "status": "open",
+      "priority": "low",
+      "parent_id": null,
+      "labels": [
+        "bug"
+      ],
+      "comments": [
+        {
+          "content": "src/lib/server/waitlist.ts joinWaitlist: ON CONFLICT(did) DO UPDATE SET handle = excluded.handle overwrites a previously-resolved handle with NULL when the current submit's profile lookup failed. Mitigated by backfillWaitlistHandle on next authenticated load, but a promote attempt in the gap is blocked. Fix: SET handle = COALESCE(excluded.handle, handle). Source: CodeRabbit PR #16.",
+          "created_at": "2026-08-16T21:03:49.243707+00:00",
+          "kind": "note"
+        }
+      ],
+      "created_at": "2026-08-16T21:03:40.018623+00:00",
+      "updated_at": "2026-08-16T21:03:40.018623+00:00",
+      "closed_at": null
+    },
+    {
+      "id": 82,
+      "title": "PR #16: apply CodeRabbit doc fixes (placeholders, CVSS label, md lint)",
+      "description": null,
+      "status": "open",
+      "priority": "medium",
+      "parent_id": null,
+      "labels": [
+        "docs"
+      ],
+      "comments": [],
+      "created_at": "2026-08-16T20:58:53.067878+00:00",
+      "updated_at": "2026-08-16T20:58:53.067878+00:00",
+      "closed_at": null
+    },
+    {
+      "id": 81,
+      "title": "Resolve PR #16 merge conflict via issues-export merge script",
+      "description": null,
+      "status": "open",
+      "priority": "high",
+      "parent_id": null,
+      "labels": [
+        "fix"
+      ],
+      "comments": [],
+      "created_at": "2026-08-16T20:51:52.339064+00:00",
+      "updated_at": "2026-08-16T20:51:52.339064+00:00",
+      "closed_at": null
+    },
+    {
+      "id": 80,
+      "title": "Session recovery: audit decision graph + report state",
+      "description": null,
+      "status": "open",
+      "priority": "low",
+      "parent_id": null,
+      "labels": [
+        "chore"
+      ],
+      "comments": [],
+      "created_at": "2026-08-16T20:49:23.562643+00:00",
+      "updated_at": "2026-08-16T20:49:23.562643+00:00",
+      "closed_at": null
+    },
+    {
+      "id": 79,
+      "title": "Diagnose PR #16 merge conflicts and give resolution recipe",
+      "description": null,
+      "status": "closed",
+      "priority": "high",
+      "parent_id": null,
+      "labels": [
+        "bug"
+      ],
+      "comments": [],
+      "created_at": "2026-08-14T15:10:56.679009+00:00",
+      "updated_at": "2026-08-14T15:13:30.952074+00:00",
+      "closed_at": "2026-08-14T15:13:30.952074+00:00"
+    },
     {
       "id": 78,
       "title": "Chainlink-export union merge driver (kill manual resolve step) + port to project-template; branch cleanup",
       "description": null,
-      "status": "open",
+      "status": "closed",
       "priority": "high",
       "parent_id": null,
       "labels": [
@@ -14,8 +152,8 @@
       ],
       "comments": [],
       "created_at": "2026-08-12T03:58:51.168864+00:00",
-      "updated_at": "2026-08-12T03:58:51.168864+00:00",
-      "closed_at": null
+      "updated_at": "2026-08-12T04:13:37.422182+00:00",
+      "closed_at": "2026-08-12T04:13:37.422182+00:00"
     },
     {
       "id": 77,
