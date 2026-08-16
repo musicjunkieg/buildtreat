@@ -1,12 +1,57 @@
 {
   "version": 1,
-  "exported_at": "2026-08-12T04:02:30.355437+00:00",
+  "exported_at": "2026-08-16T20:56:08.814755+00:00",
   "issues": [
+    {
+      "id": 81,
+      "title": "Resolve PR #16 merge conflict via issues-export merge script",
+      "description": null,
+      "status": "open",
+      "priority": "high",
+      "parent_id": null,
+      "labels": [
+        "fix"
+      ],
+      "comments": [],
+      "created_at": "2026-08-16T20:51:52.339064+00:00",
+      "updated_at": "2026-08-16T20:51:52.339064+00:00",
+      "closed_at": null
+    },
+    {
+      "id": 80,
+      "title": "Session recovery: audit decision graph + report state",
+      "description": null,
+      "status": "open",
+      "priority": "low",
+      "parent_id": null,
+      "labels": [
+        "chore"
+      ],
+      "comments": [],
+      "created_at": "2026-08-16T20:49:23.562643+00:00",
+      "updated_at": "2026-08-16T20:49:23.562643+00:00",
+      "closed_at": null
+    },
+    {
+      "id": 79,
+      "title": "Diagnose PR #16 merge conflicts and give resolution recipe",
+      "description": null,
+      "status": "closed",
+      "priority": "high",
+      "parent_id": null,
+      "labels": [
+        "bug"
+      ],
+      "comments": [],
+      "created_at": "2026-08-14T15:10:56.679009+00:00",
+      "updated_at": "2026-08-14T15:13:30.952074+00:00",
+      "closed_at": "2026-08-14T15:13:30.952074+00:00"
+    },
     {
       "id": 78,
       "title": "Chainlink-export union merge driver (kill manual resolve step) + port to project-template; branch cleanup",
       "description": null,
-      "status": "open",
+      "status": "closed",
       "priority": "high",
       "parent_id": null,
       "labels": [
@@ -14,8 +59,8 @@
       ],
       "comments": [],
       "created_at": "2026-08-12T03:58:51.168864+00:00",
-      "updated_at": "2026-08-12T03:58:51.168864+00:00",
-      "closed_at": null
+      "updated_at": "2026-08-12T04:13:37.422182+00:00",
+      "closed_at": "2026-08-12T04:13:37.422182+00:00"
     },
     {
       "id": 77,
