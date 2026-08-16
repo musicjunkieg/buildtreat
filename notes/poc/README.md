@@ -4,7 +4,9 @@ Companion to `notes/upstream-oauth-issue.md`. This directory proves the
 `returnTo` validation flaw two ways: a zero-dependency unit reproduction
 (`is-safe-return-to.poc.mjs`) and the end-to-end steps below.
 
-**Severity: Low (CVSS ~4, phishing/trust-abuse grade).** Read
+**Severity: Low (CVSS 3.1 ~4, tentative — phishing/trust-abuse grade;
+vector `AV:N/AC:H/PR:N/UI:R/S:C/C:L/I:N/A:N`, where `AC:H` reflects the
+cookie-persistence precondition below).** Read
 "Reachability" before writing the report — it is the crux of an honest
 disclosure.
 
@@ -59,7 +61,7 @@ score down for "non-default configuration." Frame it accurately: a
 
 ## Unit reproduction (runnable, no server)
 
-```
+```sh
 node notes/poc/is-safe-return-to.poc.mjs
 ```
 
@@ -84,12 +86,17 @@ the callback.
      setup, start login with `returnTo=/\evil.example` and let the app set
      the cookie normally.
    - **Isolated:** set it directly to exercise the callback branch:
-     ```
-     curl -is 'https://TARGET/oauth/callback?code=VALID&state=VALID' \
+     ```sh
+     curl -is 'https://TARGET/oauth/callback?code=<VALID_CODE>&state=<VALID_STATE>' \
        -H 'Cookie: oauth_return_to=%2F%5Cevil.example'
      ```
+     `<VALID_CODE>` and `<VALID_STATE>` must be values the callback accepts:
+     obtain them from a real ATProto login, or from a mocked/stubbed token
+     exchange that returns a `code`/`state` pair the callback validates. The
+     `code` is single-use and consumed on first callback (see the note
+     below), so capture a fresh pair immediately before running this.
 3. Capture the response header:
-   ```
+   ```http
    HTTP/1.1 303 See Other
    Location: /\evil.example
    ```

@@ -20,7 +20,7 @@ condensed from that trace; line numbers verified against 0.3.x `dist` and
 > the default flow, so **the cookie fix and the validator fix MUST ship
 > together**, or fixing the cookie activates a live open redirect. Details
 > in `notes/poc/README.md` → "Reachability".
-
+>
 > **Three separate reports, three separate targets.** (1) The cookie bug →
 > public issue/PR on the library (below). (2) The open redirect → PRIVATE
 > security disclosure to the library maintainer (see next section). (3) The
