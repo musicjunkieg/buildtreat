@@ -4,6 +4,7 @@
 	import { deserialize, enhance } from '$app/forms';
 	import { login } from '@svelte-atproto/oauth/client';
 	import Icon from '$lib/components/Icon.svelte';
+	import EmailPanel from '$lib/components/organizer/EmailPanel.svelte';
 	import Heatmap from '$lib/components/organizer/Heatmap.svelte';
 	import ResponsesTable from '$lib/components/organizer/ResponsesTable.svelte';
 	import {
@@ -611,6 +612,12 @@ finish review, the verdict, and DESIGN.md.
 					{/if}
 				{/if}
 			</section>
+
+			<EmailPanel
+				configured={data.emailConfigured}
+				broadcasts={data.broadcasts}
+				respondentCount={new Set(data.responses.map((r) => r.email.trim().toLowerCase()).filter(Boolean)).size}
+			/>
 		</div>
 	</main>
 {/if}
