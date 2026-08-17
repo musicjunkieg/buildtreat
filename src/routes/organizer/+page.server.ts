@@ -43,6 +43,8 @@ export interface OrganizerPageData {
 	deadlineDisplay: string | null;
 	deadlinePassed: boolean;
 	anchors: string[];
+	/** True when the anchor read failed — mutations are disabled for this load. */
+	anchorsUnavailable: boolean;
 }
 
 const EMPTY: Omit<OrganizerPageData, 'authState'> = {
@@ -55,7 +57,8 @@ const EMPTY: Omit<OrganizerPageData, 'authState'> = {
 	deadline: null,
 	deadlineDisplay: null,
 	deadlinePassed: false,
-	anchors: []
+	anchors: [],
+	anchorsUnavailable: false
 };
 
 function requireOrganizer(locals: App.Locals, platform: App.Platform | undefined): void {
@@ -86,6 +89,10 @@ export const load: PageServerLoad = async ({ locals, platform, url }): Promise<O
 	if (!db) error(503, { message: 'Storage is not available right now' });
 
 	const base = deadlineStatus(platform?.env?.DEADLINE);
+	// A failed anchor read must not look like "no anchors": Clear would then
+	// silently delete rows that were never displayed. The flag disables all
+	// anchor mutations for the rest of the page load.
+	let anchorsUnavailable = false;
 	const [responses, allowlist, latePasses, waitlist, reopened, anchors] = await Promise.all([
 		getAllResponses(db),
 		listAllowlist(db),
@@ -94,6 +101,7 @@ export const load: PageServerLoad = async ({ locals, platform, url }): Promise<O
 		isReopened(db),
 		listAnchors(db).catch((e) => {
 			console.error('anchor load failed', e);
+			anchorsUnavailable = true;
 			return [] as string[];
 		})
 	]);
@@ -109,7 +117,8 @@ export const load: PageServerLoad = async ({ locals, platform, url }): Promise<O
 		deadline: base.deadline,
 		deadlineDisplay: base.display,
 		deadlinePassed: base.closed,
-		anchors
+		anchors,
+		anchorsUnavailable
 	};
 };
 
@@ -309,6 +318,7 @@ function previewData(): Omit<OrganizerPageData, 'authState' | 'preview' | 'deadl
 		],
 		reopened: false,
 		deadlinePassed: false,
-		anchors: ['did:plc:preview2', 'did:plc:preview5']
+		anchors: ['did:plc:preview2', 'did:plc:preview5'],
+		anchorsUnavailable: false
 	};
 }

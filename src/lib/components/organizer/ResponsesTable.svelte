@@ -8,7 +8,8 @@
 		responses,
 		avatars,
 		anchors,
-		ontoggleanchor
+		ontoggleanchor,
+		anchorsLocked = false
 	}: {
 		responses: OrganizerResponse[];
 		/** did → avatar URL, resolved client-side from the public appview. */
@@ -16,6 +17,8 @@
 		/** DIDs anchored in the current scenario. */
 		anchors: string[];
 		ontoggleanchor: (did: string) => void;
+		/** True when the saved anchor set couldn't be read — toggling is disabled. */
+		anchorsLocked?: boolean;
 	} = $props();
 
 	const locationName = new Map(locations.map((l) => [l.id, l.name]));
@@ -105,8 +108,14 @@
 							onclick={() => ontoggleanchor(r.did)}
 							aria-pressed={anchors.includes(r.did)}
 							aria-label="Anchor {r.name} in the date scenario"
-							disabled={r.ranges.length === 0}
-							title={r.ranges.length === 0 ? 'No dates given — nothing to anchor on' : anchors.includes(r.did) ? 'Remove from scenario' : 'Anchor this person: outline the days everyone anchored shares'}
+							disabled={r.ranges.length === 0 || anchorsLocked}
+							title={anchorsLocked
+								? 'Saved anchors could not be loaded — reload to re-enable'
+								: r.ranges.length === 0
+									? 'No dates given — nothing to anchor on'
+									: anchors.includes(r.did)
+										? 'Remove from scenario'
+										: 'Anchor this person: outline the days everyone anchored shares'}
 						>
 							<span class="anchor-dot" aria-hidden="true"></span>
 						</button>

@@ -98,12 +98,17 @@
 	let anchors = $state<string[]>(untrack(() => data.anchors));
 	let anchorBusy = $state(false);
 
-	/** Optimistic toggle, persisted via ?/toggleAnchor; rolls back on failure. */
+	/** Optimistic toggle, persisted via ?/toggleAnchor; rolls back on failure.
+	    anchorBusy is a shared mutation lock: toggles and Clear are serialized
+	    so a quick on/off can't complete out of order, and nothing mutates when
+	    the load couldn't read the saved set (data.anchorsUnavailable). */
 	async function toggleAnchor(did: string) {
+		if (anchorBusy || data.anchorsUnavailable) return;
 		const on = !anchors.includes(did);
 		const prev = anchors;
 		anchors = on ? [...anchors, did] : anchors.filter((d) => d !== did);
 		if (data.preview) return;
+		anchorBusy = true;
 		const body = new FormData();
 		body.set('did', did);
 		body.set('on', on ? '1' : '0');
@@ -113,11 +118,13 @@
 			if (result.type === 'failure' || result.type === 'error') anchors = prev;
 		} catch {
 			anchors = prev;
+		} finally {
+			anchorBusy = false;
 		}
 	}
 
 	async function clearAnchors() {
-		if (anchorBusy) return;
+		if (anchorBusy || data.anchorsUnavailable) return;
 		anchorBusy = true;
 		const prev = anchors;
 		anchors = [];
@@ -405,7 +412,13 @@ finish review, the verdict, and DESIGN.md.
 							Anchored on {anchorNames.join(', ')} — {sharedFullDays}
 							full day{sharedFullDays === 1 ? '' : 's'} they all share
 						</span>
-						<button class="scenario-clear" onclick={clearAnchors} disabled={anchorBusy}>Clear</button>
+						<button
+							class="scenario-clear"
+							onclick={clearAnchors}
+							disabled={anchorBusy || data.anchorsUnavailable}
+							title={data.anchorsUnavailable ? 'Saved anchors could not be loaded — reload to re-enable' : undefined}
+							>Clear</button
+						>
 					</div>
 				{/if}
 
@@ -457,7 +470,9 @@ finish review, the verdict, and DESIGN.md.
 													{#each roster.available as did (did)}
 														<span class="roster-name" class:anchored={anchors.includes(did)}>
 															{#if anchors.includes(did)}<span class="roster-anchor-dot" aria-hidden="true"
-																></span>{/if}{rosterName(did)}
+																></span>{/if}{rosterName(did)}{#if anchors.includes(did)}<span class="visually-hidden">
+																	(anchored)</span
+																>{/if}
 														</span>
 													{/each}
 												</div>
@@ -473,7 +488,9 @@ finish review, the verdict, and DESIGN.md.
 													{#each roster.unavailable as did (did)}
 														<span class="roster-name" class:anchored={anchors.includes(did)}>
 															{#if anchors.includes(did)}<span class="roster-anchor-dot" aria-hidden="true"
-																></span>{/if}{rosterName(did)}
+																></span>{/if}{rosterName(did)}{#if anchors.includes(did)}<span class="visually-hidden">
+																	(anchored)</span
+																>{/if}
 														</span>
 													{/each}
 												</div>
@@ -495,7 +512,13 @@ finish review, the verdict, and DESIGN.md.
 				<div class="section-head">
 					<h2 class="display section-title" id="resp-head">Responses</h2>
 				</div>
-				<ResponsesTable responses={data.responses} {avatars} {anchors} ontoggleanchor={toggleAnchor} />
+				<ResponsesTable
+					responses={data.responses}
+					{avatars}
+					{anchors}
+					ontoggleanchor={toggleAnchor}
+					anchorsLocked={data.anchorsUnavailable}
+				/>
 			</section>
 
 			<section aria-labelledby="allow-head">
