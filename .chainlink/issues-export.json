@@ -1,7 +1,22 @@
 {
   "version": 1,
-  "exported_at": "2026-08-17T00:09:23.991711+00:00",
+  "exported_at": "2026-08-17T00:59:02.081429+00:00",
   "issues": [
+    {
+      "id": 87,
+      "title": "Publish deciduous graph export (session #35 backfill: nodes 73-83)",
+      "description": null,
+      "status": "open",
+      "priority": "low",
+      "parent_id": null,
+      "labels": [
+        "chore"
+      ],
+      "comments": [],
+      "created_at": "2026-08-17T00:59:02.034398+00:00",
+      "updated_at": "2026-08-17T00:59:02.034398+00:00",
+      "closed_at": null
+    },
     {
       "id": 86,
       "title": "Backfill CHANGELOG Unreleased with shipped work (issues #48-79)",
@@ -864,7 +879,7 @@
       "id": 34,
       "title": "Marque support email for stuck zone ingestion",
       "description": null,
-      "status": "open",
+      "status": "closed",
       "priority": "medium",
       "parent_id": null,
       "labels": [
@@ -872,8 +887,8 @@
       ],
       "comments": [],
       "created_at": "2026-08-06T02:35:54.706639+00:00",
-      "updated_at": "2026-08-06T02:35:54.706639+00:00",
-      "closed_at": null
+      "updated_at": "2026-08-17T00:56:00.717326+00:00",
+      "closed_at": "2026-08-17T00:56:00.717326+00:00"
     },
     {
       "id": 33,
