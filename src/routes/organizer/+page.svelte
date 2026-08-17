@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
+	import { onMount, untrack } from 'svelte';
 	import { deserialize, enhance } from '$app/forms';
 	import { login } from '@svelte-atproto/oauth/client';
 	import Icon from '$lib/components/Icon.svelte';
@@ -51,7 +51,7 @@
 	   filter: the scenario asks "when can THESE people make it", and that
 	   answer shouldn't shift when the denominator toggle does. */
 
-	let anchors = $state<string[]>(data.anchors);
+	let anchors = $state<string[]>(untrack(() => data.anchors));
 	let anchorBusy = $state(false);
 
 	/** Optimistic toggle, persisted via ?/toggleAnchor; rolls back on failure. */
