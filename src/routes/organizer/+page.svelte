@@ -70,10 +70,14 @@
 		return r ? (r.handle ? `@${r.handle}` : r.name) : did;
 	};
 
-	/** Drawer reveal: height + opacity, quick exponential ease-out. Global CSS
-	    zeroes animation-duration under prefers-reduced-motion, so no separate
-	    guard is needed here — same convention the rest of this file relies on. */
+	/** Drawer reveal: height + opacity, quick exponential ease-out. This transition
+	    compiles to element.animate() (Web Animations API), which the global CSS
+	    prefers-reduced-motion reset can't reach — WAAPI runs outside CSS animation
+	    properties. The guard has to live here instead. */
 	function drawerReveal(node: HTMLElement, { duration = 180 } = {}) {
+		if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+			return { duration: 0 };
+		}
 		const height = node.scrollHeight;
 		return {
 			duration,
@@ -419,7 +423,7 @@ finish review, the verdict, and DESIGN.md.
 									class="window-toggle"
 									class:open
 									aria-expanded={open}
-									aria-controls={drawerId}
+									aria-controls={open && roster ? drawerId : undefined}
 									onclick={() => (selectedWindow = open ? null : w.start)}
 								>
 									<span class="window-kicker">{i === 0 ? 'Best window' : `№ ${i + 1}`}</span>
