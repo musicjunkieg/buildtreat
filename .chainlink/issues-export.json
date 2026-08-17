@@ -1,7 +1,37 @@
 {
   "version": 1,
-  "exported_at": "2026-08-17T20:56:05.422835+00:00",
+  "exported_at": "2026-08-17T21:02:38.811590+00:00",
   "issues": [
+    {
+      "id": 92,
+      "title": "organizer: add visually-hidden '(anchored)' suffix to roster names for screen readers",
+      "description": null,
+      "status": "open",
+      "priority": "low",
+      "parent_id": null,
+      "labels": [
+        "enhancement"
+      ],
+      "comments": [],
+      "created_at": "2026-08-17T21:02:22.893789+00:00",
+      "updated_at": "2026-08-17T21:02:22.893789+00:00",
+      "closed_at": null
+    },
+    {
+      "id": 91,
+      "title": "organizer: surface anchor action failures (toast/flash) — currently silent rollback, no AT announcement",
+      "description": null,
+      "status": "open",
+      "priority": "low",
+      "parent_id": null,
+      "labels": [
+        "enhancement"
+      ],
+      "comments": [],
+      "created_at": "2026-08-17T21:02:22.887784+00:00",
+      "updated_at": "2026-08-17T21:02:22.887784+00:00",
+      "closed_at": null
+    },
     {
       "id": 90,
       "title": "Scenario planner backend: date->who's-available + people->overlap, persistent anchors",
