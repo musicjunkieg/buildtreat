@@ -1,5 +1,13 @@
 [
   {
+    "hash": "a25dd903119fdc2fe9f52cd59c8198af5aa2ded6",
+    "short_hash": "a25dd90",
+    "author": "Bryan Guffey",
+    "date": "2026-08-17T14:02:38-07:00",
+    "message": "docs: changelog entry for the scenario planner (#90)\n\nCo-Authored-By: Claude Opus 4.8 <noreply@anthropic.com>\nClaude-Session: https://claude.ai/code/session_01RwSQjGei7n9wVRMcqcMAga",
+    "files_changed": 2
+  },
+  {
     "hash": "8b0fe0945446ad388087d8f53c990638e45d65bf",
     "short_hash": "8b0fe09",
     "author": "chaos gremlin",

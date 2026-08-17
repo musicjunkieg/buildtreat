@@ -121,6 +121,40 @@ export function windowFitCount(sets: Set<string>[], start: string): number {
 	return sets.filter((s) => need.every((k) => s.has(k))).length;
 }
 
+export interface WindowRoster {
+	/** Arrival day of the 3-night window. */
+	start: string;
+	/** Departure day (start + 3). */
+	end: string;
+	/** DIDs whose slots cover every required window slot. */
+	available: string[];
+	/** DIDs who gave dates but miss at least one required slot. */
+	unavailable: string[];
+}
+
+/**
+ * Who can make the 3-night window starting `start` — same fit definition as
+ * windowFitCount, partitioned into names instead of a count. Respondents
+ * with no ranges never entered dates and appear in neither list.
+ */
+export function windowRoster(
+	respondents: { did: string; ranges: AvailabilityRange[] }[],
+	start: string
+): WindowRoster {
+	const need = windowSlots(start);
+	const s = parseIso(start);
+	const dep = new Date(Date.UTC(s.y, s.m - 1, s.d + 3));
+	const end = iso(dep.getUTCFullYear(), dep.getUTCMonth() + 1, dep.getUTCDate());
+	const available: string[] = [];
+	const unavailable: string[] = [];
+	for (const r of respondents) {
+		if (r.ranges.length === 0) continue;
+		const slots = slotSet(r.ranges);
+		(need.every((k) => slots.has(k)) ? available : unavailable).push(r.did);
+	}
+	return { start, end, available, unavailable };
+}
+
 export interface RetreatWindow {
 	/** Arrival day (evening) — the retreat runs start..end, 3 nights. */
 	start: string;

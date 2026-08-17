@@ -207,6 +207,30 @@ export async function hasLatePass(db: D1Database, who: { did: string; handle: st
 	return true;
 }
 
+/* ── scenario anchors ── */
+
+/** Anchored respondent DIDs, oldest first. Global across organizers. */
+export async function listAnchors(db: D1Database): Promise<string[]> {
+	const rows = await db.prepare(`SELECT did FROM anchors ORDER BY created_at`).all<{ did: string }>();
+	return rows.results.map((r) => r.did);
+}
+
+/** Idempotent both directions: re-anchoring or re-clearing a DID is a no-op. */
+export async function setAnchor(db: D1Database, did: string, on: boolean): Promise<void> {
+	if (on) {
+		await db
+			.prepare(`INSERT OR IGNORE INTO anchors (did, created_at) VALUES (?1, ?2)`)
+			.bind(did, new Date().toISOString())
+			.run();
+	} else {
+		await db.prepare(`DELETE FROM anchors WHERE did = ?1`).bind(did).run();
+	}
+}
+
+export async function clearAllAnchors(db: D1Database): Promise<void> {
+	await db.prepare(`DELETE FROM anchors`).run();
+}
+
 /* ── the effective deadline, overrides applied ── */
 
 export interface SurveyGate {

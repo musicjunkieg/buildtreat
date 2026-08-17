@@ -10,6 +10,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Patch transitive dependency CVEs via pnpm overrides: nanoid 3.3.18, undici 7.29.0, cookie 0.7.2 (#88)
 
 ### Added
+- Organizer scenario planner: anchors persist in D1 (survive reload, shared across organizers) + window roster — select a top-5 window to see who can and can't make it by name, anchored people marked (#90)
 - Chainlink-export union merge driver for valid exports (malformed JSON stays a human-resolved conflict) + port to project-template (#78)
 - Waitlist signup for uninvited visitors — sign in, leave an email, organizer can promote from the responses view (#75)
 - Organizer: anchor-people scenario mode — toggle respondents, highlight full-overlap dates in the heatmap, badge top-5 windows that fit all anchors (#54)

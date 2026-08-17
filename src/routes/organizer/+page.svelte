@@ -1,11 +1,20 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
-	import { enhance } from '$app/forms';
+	import { onMount, untrack } from 'svelte';
+	import { expoOut } from 'svelte/easing';
+	import { deserialize, enhance } from '$app/forms';
 	import { login } from '@svelte-atproto/oauth/client';
 	import Icon from '$lib/components/Icon.svelte';
 	import Heatmap from '$lib/components/organizer/Heatmap.svelte';
 	import ResponsesTable from '$lib/components/organizer/ResponsesTable.svelte';
-	import { bestWindows, dayLoads, fullOverlap, locationTallies, slotSet, windowFitCount } from '$lib/organizer/aggregate';
+	import {
+		bestWindows,
+		dayLoads,
+		fullOverlap,
+		locationTallies,
+		slotSet,
+		windowFitCount,
+		windowRoster
+	} from '$lib/organizer/aggregate';
 	import { locations, retreat } from '$lib/content';
 	import { formatDay, parseIso } from '$lib/dates';
 	import type { ActionData, PageData } from './$types';
@@ -41,6 +50,41 @@
 	// alternatives beyond the single strongest cluster.
 	const windows = $derived(bestWindows(filtered, 5));
 	const withDates = $derived(filtered.filter((r) => r.ranges.length > 0).length);
+
+	/* ── window-roster drawer: pick a window, see who's in it by name ── */
+
+	let selectedWindow = $state<string | null>(null); // window start iso, or null
+
+	const roster = $derived(
+		selectedWindow === null
+			? null
+			: windowRoster(
+					filtered.map((r) => ({ did: r.did, ranges: r.ranges })),
+					selectedWindow
+				)
+	);
+
+	/** Same DID→display-name fallback the scenario chip uses (@handle, else name). */
+	const rosterName = (did: string) => {
+		const r = data.responses.find((x) => x.did === did);
+		return r ? (r.handle ? `@${r.handle}` : r.name) : did;
+	};
+
+	/** Drawer reveal: height + opacity, quick exponential ease-out. This transition
+	    compiles to element.animate() (Web Animations API), which the global CSS
+	    prefers-reduced-motion reset can't reach — WAAPI runs outside CSS animation
+	    properties. The guard has to live here instead. */
+	function drawerReveal(node: HTMLElement, { duration = 180 } = {}) {
+		if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+			return { duration: 0 };
+		}
+		const height = node.scrollHeight;
+		return {
+			duration,
+			easing: expoOut,
+			css: (t: number) => `height: ${t * height}px; opacity: ${t}; overflow: hidden;`
+		};
+	}
 	const tallies = $derived(locationTallies(filtered.map((r) => r.ranking)));
 	const maxPoints = $derived(Math.max(1, ...tallies.tallies.map((t) => t.points)));
 
@@ -51,10 +95,52 @@
 	   filter: the scenario asks "when can THESE people make it", and that
 	   answer shouldn't shift when the denominator toggle does. */
 
-	let anchors = $state<string[]>([]);
+	let anchors = $state<string[]>(untrack(() => data.anchors));
+	let anchorBusy = $state(false);
 
-	function toggleAnchor(did: string) {
-		anchors = anchors.includes(did) ? anchors.filter((d) => d !== did) : [...anchors, did];
+	/** Optimistic toggle, persisted via ?/toggleAnchor; rolls back on failure.
+	    anchorBusy is a shared mutation lock: toggles and Clear are serialized
+	    so a quick on/off can't complete out of order, and nothing mutates when
+	    the load couldn't read the saved set (data.anchorsUnavailable). */
+	async function toggleAnchor(did: string) {
+		if (anchorBusy || data.anchorsUnavailable) return;
+		const on = !anchors.includes(did);
+		const prev = anchors;
+		anchors = on ? [...anchors, did] : anchors.filter((d) => d !== did);
+		if (data.preview) return;
+		anchorBusy = true;
+		const body = new FormData();
+		body.set('did', did);
+		body.set('on', on ? '1' : '0');
+		try {
+			const res = await fetch('?/toggleAnchor', { method: 'POST', body });
+			const result = deserialize(await res.text());
+			if (result.type === 'failure' || result.type === 'error') anchors = prev;
+		} catch {
+			anchors = prev;
+		} finally {
+			anchorBusy = false;
+		}
+	}
+
+	async function clearAnchors() {
+		if (anchorBusy || data.anchorsUnavailable) return;
+		anchorBusy = true;
+		const prev = anchors;
+		anchors = [];
+		if (data.preview) {
+			anchorBusy = false;
+			return;
+		}
+		try {
+			const res = await fetch('?/clearAnchors', { method: 'POST', body: new FormData() });
+			const result = deserialize(await res.text());
+			if (result.type === 'failure' || result.type === 'error') anchors = prev;
+		} catch {
+			anchors = prev;
+		} finally {
+			anchorBusy = false;
+		}
 	}
 
 	const anchorPeople = $derived(
@@ -326,7 +412,13 @@ finish review, the verdict, and DESIGN.md.
 							Anchored on {anchorNames.join(', ')} — {sharedFullDays}
 							full day{sharedFullDays === 1 ? '' : 's'} they all share
 						</span>
-						<button class="scenario-clear" onclick={() => (anchors = [])}>Clear</button>
+						<button
+							class="scenario-clear"
+							onclick={clearAnchors}
+							disabled={anchorBusy || data.anchorsUnavailable}
+							title={data.anchorsUnavailable ? 'Saved anchors could not be loaded — reload to re-enable' : undefined}
+							>Clear</button
+						>
 					</div>
 				{/if}
 
@@ -336,21 +428,77 @@ finish review, the verdict, and DESIGN.md.
 					<ol class="windows" class:with-anchors={anchors.length > 0} aria-label="Best 3-night windows">
 						{#each windows as w, i (w.start)}
 							{@const fit = anchors.length > 0 ? windowFitCount(anchorSets, w.start) : 0}
+							{@const open = selectedWindow === w.start}
+							{@const drawerId = `roster-drawer-${w.start}`}
 							<li class="window-row" class:best={i === 0}>
-								<span class="window-kicker">{i === 0 ? 'Best window' : `№ ${i + 1}`}</span>
-								<span class="window-dates">{fmtWindow(w.start, w.end)}</span>
-								<span class="window-count">{w.count} of {w.of} available</span>
-								{#if anchors.length > 0}
-									<span
-										class="window-anchors"
-										class:full={fit === anchors.length}
-										title={fit === anchors.length
-											? 'Every anchored person can make this window'
-											: `${fit} of ${anchors.length} anchored people can make this window`}
+								<button
+									type="button"
+									class="window-toggle"
+									class:open
+									aria-expanded={open}
+									aria-controls={open && roster ? drawerId : undefined}
+									onclick={() => (selectedWindow = open ? null : w.start)}
+								>
+									<span class="window-kicker">{i === 0 ? 'Best window' : `№ ${i + 1}`}</span>
+									<span class="window-dates">{fmtWindow(w.start, w.end)}</span>
+									<span class="window-count">{w.count} of {w.of} available</span>
+									{#if anchors.length > 0}
+										<span
+											class="window-anchors"
+											class:full={fit === anchors.length}
+											title={fit === anchors.length
+												? 'Every anchored person can make this window'
+												: `${fit} of ${anchors.length} anchored people can make this window`}
+										>
+											<span class="window-anchor-dot" aria-hidden="true"></span>
+											{fit}/{anchors.length} anchors
+										</span>
+									{/if}
+								</button>
+								{#if open && roster}
+									<div
+										class="roster-drawer"
+										id={drawerId}
+										role="group"
+										aria-label={`Roster for ${fmtWindow(w.start, w.end)}`}
+										transition:drawerReveal
 									>
-										<span class="window-anchor-dot" aria-hidden="true"></span>
-										{fit}/{anchors.length} anchors
-									</span>
+										<div class="roster-group">
+											<p class="roster-label">Can make it ({roster.available.length})</p>
+											{#if roster.available.length > 0}
+												<div class="roster-names">
+													{#each roster.available as did (did)}
+														<span class="roster-name" class:anchored={anchors.includes(did)}>
+															{#if anchors.includes(did)}<span class="roster-anchor-dot" aria-hidden="true"
+																></span>{/if}{rosterName(did)}{#if anchors.includes(did)}<span class="visually-hidden">
+																	(anchored)</span
+																>{/if}
+														</span>
+													{/each}
+												</div>
+											{:else}
+												<p class="roster-empty">No one yet</p>
+											{/if}
+										</div>
+										<div class="roster-sep" aria-hidden="true"></div>
+										<div class="roster-group">
+											<p class="roster-label">Can't ({roster.unavailable.length})</p>
+											{#if roster.unavailable.length > 0}
+												<div class="roster-names">
+													{#each roster.unavailable as did (did)}
+														<span class="roster-name" class:anchored={anchors.includes(did)}>
+															{#if anchors.includes(did)}<span class="roster-anchor-dot" aria-hidden="true"
+																></span>{/if}{rosterName(did)}{#if anchors.includes(did)}<span class="visually-hidden">
+																	(anchored)</span
+																>{/if}
+														</span>
+													{/each}
+												</div>
+											{:else}
+												<p class="roster-empty">Everyone with dates can make it</p>
+											{/if}
+										</div>
+									</div>
 								{/if}
 							</li>
 						{/each}
@@ -364,7 +512,13 @@ finish review, the verdict, and DESIGN.md.
 				<div class="section-head">
 					<h2 class="display section-title" id="resp-head">Responses</h2>
 				</div>
-				<ResponsesTable responses={data.responses} {avatars} {anchors} ontoggleanchor={toggleAnchor} />
+				<ResponsesTable
+					responses={data.responses}
+					{avatars}
+					{anchors}
+					ontoggleanchor={toggleAnchor}
+					anchorsLocked={data.anchorsUnavailable}
+				/>
 			</section>
 
 			<section aria-labelledby="allow-head">
@@ -926,17 +1080,33 @@ finish review, the verdict, and DESIGN.md.
 	}
 
 	.window-row {
+		border-top: var(--hairline);
+	}
+
+	/* The row's own affordance: a real button carrying the existing grid
+	   layout, dimmed to 70% ink when closed, full ink when its drawer is
+	   open — the row itself is the "selected" indicator. */
+	.window-toggle {
 		display: grid;
 		grid-template-columns: 7.5rem 1fr auto;
 		grid-template-areas: 'kicker dates count';
 		align-items: baseline;
 		gap: var(--space-3);
+		width: 100%;
 		padding: 0.65rem 0;
-		border-top: var(--hairline);
 		font-size: 0.9375rem;
+		text-align: left;
+		opacity: 0.7;
+		transition: opacity 0.2s var(--ease-out);
 	}
 
-	.windows.with-anchors .window-row {
+	.window-toggle:hover,
+	.window-toggle:focus-visible,
+	.window-toggle.open {
+		opacity: 1;
+	}
+
+	.windows.with-anchors .window-toggle {
 		grid-template-columns: 7.5rem 1fr auto auto;
 		grid-template-areas: 'kicker dates count anchors';
 	}
@@ -956,8 +1126,8 @@ finish review, the verdict, and DESIGN.md.
 	/* Narrow screens: the row stacks into two lines so the dates keep a full
 	   measure instead of wrapping word-per-line beside three other columns. */
 	@media (max-width: 640px) {
-		.window-row,
-		.windows.with-anchors .window-row {
+		.window-toggle,
+		.windows.with-anchors .window-toggle {
 			grid-template-columns: 1fr auto;
 			grid-template-areas:
 				'kicker anchors'
@@ -965,6 +1135,68 @@ finish review, the verdict, and DESIGN.md.
 				'count count';
 			row-gap: 0.2rem;
 		}
+	}
+
+	/* ── window-roster drawer ── */
+
+	.roster-drawer {
+		display: flex;
+		flex-direction: column;
+		gap: var(--space-2);
+		padding-bottom: var(--space-2);
+	}
+
+	.roster-group {
+		display: flex;
+		flex-direction: column;
+		gap: 0.4rem;
+	}
+
+	.roster-label {
+		font-size: 0.6875rem;
+		font-weight: 500;
+		letter-spacing: 0.18em;
+		text-transform: uppercase;
+		color: var(--ink-45);
+	}
+
+	.roster-names {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.4rem var(--space-3);
+	}
+
+	.roster-name {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.35rem;
+		/* DESIGN.md's `compact` interim step — dense name lists, review values. */
+		font-size: 0.9375rem;
+		font-weight: 400;
+		line-height: 1.45;
+		color: var(--ink-70);
+	}
+
+	.roster-name.anchored {
+		color: var(--ink);
+	}
+
+	.roster-anchor-dot {
+		width: 0.6rem;
+		height: 0.6rem;
+		flex-shrink: 0;
+		border-radius: 999px;
+		border: 1.5px solid currentColor;
+		background: var(--ink);
+	}
+
+	.roster-empty {
+		font-size: var(--text-author);
+		color: var(--ink-45);
+	}
+
+	.roster-sep {
+		border-top: 1px dotted var(--ink-12);
 	}
 
 	/* ── anchor scenario ── */

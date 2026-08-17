@@ -4,14 +4,17 @@ import { dev } from '$app/environment';
 import { deadlineStatus } from '$lib/server/deadline';
 import {
 	addAllowlistHandles,
+	clearAllAnchors,
 	getAllResponses,
 	grantLatePass,
 	isOrganizer,
 	isReopened,
 	listAllowlist,
+	listAnchors,
 	listLatePasses,
 	removeAllowlistHandle,
 	revokeLatePass,
+	setAnchor,
 	setReopened,
 	surveyGate,
 	type AllowlistEntry,
@@ -39,6 +42,9 @@ export interface OrganizerPageData {
 	deadline: string | null;
 	deadlineDisplay: string | null;
 	deadlinePassed: boolean;
+	anchors: string[];
+	/** True when the anchor read failed — mutations are disabled for this load. */
+	anchorsUnavailable: boolean;
 }
 
 const EMPTY: Omit<OrganizerPageData, 'authState'> = {
@@ -50,7 +56,9 @@ const EMPTY: Omit<OrganizerPageData, 'authState'> = {
 	reopened: false,
 	deadline: null,
 	deadlineDisplay: null,
-	deadlinePassed: false
+	deadlinePassed: false,
+	anchors: [],
+	anchorsUnavailable: false
 };
 
 function requireOrganizer(locals: App.Locals, platform: App.Platform | undefined): void {
@@ -81,12 +89,21 @@ export const load: PageServerLoad = async ({ locals, platform, url }): Promise<O
 	if (!db) error(503, { message: 'Storage is not available right now' });
 
 	const base = deadlineStatus(platform?.env?.DEADLINE);
-	const [responses, allowlist, latePasses, waitlist, reopened] = await Promise.all([
+	// A failed anchor read must not look like "no anchors": Clear would then
+	// silently delete rows that were never displayed. The flag disables all
+	// anchor mutations for the rest of the page load.
+	let anchorsUnavailable = false;
+	const [responses, allowlist, latePasses, waitlist, reopened, anchors] = await Promise.all([
 		getAllResponses(db),
 		listAllowlist(db),
 		listLatePasses(db),
 		listWaitlist(db),
-		isReopened(db)
+		isReopened(db),
+		listAnchors(db).catch((e) => {
+			console.error('anchor load failed', e);
+			anchorsUnavailable = true;
+			return [] as string[];
+		})
 	]);
 
 	return {
@@ -99,7 +116,9 @@ export const load: PageServerLoad = async ({ locals, platform, url }): Promise<O
 		reopened,
 		deadline: base.deadline,
 		deadlineDisplay: base.display,
-		deadlinePassed: base.closed
+		deadlinePassed: base.closed,
+		anchors,
+		anchorsUnavailable
 	};
 };
 
@@ -172,6 +191,41 @@ export const actions: Actions = {
 			});
 		}
 		return { message: `Promoted @${handle} — they’re on the survey now` };
+	},
+
+	toggleAnchor: async ({ request, locals, platform }) => {
+		requireOrganizer(locals, platform);
+		const db = platform?.env?.DB;
+		if (!db) return fail(503, { message: 'Storage is not available right now' });
+		const form = await request.formData();
+		const did = String(form.get('did') ?? '');
+		const on = String(form.get('on') ?? '') === '1';
+		if (!did) return fail(400, { message: 'Missing respondent' });
+		const known = await db
+			.prepare(`SELECT 1 AS x FROM responses WHERE did = ?1`)
+			.bind(did)
+			.first<{ x: number }>();
+		if (!known) return fail(400, { message: 'Not a respondent' });
+		try {
+			await setAnchor(db, did, on);
+		} catch (e) {
+			console.error('toggleAnchor failed', e);
+			return fail(500, { message: 'Could not save the anchor — try again' });
+		}
+		return { anchorDid: did, anchorOn: on };
+	},
+
+	clearAnchors: async ({ locals, platform }) => {
+		requireOrganizer(locals, platform);
+		const db = platform?.env?.DB;
+		if (!db) return fail(503, { message: 'Storage is not available right now' });
+		try {
+			await clearAllAnchors(db);
+		} catch (e) {
+			console.error('clearAnchors failed', e);
+			return fail(500, { message: 'Could not clear anchors — try again' });
+		}
+		return { anchorsCleared: true };
 	}
 };
 
@@ -263,6 +317,8 @@ function previewData(): Omit<OrganizerPageData, 'authState' | 'preview' | 'deadl
 			{ did: 'did:plc:wl3', handle: 'okoye.bsky.social', email: 'okoye@example.com', createdAt: '2026-08-09T12:00:00Z', promotedAt: '2026-08-11T17:30:00Z' }
 		],
 		reopened: false,
-		deadlinePassed: false
+		deadlinePassed: false,
+		anchors: ['did:plc:preview2', 'did:plc:preview5'],
+		anchorsUnavailable: false
 	};
 }

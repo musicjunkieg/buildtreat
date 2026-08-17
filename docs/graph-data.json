@@ -912,6 +912,83 @@
       "created_at": "2026-08-16T17:58:16.949804-07:00",
       "updated_at": "2026-08-16T17:58:16.949804-07:00",
       "metadata_json": "{\"branch\":\"main\",\"confidence\":95}"
+    },
+    {
+      "id": 84,
+      "change_id": "2f9c8d48-a672-4660-b4c0-d8dcb15d14ec",
+      "node_type": "goal",
+      "title": "Scenario planner: date->who + people->overlap, persistent anchors",
+      "description": null,
+      "status": "pending",
+      "created_at": "2026-08-17T14:03:11.515505-07:00",
+      "updated_at": "2026-08-17T14:03:11.515505-07:00",
+      "metadata_json": "{\"branch\":\"feat/scenario-planner\",\"confidence\":95,\"prompt\":\"Can you give me a scenario planner in the backend, so I can pick a date and see who's available, vs picking people and seeing when they overlap? Also let me flag people persistently as those anchors so I can see if they're available. If we need to design or shape this feature, work with impeccable\"}"
+    },
+    {
+      "id": 85,
+      "change_id": "5f0743a8-e4bc-4fe1-ae94-249f3cda74c9",
+      "node_type": "option",
+      "title": "Ledger drawer under selected window row (comp A)",
+      "description": null,
+      "status": "pending",
+      "created_at": "2026-08-17T14:03:11.526831-07:00",
+      "updated_at": "2026-08-17T14:03:11.526831-07:00",
+      "metadata_json": "{\"branch\":\"feat/scenario-planner\",\"confidence\":85}"
+    },
+    {
+      "id": 86,
+      "change_id": "ed2e927c-9f6b-4e01-ab1b-1f2224869ac5",
+      "node_type": "option",
+      "title": "Side roster column beside windows list (comp B)",
+      "description": null,
+      "status": "pending",
+      "created_at": "2026-08-17T14:03:11.537481-07:00",
+      "updated_at": "2026-08-17T14:03:11.537481-07:00",
+      "metadata_json": "{\"branch\":\"feat/scenario-planner\",\"confidence\":55}"
+    },
+    {
+      "id": 87,
+      "change_id": "693046bc-ce56-49e0-be56-c445f487d40e",
+      "node_type": "option",
+      "title": "Names woven inline into rows, no selection (comp C)",
+      "description": null,
+      "status": "pending",
+      "created_at": "2026-08-17T14:03:11.548294-07:00",
+      "updated_at": "2026-08-17T14:03:11.548294-07:00",
+      "metadata_json": "{\"branch\":\"feat/scenario-planner\",\"confidence\":30}"
+    },
+    {
+      "id": 88,
+      "change_id": "9e7f11f3-7c07-4647-b8b0-4d07163b1d83",
+      "node_type": "decision",
+      "title": "Bryan: backend+UI scope, 3-night window unit, persistent-replaces-ephemeral anchors, comp A drawer",
+      "description": null,
+      "status": "pending",
+      "created_at": "2026-08-17T14:03:11.558467-07:00",
+      "updated_at": "2026-08-17T14:03:11.558467-07:00",
+      "metadata_json": "{\"branch\":\"feat/scenario-planner\",\"confidence\":95}"
+    },
+    {
+      "id": 89,
+      "change_id": "6a05f191-498c-4d88-9da2-f28759e64ef4",
+      "node_type": "action",
+      "title": "Built via subagent-driven plan: 0004 migration + anchors CRUD, windowRoster, actions, persistent UI, roster drawer; 2 fix rounds (untrack seed; WAAPI reduced-motion guard)",
+      "description": null,
+      "status": "pending",
+      "created_at": "2026-08-17T14:03:11.572901-07:00",
+      "updated_at": "2026-08-17T14:03:11.572901-07:00",
+      "metadata_json": "{\"branch\":\"feat/scenario-planner\",\"commit\":\"a25dd90\",\"confidence\":90}"
+    },
+    {
+      "id": 90,
+      "change_id": "16b57245-d9c2-4bac-8aa8-76ce0b2143ed",
+      "node_type": "outcome",
+      "title": "PR #22 open, READY TO MERGE verdict; follow-ups #91 #92; prod D1 migration pending post-merge",
+      "description": null,
+      "status": "pending",
+      "created_at": "2026-08-17T14:03:11.583176-07:00",
+      "updated_at": "2026-08-17T14:03:11.583176-07:00",
+      "metadata_json": "{\"branch\":\"feat/scenario-planner\",\"confidence\":95}"
     }
   ],
   "edges": [
@@ -1805,6 +1882,94 @@
       "weight": 1.0,
       "rationale": "branch pruning completed under the same cleanup goal",
       "created_at": "2026-08-16T17:58:24.881510-07:00"
+    },
+    {
+      "id": 82,
+      "from_node_id": 84,
+      "to_node_id": 85,
+      "from_change_id": "2f9c8d48-a672-4660-b4c0-d8dcb15d14ec",
+      "to_change_id": "5f0743a8-e4bc-4fe1-ae94-249f3cda74c9",
+      "edge_type": "leads_to",
+      "weight": 1.0,
+      "rationale": "comp option",
+      "created_at": "2026-08-17T14:03:17.717617-07:00"
+    },
+    {
+      "id": 83,
+      "from_node_id": 84,
+      "to_node_id": 86,
+      "from_change_id": "2f9c8d48-a672-4660-b4c0-d8dcb15d14ec",
+      "to_change_id": "ed2e927c-9f6b-4e01-ab1b-1f2224869ac5",
+      "edge_type": "leads_to",
+      "weight": 1.0,
+      "rationale": "comp option",
+      "created_at": "2026-08-17T14:03:17.724521-07:00"
+    },
+    {
+      "id": 84,
+      "from_node_id": 84,
+      "to_node_id": 87,
+      "from_change_id": "2f9c8d48-a672-4660-b4c0-d8dcb15d14ec",
+      "to_change_id": "693046bc-ce56-49e0-be56-c445f487d40e",
+      "edge_type": "leads_to",
+      "weight": 1.0,
+      "rationale": "comp option",
+      "created_at": "2026-08-17T14:03:17.732438-07:00"
+    },
+    {
+      "id": 85,
+      "from_node_id": 85,
+      "to_node_id": 88,
+      "from_change_id": "5f0743a8-e4bc-4fe1-ae94-249f3cda74c9",
+      "to_change_id": "9e7f11f3-7c07-4647-b8b0-4d07163b1d83",
+      "edge_type": "leads_to",
+      "weight": 1.0,
+      "rationale": "chosen: most in-world, roster attached to its window",
+      "created_at": "2026-08-17T14:03:17.738933-07:00"
+    },
+    {
+      "id": 86,
+      "from_node_id": 86,
+      "to_node_id": 88,
+      "from_change_id": "ed2e927c-9f6b-4e01-ab1b-1f2224869ac5",
+      "to_change_id": "9e7f11f3-7c07-4647-b8b0-4d07163b1d83",
+      "edge_type": "leads_to",
+      "weight": 1.0,
+      "rationale": "rejected: separate region, detaches on mobile",
+      "created_at": "2026-08-17T14:03:17.745512-07:00"
+    },
+    {
+      "id": 87,
+      "from_node_id": 87,
+      "to_node_id": 88,
+      "from_change_id": "693046bc-ce56-49e0-be56-c445f487d40e",
+      "to_change_id": "9e7f11f3-7c07-4647-b8b0-4d07163b1d83",
+      "edge_type": "leads_to",
+      "weight": 1.0,
+      "rationale": "rejected: cannot list full rosters by name",
+      "created_at": "2026-08-17T14:03:17.752290-07:00"
+    },
+    {
+      "id": 88,
+      "from_node_id": 88,
+      "to_node_id": 89,
+      "from_change_id": "9e7f11f3-7c07-4647-b8b0-4d07163b1d83",
+      "to_change_id": "6a05f191-498c-4d88-9da2-f28759e64ef4",
+      "edge_type": "leads_to",
+      "weight": 1.0,
+      "rationale": "implementation",
+      "created_at": "2026-08-17T14:03:17.758562-07:00"
+    },
+    {
+      "id": 89,
+      "from_node_id": 89,
+      "to_node_id": 90,
+      "from_change_id": "6a05f191-498c-4d88-9da2-f28759e64ef4",
+      "to_change_id": "16b57245-d9c2-4bac-8aa8-76ce0b2143ed",
+      "edge_type": "leads_to",
+      "weight": 1.0,
+      "rationale": "verified: reviews + Playwright",
+      "created_at": "2026-08-17T14:03:17.765206-07:00"
     }
   ]
 }
