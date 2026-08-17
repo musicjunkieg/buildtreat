@@ -8,6 +8,27 @@ condensed from that trace; line numbers verified against 0.3.x `dist` and
 
 ---
 
+> **Real-source line references** (a maintainer PR edits these, not the
+> `dist` the artifact cites): open redirect — `src/server/api.ts:21`
+> (`isSafeReturnTo`) and the duplicate at `src/server/handlers.ts:52`.
+> Vanishing cookie — `src/server/api.ts:50` (queue),
+> `src/server/handlers.ts:79` (`return json`), `src/server/handle.ts:15-17`
+> (the side door). Runnable PoC + e2e steps: `notes/poc/`.
+>
+> **Critical interaction** (found by reading the real source): the two bugs
+> mask each other — the cookie bug makes the open redirect unreachable in
+> the default flow, so **the cookie fix and the validator fix MUST ship
+> together**, or fixing the cookie activates a live open redirect. Details
+> in `notes/poc/README.md` → "Reachability".
+>
+> **Three separate reports, three separate targets.** (1) The cookie bug →
+> public issue/PR on the library (below). (2) The open redirect → PRIVATE
+> security disclosure to the library maintainer (see next section). (3) The
+> SvelteKit silent-cookie-drop footgun that made the library's mistake
+> invisible → a comment on the existing upstream thread sveltejs/kit#15138,
+> drafted in `notes/sveltekit-cookie-footgun.md`. Keep them separate; they
+> go to different people and move at different speeds.
+
 ## ⚠️ Before anything else: split the two bugs
 
 You found TWO bugs. They must not travel together:
