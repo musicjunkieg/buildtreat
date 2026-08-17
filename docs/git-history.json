@@ -1,5 +1,13 @@
 [
   {
+    "hash": "8b0fe0945446ad388087d8f53c990638e45d65bf",
+    "short_hash": "8b0fe09",
+    "author": "chaos gremlin",
+    "date": "2026-08-16T17:54:24-07:00",
+    "message": "docs: backfill CHANGELOG Unreleased with shipped work (#18)",
+    "files_changed": 2
+  },
+  {
     "hash": "ff4051a6e35b9162013cef44e982ad914ed60b73",
     "short_hash": "ff4051a",
     "author": "Bryan Guffey",
