@@ -153,3 +153,37 @@ export async function getBroadcast(db: D1Database, broadcastId: number): Promise
 		.first<{ id: number; subject: string; body: string }>();
 	return row ?? null;
 }
+
+export interface BroadcastRunResult {
+	sent: number;
+	failed: number;
+	/** Error code that halted the run, or null if it walked the whole list. */
+	stopped: string | null;
+}
+
+/**
+ * Walk the worklist sequentially. Hard failures are recorded and skipped;
+ * a retryable failure (rate limit, relay hiccup) is recorded, then the run
+ * stops — during comail's warming period a 429 means every later send
+ * would also fail, so the retry button resumes where this left off.
+ */
+export async function runBroadcast(
+	recipients: BroadcastRecipient[],
+	send: (email: string) => Promise<SendResult>,
+	mark: (did: string, result: SendResult) => Promise<void>
+): Promise<BroadcastRunResult> {
+	let sent = 0;
+	let failed = 0;
+	for (const r of recipients) {
+		const result = await send(r.email);
+		await mark(r.did, result);
+		if (result.ok) {
+			sent++;
+		} else if (result.retryable) {
+			return { sent, failed, stopped: result.code };
+		} else {
+			failed++;
+		}
+	}
+	return { sent, failed, stopped: null };
+}
