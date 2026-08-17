@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import { enhance } from '$app/forms';
+	import { deserialize, enhance } from '$app/forms';
 	import { login } from '@svelte-atproto/oauth/client';
 	import Icon from '$lib/components/Icon.svelte';
 	import Heatmap from '$lib/components/organizer/Heatmap.svelte';
@@ -51,10 +51,45 @@
 	   filter: the scenario asks "when can THESE people make it", and that
 	   answer shouldn't shift when the denominator toggle does. */
 
-	let anchors = $state<string[]>([]);
+	let anchors = $state<string[]>(data.anchors);
+	let anchorBusy = $state(false);
 
-	function toggleAnchor(did: string) {
-		anchors = anchors.includes(did) ? anchors.filter((d) => d !== did) : [...anchors, did];
+	/** Optimistic toggle, persisted via ?/toggleAnchor; rolls back on failure. */
+	async function toggleAnchor(did: string) {
+		const on = !anchors.includes(did);
+		const prev = anchors;
+		anchors = on ? [...anchors, did] : anchors.filter((d) => d !== did);
+		if (data.preview) return;
+		const body = new FormData();
+		body.set('did', did);
+		body.set('on', on ? '1' : '0');
+		try {
+			const res = await fetch('?/toggleAnchor', { method: 'POST', body });
+			const result = deserialize(await res.text());
+			if (result.type === 'failure' || result.type === 'error') anchors = prev;
+		} catch {
+			anchors = prev;
+		}
+	}
+
+	async function clearAnchors() {
+		if (anchorBusy) return;
+		anchorBusy = true;
+		const prev = anchors;
+		anchors = [];
+		if (data.preview) {
+			anchorBusy = false;
+			return;
+		}
+		try {
+			const res = await fetch('?/clearAnchors', { method: 'POST', body: new FormData() });
+			const result = deserialize(await res.text());
+			if (result.type === 'failure' || result.type === 'error') anchors = prev;
+		} catch {
+			anchors = prev;
+		} finally {
+			anchorBusy = false;
+		}
 	}
 
 	const anchorPeople = $derived(
@@ -326,7 +361,7 @@ finish review, the verdict, and DESIGN.md.
 							Anchored on {anchorNames.join(', ')} — {sharedFullDays}
 							full day{sharedFullDays === 1 ? '' : 's'} they all share
 						</span>
-						<button class="scenario-clear" onclick={() => (anchors = [])}>Clear</button>
+						<button class="scenario-clear" onclick={clearAnchors} disabled={anchorBusy}>Clear</button>
 					</div>
 				{/if}
 
