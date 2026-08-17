@@ -6,6 +6,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## [Unreleased]
 
+### Security
+- Patch transitive dependency CVEs via pnpm overrides: nanoid 3.3.18, undici 7.29.0, cookie 0.7.2 (#88)
+
 ### Added
 - Chainlink-export union merge driver for valid exports (malformed JSON stays a human-resolved conflict) + port to project-template (#78)
 - Waitlist signup for uninvited visitors — sign in, leave an email, organizer can promote from the responses view (#75)
