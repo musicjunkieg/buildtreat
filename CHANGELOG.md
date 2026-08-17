@@ -7,6 +7,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## [Unreleased]
 
 ### Added
+- Chainlink-export union merge driver for valid exports (malformed JSON stays a human-resolved conflict) + port to project-template (#78)
+- Waitlist signup for uninvited visitors — sign in, leave an email, organizer can promote from the responses view (#75)
+- Organizer: anchor-people scenario mode — toggle respondents, highlight full-overlap dates in the heatmap, badge top-5 windows that fit all anchors (#54)
+- Calendar picker: bits-ui-style range selection — click-start/click-end fill and smoother touch — keeping multi-range, half-day, and the existing visuals (#50)
 - Organizer backend: allowlist, responses table, availability heatmap, CSV export (#48)
 - Review: answers-updated confirmation + sign-out at end (#41)
 - Location question: add no-preference option (#40)
@@ -16,6 +20,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Deadline: Aug 15 2026 23:59:59 PT — display + enforcement (#31)
 
 ### Fixed
+- Best-windows ranking: drop the departure-morning requirement and de-cluster the top list (#56)
+- Anchor overlap rings legible on bright heatmap cells — punched double-ring fix (#69)
+- Heatmap aria-label half-day wording; scenario bar no longer hides when the filter empties dated responses (#65)
+- OAuth returnTo cookie never set — organizer sign-in landed on the survey instead of the requested page (#49)
 - Review findings: pre-pin allowlist DIDs, fail-open gates, log swallowed errors (#42)
 - Gate allowlist at sign-in, not just submit (#36)
 - OAuth login on the deployed Worker: SSR now resolves workerd package builds, fixing the 500 on sign-in (#19)
