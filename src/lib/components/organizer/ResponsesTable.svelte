@@ -107,7 +107,9 @@
 							class:on={anchors.includes(r.did)}
 							onclick={() => ontoggleanchor(r.did)}
 							aria-pressed={anchors.includes(r.did)}
-							aria-label="Anchor {r.name} in the date scenario"
+							aria-label={anchorsLocked
+								? `Anchor ${r.name} in the date scenario — unavailable, saved anchors could not be loaded; reload to re-enable`
+								: `Anchor ${r.name} in the date scenario`}
 							disabled={r.ranges.length === 0 || anchorsLocked}
 							title={anchorsLocked
 								? 'Saved anchors could not be loaded — reload to re-enable'
