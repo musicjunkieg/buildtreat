@@ -132,6 +132,49 @@
 </section>
 
 <style>
+	/* Duplicated from +page.svelte — Svelte scopes <style> per-component,
+	   so the page's section/warn/empty rules don't reach this component. */
+	.section-head {
+		display: flex;
+		align-items: flex-end;
+		justify-content: space-between;
+		gap: var(--space-3);
+		flex-wrap: wrap;
+	}
+
+	.section-title {
+		/* The documented `place` ramp — section heads sit below the rail title. */
+		font-size: clamp(1.35rem, 4.2vw, 1.9rem);
+		font-weight: 650;
+	}
+
+	.section-sub {
+		margin-top: 0.35rem;
+		font-size: 0.8125rem;
+		color: var(--ink-70);
+	}
+
+	.section-empty {
+		color: var(--ink-70);
+		font-size: 0.9375rem;
+		padding: var(--space-3) 0;
+		border-top: var(--hairline);
+		border-bottom: var(--hairline);
+	}
+
+	.warn {
+		font-size: 0.9375rem;
+		line-height: 1.5;
+		padding: 0.65rem 0;
+		border-top: 1px solid var(--ink);
+		border-bottom: 1px solid var(--ink);
+		max-width: 62ch;
+	}
+
+	.compose .kicker {
+		color: var(--ink-70);
+	}
+
 	.compose {
 		display: flex;
 		flex-direction: column;
