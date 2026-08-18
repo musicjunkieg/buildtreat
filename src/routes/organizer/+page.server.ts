@@ -128,7 +128,10 @@ export const load: PageServerLoad = async ({ locals, platform, url }): Promise<O
 			anchorsUnavailable = true;
 			return [] as string[];
 		}),
-		listBroadcasts(db)
+		listBroadcasts(db).catch((e) => {
+			console.error('broadcast list failed', e);
+			return [] as BroadcastView[];
+		})
 	]);
 
 	return {

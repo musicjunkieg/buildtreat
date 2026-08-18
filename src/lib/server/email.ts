@@ -70,8 +70,14 @@ export async function sendEmail(env: EmailEnv, msg: EmailMessage, fetchFn: typeo
 	}
 
 	if (res.ok) {
-		const accepted = (body as { accepted?: Array<{ messageId?: number | string }> }).accepted?.[0];
+		const parsed = body as {
+			accepted?: Array<{ messageId?: number | string }>;
+			rejected?: Array<{ recipient: string; reason?: string }>;
+		};
+		const accepted = parsed.accepted?.[0];
 		if (accepted?.messageId != null) return { ok: true, messageId: String(accepted.messageId) };
+		const rejected = parsed.rejected?.[0];
+		if (rejected) return { ok: false, code: 'REJECTED', retryable: false, ...(rejected.reason ? { detail: rejected.reason } : {}) };
 		return { ok: false, code: 'BAD_RESPONSE', retryable: true, detail: '200 without an accepted recipient' };
 	}
 

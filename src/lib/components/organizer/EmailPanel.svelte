@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
+	import { SvelteSet } from 'svelte/reactivity';
 	import type { BroadcastView } from '$lib/server/broadcasts';
 
 	let {
@@ -18,6 +19,9 @@
 	// recipient count is visible at the moment of commitment.
 	let armed = $state(false);
 	let sending = $state(false);
+	// Per-broadcast in-flight guard: prevents a double-click on Retry from
+	// firing two concurrent emailRetry actions and double-emailing recipients.
+	let retrying = new SvelteSet<number>();
 
 	const draftReady = $derived(subject.trim().length > 0 && body.trim().length > 0);
 
@@ -116,9 +120,19 @@
 								{/each}
 							</ul>
 							{#if configured && c.failed + c.pending > 0}
-								<form method="POST" action="?/emailRetry" use:enhance>
+								<form
+									method="POST"
+									action="?/emailRetry"
+									use:enhance={() => {
+										retrying.add(b.id);
+										return async ({ update }) => {
+											retrying.delete(b.id);
+											await update({ reset: false });
+										};
+									}}
+								>
 									<input type="hidden" name="id" value={b.id} />
-									<button class="btn-ghost">Retry {c.failed + c.pending} unsent</button>
+									<button class="btn-ghost" disabled={retrying.has(b.id)}>Retry {c.failed + c.pending} unsent</button>
 								</form>
 							{/if}
 						</details>
