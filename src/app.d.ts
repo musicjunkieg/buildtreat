@@ -17,6 +17,9 @@ declare global {
 				ORIGIN?: string;
 				DEADLINE?: string;
 				ORGANIZER_DIDS?: string;
+				EMAIL_FROM?: string;
+				COMAIL_DID?: string;
+				COMAIL_API_KEY?: string;
 				OAUTH_SESSIONS: KVNamespace;
 				OAUTH_STATES: KVNamespace;
 				PROFILE_CACHE: KVNamespace;

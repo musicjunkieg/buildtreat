@@ -20,7 +20,11 @@
 		"DEADLINE": "2026-08-16T06:59:59Z",
 		// DIDs allowed into /organizer (comma-separated).
 		// Bryan (@chaosgreml.in), Alex (@alex.bsky.team).
-		"ORGANIZER_DIDS": "did:plc:h3wpawnrlptr4534chevddo6,did:plc:vmt7o7y6titkqzzxav247zrn"
+		"ORGANIZER_DIDS": "did:plc:h3wpawnrlptr4534chevddo6,did:plc:vmt7o7y6titkqzzxav247zrn",
+		// Email sending via comail.at (HTTP Send API). The DID is the comail
+		// account identity (Bryan's — already public in ORGANIZER_DIDS).
+		"EMAIL_FROM": "hello@buildersretre.at",
+		"COMAIL_DID": "did:plc:h3wpawnrlptr4534chevddo6"
 	},
 	"kv_namespaces": [
 		{ "binding": "OAUTH_SESSIONS", "id": "b54ff92b5d6c4d53bf6126663f0e5077" },
@@ -35,5 +39,5 @@
 			"migrations_dir": "migrations"
 		}
 	]
-	// Secrets (wrangler secret put): COOKIE_SECRET, CLIENT_ASSERTION_KEY
+	// Secrets (wrangler secret put): COOKIE_SECRET, CLIENT_ASSERTION_KEY, COMAIL_API_KEY
 }

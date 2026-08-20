@@ -22,6 +22,18 @@ import {
 	type OrganizerResponse
 } from '$lib/server/organizer';
 import { listWaitlist, promoteFromWaitlist, type WaitlistEntry } from '$lib/server/waitlist';
+import { emailConfigured, sendEmail } from '$lib/server/email';
+import {
+	createBroadcast,
+	dedupeRecipients,
+	getBroadcast,
+	listBroadcasts,
+	markRecipient,
+	runBroadcast,
+	unsentRecipients,
+	type BroadcastView
+} from '$lib/server/broadcasts';
+import { EMAIL_RE } from '$lib/server/db';
 
 /**
  * /organizer — Bryan's side of the survey. Access policy:
@@ -45,6 +57,9 @@ export interface OrganizerPageData {
 	anchors: string[];
 	/** True when the anchor read failed — mutations are disabled for this load. */
 	anchorsUnavailable: boolean;
+	/** False until COMAIL_API_KEY + vars are set — renders setup hints. */
+	emailConfigured: boolean;
+	broadcasts: BroadcastView[];
 }
 
 const EMPTY: Omit<OrganizerPageData, 'authState'> = {
@@ -58,13 +73,22 @@ const EMPTY: Omit<OrganizerPageData, 'authState'> = {
 	deadlineDisplay: null,
 	deadlinePassed: false,
 	anchors: [],
-	anchorsUnavailable: false
+	anchorsUnavailable: false,
+	emailConfigured: false,
+	broadcasts: []
 };
 
 function requireOrganizer(locals: App.Locals, platform: App.Platform | undefined): void {
 	if (!locals.did || !isOrganizer(platform?.env?.ORGANIZER_DIDS, locals.did)) {
 		error(404, { message: 'Not found' });
 	}
+}
+
+function broadcastMessage(run: { sent: number; failed: number; stopped: string | null }): string {
+	const parts = [`Sent ${run.sent}`];
+	if (run.failed) parts.push(`${run.failed} failed`);
+	if (run.stopped) parts.push(`paused on ${run.stopped} — use Retry to resume`);
+	return parts.join(' · ');
 }
 
 export const load: PageServerLoad = async ({ locals, platform, url }): Promise<OrganizerPageData> => {
@@ -93,7 +117,7 @@ export const load: PageServerLoad = async ({ locals, platform, url }): Promise<O
 	// silently delete rows that were never displayed. The flag disables all
 	// anchor mutations for the rest of the page load.
 	let anchorsUnavailable = false;
-	const [responses, allowlist, latePasses, waitlist, reopened, anchors] = await Promise.all([
+	const [responses, allowlist, latePasses, waitlist, reopened, anchors, broadcasts] = await Promise.all([
 		getAllResponses(db),
 		listAllowlist(db),
 		listLatePasses(db),
@@ -103,6 +127,10 @@ export const load: PageServerLoad = async ({ locals, platform, url }): Promise<O
 			console.error('anchor load failed', e);
 			anchorsUnavailable = true;
 			return [] as string[];
+		}),
+		listBroadcasts(db).catch((e) => {
+			console.error('broadcast list failed', e);
+			return [] as BroadcastView[];
 		})
 	]);
 
@@ -118,7 +146,9 @@ export const load: PageServerLoad = async ({ locals, platform, url }): Promise<O
 		deadlineDisplay: base.display,
 		deadlinePassed: base.closed,
 		anchors,
-		anchorsUnavailable
+		anchorsUnavailable,
+		emailConfigured: emailConfigured(platform?.env ?? {}),
+		broadcasts
 	};
 };
 
@@ -226,6 +256,65 @@ export const actions: Actions = {
 			return fail(500, { message: 'Could not clear anchors — try again' });
 		}
 		return { anchorsCleared: true };
+	},
+
+	emailTest: async ({ request, locals, platform }) => {
+		requireOrganizer(locals, platform);
+		const form = await request.formData();
+		const to = String(form.get('to') ?? '').trim();
+		const subject = String(form.get('subject') ?? '').trim();
+		const body = String(form.get('body') ?? '').trim();
+		if (!EMAIL_RE.test(to)) return fail(400, { message: 'Enter a valid test address' });
+		if (!subject || !body) return fail(400, { message: 'Subject and body are both required' });
+		const result = await sendEmail(platform?.env ?? {}, { to, subject, text: body });
+		if (!result.ok) {
+			return fail(502, { message: `Test send failed (${result.code})${result.detail ? ` — ${result.detail}` : ''}` });
+		}
+		return { message: `Test sent to ${to} (message ${result.messageId})` };
+	},
+
+	emailBroadcast: async ({ request, locals, platform }) => {
+		requireOrganizer(locals, platform);
+		const db = platform?.env?.DB;
+		if (!db) return fail(503, { message: 'Storage is not available right now' });
+		const form = await request.formData();
+		const subject = String(form.get('subject') ?? '').trim();
+		const body = String(form.get('body') ?? '').trim();
+		if (!subject || !body) return fail(400, { message: 'Subject and body are both required' });
+		if (!emailConfigured(platform?.env ?? {})) return fail(503, { message: 'Email is not configured yet' });
+
+		const responses = await getAllResponses(db);
+		const recipients = dedupeRecipients(responses.map((r) => ({ did: r.did, email: r.email })));
+		if (!recipients.length) return fail(400, { message: 'No respondents with emails to send to' });
+
+		const id = await createBroadcast(db, { subject, body, sentBy: locals.did!, recipients });
+		const worklist = await unsentRecipients(db, id);
+		const run = await runBroadcast(
+			worklist,
+			(to) => sendEmail(platform!.env, { to, subject, text: body, category: 'broadcast' }),
+			(did, result) => markRecipient(db, id, did, result)
+		);
+		return { message: broadcastMessage(run) };
+	},
+
+	emailRetry: async ({ request, locals, platform }) => {
+		requireOrganizer(locals, platform);
+		const db = platform?.env?.DB;
+		if (!db) return fail(503, { message: 'Storage is not available right now' });
+		const id = Number((await request.formData()).get('id'));
+		if (!Number.isInteger(id)) return fail(400, { message: 'Missing broadcast' });
+		const broadcast = await getBroadcast(db, id);
+		if (!broadcast) return fail(400, { message: 'Unknown broadcast' });
+		if (!emailConfigured(platform?.env ?? {})) return fail(503, { message: 'Email is not configured yet' });
+
+		const worklist = await unsentRecipients(db, id);
+		if (!worklist.length) return fail(400, { message: 'Nothing left to retry for that broadcast' });
+		const run = await runBroadcast(
+			worklist,
+			(to) => sendEmail(platform!.env, { to, subject: broadcast.subject, text: broadcast.body, category: 'broadcast' }),
+			(did, result) => markRecipient(db, id, did, result)
+		);
+		return { message: broadcastMessage(run) };
 	}
 };
 
@@ -319,6 +408,22 @@ function previewData(): Omit<OrganizerPageData, 'authState' | 'preview' | 'deadl
 		reopened: false,
 		deadlinePassed: false,
 		anchors: ['did:plc:preview2', 'did:plc:preview5'],
-		anchorsUnavailable: false
+		anchorsUnavailable: false,
+		emailConfigured: true,
+		broadcasts: [
+			{
+				id: 1,
+				subject: 'October dates are locked',
+				body: 'Hi builders — we picked the window. Details on the site.',
+				sentBy: 'did:plc:h3wpawnrlptr4534chevddo6',
+				createdAt: '2026-08-14T20:11:00Z',
+				recipients: [
+					{ did: 'did:plc:preview0', email: 'maren0@example.com', status: 'sent', errorCode: null, messageId: '101' },
+					{ did: 'did:plc:preview1', email: 'chris1@example.com', status: 'sent', errorCode: null, messageId: '102' },
+					{ did: 'did:plc:preview2', email: 'koko2@example.com', status: 'failed', errorCode: 'INVALID_RECIPIENT_DOMAIN', messageId: null },
+					{ did: 'did:plc:preview3', email: 'evan3@example.com', status: 'pending', errorCode: 'RATE_LIMITED', messageId: null }
+				]
+			}
+		]
 	};
 }

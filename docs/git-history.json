@@ -1,5 +1,13 @@
 [
   {
+    "hash": "93b0cc99884618ce2a428c891d4e46af24d98375",
+    "short_hash": "93b0cc9",
+    "author": "Bryan Guffey",
+    "date": "2026-08-17T17:13:33-07:00",
+    "message": "fix: handle comail rejected recipients, degrade missing broadcasts table, guard retry double-submit\n\n- email.ts: a 200 response with an empty accepted array but a rejected\n  entry (e.g. suppressed broadcast recipients) now returns a non-retryable\n  REJECTED result instead of falling through to retryable BAD_RESPONSE,\n  which previously made runBroadcast stop and retry the same recipient\n  forever. BAD_RESPONSE stays for the truly empty accepted+rejected case.\n- +page.server.ts: listBroadcasts(db) now follows the listAnchors\n  precedent and catches into an empty array, so a pre-migration-0005\n  deploy degrades the email history panel instead of 500ing the whole\n  organizer page.\n- EmailPanel.svelte: the retry form now guards against double-submit with\n  a per-broadcast SvelteSet, disabling the Retry button while its\n  emailRetry action is in flight.",
+    "files_changed": 5
+  },
+  {
     "hash": "a25dd903119fdc2fe9f52cd59c8198af5aa2ded6",
     "short_hash": "a25dd90",
     "author": "Bryan Guffey",
