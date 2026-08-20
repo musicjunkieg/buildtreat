@@ -1055,6 +1055,39 @@
       "created_at": "2026-08-17T16:13:37.147854-07:00",
       "updated_at": "2026-08-17T16:13:37.147854-07:00",
       "metadata_json": "{\"branch\":\"main\",\"confidence\":90}"
+    },
+    {
+      "id": 97,
+      "change_id": "6d40046b-f0fb-4cf1-bd7e-6e0daa6a5678",
+      "node_type": "action",
+      "title": "Implemented comail transport + organizer broadcast (PR #23)",
+      "description": null,
+      "status": "pending",
+      "created_at": "2026-08-17T17:17:05.229856-07:00",
+      "updated_at": "2026-08-17T17:17:05.229856-07:00",
+      "metadata_json": "{\"branch\":\"feat/comail-email\",\"commit\":\"93b0cc9\",\"confidence\":90}"
+    },
+    {
+      "id": 98,
+      "change_id": "12c00ad3-3357-4971-9f0d-e05d85fd9b93",
+      "node_type": "outcome",
+      "title": "Email sending shipped behind NOT_CONFIGURED gate; 14 tests; final review: ready to merge after 1 fix round",
+      "description": null,
+      "status": "pending",
+      "created_at": "2026-08-17T17:17:05.252634-07:00",
+      "updated_at": "2026-08-17T17:17:05.252634-07:00",
+      "metadata_json": "{\"branch\":\"feat/comail-email\",\"confidence\":90}"
+    },
+    {
+      "id": 99,
+      "change_id": "c63f25a0-98c8-4a2d-8aaa-57047e5167fe",
+      "node_type": "observation",
+      "title": "comail 200-with-rejected would have livelocked broadcasts; caught in final whole-branch review, fixed as non-retryable REJECTED",
+      "description": null,
+      "status": "pending",
+      "created_at": "2026-08-17T17:17:05.270444-07:00",
+      "updated_at": "2026-08-17T17:17:05.270444-07:00",
+      "metadata_json": "{\"branch\":\"feat/comail-email\",\"confidence\":95}"
     }
   ],
   "edges": [
@@ -2113,6 +2146,39 @@
       "weight": 1.0,
       "rationale": "rejected: fragile raw TCP when HTTP API exists",
       "created_at": "2026-08-17T16:13:37.184797-07:00"
+    },
+    {
+      "id": 97,
+      "from_node_id": 96,
+      "to_node_id": 97,
+      "from_change_id": "e5dde5ab-3f78-4a24-92ed-4a3ecf4c76a0",
+      "to_change_id": "6d40046b-f0fb-4cf1-bd7e-6e0daa6a5678",
+      "edge_type": "leads_to",
+      "weight": 1.0,
+      "rationale": "Implementation of chosen option",
+      "created_at": "2026-08-17T17:17:05.239978-07:00"
+    },
+    {
+      "id": 98,
+      "from_node_id": 97,
+      "to_node_id": 98,
+      "from_change_id": "6d40046b-f0fb-4cf1-bd7e-6e0daa6a5678",
+      "to_change_id": "12c00ad3-3357-4971-9f0d-e05d85fd9b93",
+      "edge_type": "leads_to",
+      "weight": 1.0,
+      "rationale": "Result",
+      "created_at": "2026-08-17T17:17:05.260144-07:00"
+    },
+    {
+      "id": 99,
+      "from_node_id": 98,
+      "to_node_id": 99,
+      "from_change_id": "12c00ad3-3357-4971-9f0d-e05d85fd9b93",
+      "to_change_id": "c63f25a0-98c8-4a2d-8aaa-57047e5167fe",
+      "edge_type": "leads_to",
+      "weight": 1.0,
+      "rationale": "Notable finding",
+      "created_at": "2026-08-17T17:17:05.277288-07:00"
     }
   ]
 }

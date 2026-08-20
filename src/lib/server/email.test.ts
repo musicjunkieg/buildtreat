@@ -90,7 +90,7 @@ describe('sendEmail', () => {
 
 	it('treats a 200 with a rejected recipient as non-retryable REJECTED', async () => {
 		const fetchFn = vi.fn(async () =>
-			jsonResponse(200, { accepted: [], rejected: [{ recipient: 'user@example.com', reason: 'suppressed' }] })
+			jsonResponse(200, { accepted: [], rejected: [{ recipient: 'user@example.com', error: 'suppressed' }] })
 		);
 		const res = await sendEmail(ENV, MSG, fetchFn as unknown as typeof fetch);
 		expect(res).toMatchObject({ ok: false, code: 'REJECTED', retryable: false, detail: 'suppressed' });

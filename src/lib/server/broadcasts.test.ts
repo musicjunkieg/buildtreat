@@ -19,6 +19,12 @@ describe('dedupeRecipients', () => {
 	it('skips rows with empty emails', () => {
 		expect(dedupeRecipients([{ did: 'did:plc:a', email: '  ' }])).toEqual([]);
 	});
+
+	it('stores the trimmed email, not the raw one', () => {
+		expect(dedupeRecipients([{ did: 'did:plc:a', email: '  pad@example.com ' }])).toEqual([
+			{ did: 'did:plc:a', email: 'pad@example.com' }
+		]);
+	});
 });
 
 function recipient(did: string, email: string): BroadcastRecipient {

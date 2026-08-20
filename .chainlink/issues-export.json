@@ -1,7 +1,37 @@
 {
   "version": 1,
-  "exported_at": "2026-08-18T00:13:33.247901+00:00",
+  "exported_at": "2026-08-20T22:18:42.079281+00:00",
   "issues": [
+    {
+      "id": 95,
+      "title": "PR #23 babysitting: CI status + review comments (comail email)",
+      "description": null,
+      "status": "open",
+      "priority": "medium",
+      "parent_id": null,
+      "labels": [
+        "chore"
+      ],
+      "comments": [],
+      "created_at": "2026-08-20T22:16:23.493118+00:00",
+      "updated_at": "2026-08-20T22:16:23.493118+00:00",
+      "closed_at": null
+    },
+    {
+      "id": 94,
+      "title": "Post-PR housekeeping: memory index + screenshot handoff for comail email work",
+      "description": null,
+      "status": "open",
+      "priority": "low",
+      "parent_id": null,
+      "labels": [
+        "chore"
+      ],
+      "comments": [],
+      "created_at": "2026-08-18T00:17:42.860483+00:00",
+      "updated_at": "2026-08-18T00:17:42.860483+00:00",
+      "closed_at": null
+    },
     {
       "id": 93,
       "title": "Wire up email sending via comail.at (transport + organizer broadcast)",

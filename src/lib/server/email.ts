@@ -43,6 +43,10 @@ export async function sendEmail(env: EmailEnv, msg: EmailMessage, fetchFn: typeo
 	try {
 		res = await fetchFn(SEND_URL, {
 			method: 'POST',
+			// A stalled relay must not hang the organizer action mid-broadcast:
+			// abort surfaces in the catch below as retryable NETWORK, so the
+			// run pauses and Retry resumes it.
+			signal: AbortSignal.timeout(10_000),
 			headers: {
 				'Content-Type': 'application/json',
 				'X-Atmos-DID': env.COMAIL_DID!,
@@ -72,12 +76,12 @@ export async function sendEmail(env: EmailEnv, msg: EmailMessage, fetchFn: typeo
 	if (res.ok) {
 		const parsed = body as {
 			accepted?: Array<{ messageId?: number | string }>;
-			rejected?: Array<{ recipient: string; reason?: string }>;
+			rejected?: Array<{ recipient: string; error?: string }>;
 		};
 		const accepted = parsed.accepted?.[0];
 		if (accepted?.messageId != null) return { ok: true, messageId: String(accepted.messageId) };
 		const rejected = parsed.rejected?.[0];
-		if (rejected) return { ok: false, code: 'REJECTED', retryable: false, ...(rejected.reason ? { detail: rejected.reason } : {}) };
+		if (rejected) return { ok: false, code: 'REJECTED', retryable: false, ...(rejected.error ? { detail: rejected.error } : {}) };
 		return { ok: false, code: 'BAD_RESPONSE', retryable: true, detail: '200 without an accepted recipient' };
 	}
 

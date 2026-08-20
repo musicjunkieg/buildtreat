@@ -35,10 +35,11 @@ export function dedupeRecipients(rows: RecipientInput[]): RecipientInput[] {
 	const seen = new Set<string>();
 	const out: RecipientInput[] = [];
 	for (const row of rows) {
-		const key = row.email.trim().toLowerCase();
+		const email = row.email.trim();
+		const key = email.toLowerCase();
 		if (!key || seen.has(key)) continue;
 		seen.add(key);
-		out.push(row);
+		out.push({ ...row, email });
 	}
 	return out;
 }
