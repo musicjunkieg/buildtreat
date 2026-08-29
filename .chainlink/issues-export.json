@@ -1,7 +1,67 @@
 {
   "version": 1,
-  "exported_at": "2026-08-29T22:59:42.172608+00:00",
+  "exported_at": "2026-08-29T23:13:35.620807+00:00",
   "issues": [
+    {
+      "id": 101,
+      "title": "Follow-up: rowToRegistration unknown status should default to 'declined' (under-count, not over-count)",
+      "description": null,
+      "status": "open",
+      "priority": "low",
+      "parent_id": null,
+      "labels": [
+        "enhancement"
+      ],
+      "comments": [],
+      "created_at": "2026-08-29T23:07:22.846712+00:00",
+      "updated_at": "2026-08-29T23:07:22.846712+00:00",
+      "closed_at": null
+    },
+    {
+      "id": 100,
+      "title": "Follow-up: AgreementRow — move 'read it' button out of <label>; init $state(checked) to avoid one-frame flash",
+      "description": null,
+      "status": "open",
+      "priority": "low",
+      "parent_id": null,
+      "labels": [
+        "bug"
+      ],
+      "comments": [],
+      "created_at": "2026-08-29T23:07:22.841882+00:00",
+      "updated_at": "2026-08-29T23:07:22.841882+00:00",
+      "closed_at": null
+    },
+    {
+      "id": 99,
+      "title": "Follow-up: guard registration confirmation email with emailConfigured() to avoid NOT_CONFIGURED log noise",
+      "description": null,
+      "status": "open",
+      "priority": "low",
+      "parent_id": null,
+      "labels": [
+        "chore"
+      ],
+      "comments": [],
+      "created_at": "2026-08-29T23:07:22.836986+00:00",
+      "updated_at": "2026-08-29T23:07:22.836986+00:00",
+      "closed_at": null
+    },
+    {
+      "id": 98,
+      "title": "Follow-up: /?survey should be truly read-only (reopen switch + late passes still allow edits)",
+      "description": null,
+      "status": "open",
+      "priority": "low",
+      "parent_id": null,
+      "labels": [
+        "enhancement"
+      ],
+      "comments": [],
+      "created_at": "2026-08-29T23:07:22.831592+00:00",
+      "updated_at": "2026-08-29T23:07:22.831592+00:00",
+      "closed_at": null
+    },
     {
       "id": 97,
       "title": "Registration flow: confirm attendance, travel, dietary, agreements + organizer roster (Dec 4-7 retreat)",
@@ -21,6 +81,11 @@
         {
           "content": "[action] Registration SDD: tasks 1-7 complete (HEAD f8ea711). Task 8 (organizer panel) in flight. Applying migration 0006 to prod D1 now (pre-merge, additive).",
           "created_at": "2026-08-29T22:43:30.348912+00:00",
+          "kind": "note"
+        },
+        {
+          "content": "[action] Registration SDD: tasks 1-8 complete (HEAD be0795c), verification green (31 tests, check, build, detector). Migration 0006 applied to prod. Finish review (impeccable) + whole-branch code review both in flight; then fix wave → PR.",
+          "created_at": "2026-08-29T23:03:33.033374+00:00",
           "kind": "note"
         }
       ],

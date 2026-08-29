@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import {
+	canConfirm,
 	emptyRegistration,
 	isDietaryId,
 	isTravelMode,
@@ -106,5 +107,27 @@ describe('id guards', () => {
 		expect(isDietaryId('paleo')).toBe(false);
 		expect(isTravelMode('train')).toBe(true);
 		expect(isTravelMode('boat')).toBe(false);
+	});
+});
+
+describe('canConfirm', () => {
+	it('allows a new confirmation while open', () => {
+		expect(canConfirm(false, null)).toBe(true);
+	});
+
+	it('allows a declined visitor to confirm while open', () => {
+		expect(canConfirm(false, { status: 'declined' })).toBe(true);
+	});
+
+	it('refuses a new confirmation once closed', () => {
+		expect(canConfirm(true, null)).toBe(false);
+	});
+
+	it('refuses a declined visitor once closed', () => {
+		expect(canConfirm(true, { status: 'declined' })).toBe(false);
+	});
+
+	it('always allows editing an existing confirmed row, even closed', () => {
+		expect(canConfirm(true, { status: 'confirmed' })).toBe(true);
 	});
 });

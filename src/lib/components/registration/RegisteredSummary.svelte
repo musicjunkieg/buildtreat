@@ -1,14 +1,27 @@
 <script lang="ts">
+	import { enhance } from '$app/forms';
 	import { dietaryOptions, registration as copy, retreat, retreatDates, retreatLocation, travelModes } from '$lib/content';
 	import type { Registration } from '$lib/server/registration';
 
-	let { registration: reg, regClosed, onedit }: { registration: Registration; regClosed: boolean; onedit: () => void } = $props();
+	let {
+		registration: reg,
+		regClosed,
+		organizerAvatar = null,
+		onedit
+	}: {
+		registration: Registration;
+		regClosed: boolean;
+		organizerAvatar?: string | null;
+		onedit: () => void;
+	} = $props();
 
 	const dietaryLabels = $derived(
 		reg.dietary.map((id) => dietaryOptions.find((o) => o.id === id)?.label ?? id).join(', ')
 	);
 	const modeLabel = $derived(reg.travelMode ? (travelModes.find((m) => m.id === reg.travelMode)?.label ?? '') : '');
 	const dash = '—';
+
+	let declining = $state(false);
 </script>
 
 <div class="doc">
@@ -49,6 +62,7 @@
 				<li><span class="k">{copy.sections.contact.email}</span><span class="v">{reg.email}</span></li>
 				<li><span class="k">{copy.sections.contact.phone}</span><span class="v" class:empty={!reg.phone}>{reg.phone || dash}</span></li>
 			</ul>
+			<button class="pill ghost" onclick={onedit}>{copy.edit}</button>
 		</section>
 
 		<section>
@@ -57,6 +71,7 @@
 				<li><span class="k">Needs</span><span class="v" class:empty={!dietaryLabels}>{dietaryLabels || 'None'}</span></li>
 				{#if reg.dietaryOther}<li><span class="k">Notes</span><span class="v">{reg.dietaryOther}</span></li>{/if}
 			</ul>
+			<button class="pill ghost" onclick={onedit}>{copy.edit}</button>
 		</section>
 
 		<section>
@@ -65,6 +80,7 @@
 				<li><span class="k">{copy.sections.emergency.name}</span><span class="v">{reg.emergencyName}</span></li>
 				<li><span class="k">{copy.sections.emergency.phone}</span><span class="v">{reg.emergencyPhone}</span></li>
 			</ul>
+			<button class="pill ghost" onclick={onedit}>{copy.edit}</button>
 		</section>
 
 		{#if reg.accessibility || reg.notes}
@@ -74,6 +90,7 @@
 					{#if reg.accessibility}<li><span class="k">{copy.sections.accessibility.head}</span><span class="v">{reg.accessibility}</span></li>{/if}
 					{#if reg.notes}<li><span class="k">{copy.sections.notes.head}</span><span class="v">{reg.notes}</span></li>{/if}
 				</ul>
+				<button class="pill ghost" onclick={onedit}>{copy.edit}</button>
 			</section>
 		{/if}
 
@@ -83,14 +100,31 @@
 				<li><span class="k">Waiver</span><span class="v">{reg.waiverVersion} · agreed {reg.agreedAt ? new Date(reg.agreedAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) : dash}</span></li>
 				<li><span class="k">Conduct</span><span class="v">{reg.cocVersion}</span></li>
 			</ul>
+			<button class="pill ghost" onclick={onedit}>{copy.edit}</button>
 		</section>
 
 		<div class="foot">
 			<button class="pill ghost" onclick={onedit}>{copy.edit}</button>
 			{#if regClosed}<p class="hint">Registration is closed to new sign-ups, but yours stays editable.</p>{/if}
+			<form
+				method="POST"
+				action="?/decline"
+				use:enhance={() => {
+					declining = true;
+					return async ({ update }) => {
+						await update();
+						declining = false;
+					};
+				}}
+			>
+				<button class="quiet" type="submit" disabled={declining}>{copy.declineAfter}</button>
+			</form>
 		</div>
 
-		<p class="author"><span class="avatar"></span><span>{retreat.organizerLine} <a class="handle" href={retreat.organizerLink} target="_blank" rel="noopener">@{retreat.organizerHandle}</a></span></p>
+		<p class="author">
+			<span class="avatar" style:background-image={organizerAvatar ? `url(${organizerAvatar})` : undefined}></span>
+			<span>{retreat.organizerLine} <a class="handle" href={retreat.organizerLink} target="_blank" rel="noopener">@{retreat.organizerHandle}</a></span>
+		</p>
 	</div>
 </div>
 
@@ -119,7 +153,9 @@
 	.pill.ghost { background: transparent; border: 1.5px solid var(--ink); color: var(--ink); width: auto; justify-self: start; padding: 0.55rem 1.25rem; min-height: 2.6rem; }
 	.foot { display: grid; gap: var(--space-2); justify-items: center; }
 	.foot .hint { color: var(--ink-70); }
+	.quiet { font-size: var(--text-author); color: var(--ink-70); text-decoration: underline; text-underline-offset: 3px; }
+	.quiet:disabled { opacity: 0.55; }
 	.author { display: flex; align-items: center; gap: 0.6rem; font-size: var(--text-author); color: var(--ink-70); }
-	.avatar { width: 1.9rem; height: 1.9rem; border-radius: 999px; border: 1px solid var(--ink-45); background: var(--ink-12); }
+	.avatar { width: 1.9rem; height: 1.9rem; border-radius: 999px; border: 1px solid var(--ink-45); background: var(--ink-12) center/cover no-repeat; }
 	.handle { color: var(--ink); font-weight: 550; text-decoration: underline; text-underline-offset: 3px; }
 </style>

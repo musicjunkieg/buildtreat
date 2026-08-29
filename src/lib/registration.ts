@@ -103,6 +103,11 @@ export function parseRegistrationForm(form: FormData): RegistrationInput {
 	};
 }
 
+/** Post-deadline rule: new confirmations close; an existing confirmed row may always be edited. */
+export function canConfirm(closed: boolean, existing: { status: 'confirmed' | 'declined' } | null): boolean {
+	return !closed || existing?.status === 'confirmed';
+}
+
 /** Rules for a CONFIRMED registration. Declines skip this entirely. */
 export function validateRegistration(
 	input: RegistrationInput

@@ -217,15 +217,15 @@ export const registration = {
 	facts: [
 		{ label: 'Palm Springs or Coachella Valley', value: '' },
 		{ label: 'Venue locks with the headcount', value: '', muted: true },
-		{ label: 'Lodging & food covered', value: 'Bluesky' },
-		{ label: 'Register by Sept 7', value: '' }
+		{ label: 'Lodging & food covered', value: 'Bluesky' }
 	] as { label: string; value: string; muted?: boolean }[],
+	registerBy: 'Register by',
 	confirm: 'I’m in',
 	decline: 'I can’t make it',
 	declinedLead: 'Noted — we’ll miss you.',
 	declinedBody: 'If your December opens up, come back here and change your answer.',
 	declinedUndo: 'Actually, I can come',
-	closedLead: 'Registration closed Sept 7.',
+	closedLeadPrefix: 'Registration closed',
 	closedBody: 'We’ve locked the headcount to book the house. If you can still make it, DM',
 	formKicker: 'Registration',
 	formTitle: 'You’re in.',
@@ -246,6 +246,7 @@ export const registration = {
 	registeredSub: 'December 4–7. We’ll email the venue and itinerary once the house is booked.',
 	travelNudge: 'Update as plans firm up',
 	edit: 'Edit',
+	declineAfter: 'I can’t make it after all',
 	surveyLink: 'Your availability survey answers',
 	errors: {
 		name: 'Tell us your name',

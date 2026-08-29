@@ -10,7 +10,7 @@ import { deadlineStatus } from '$lib/server/deadline';
 import { sendEmail } from '$lib/server/email';
 import { getRegistration, setDeclined, upsertConfirmed, type Registration } from '$lib/server/registration';
 import { confirmationEmail } from '$lib/server/registration-email';
-import { parseRegistrationForm, validateRegistration } from '$lib/registration';
+import { canConfirm, parseRegistrationForm, validateRegistration } from '$lib/registration';
 import {
 	backfillWaitlistHandle,
 	getWaitlistEntry,
@@ -345,7 +345,7 @@ export const actions: Actions = {
 
 			const existing = await getRegistration(db, locals.did);
 			const { closed } = deadlineStatus(platform?.env?.REG_DEADLINE);
-			if (closed && existing?.status !== 'confirmed') return fail(403, { regClosed: true });
+			if (!canConfirm(closed, existing)) return fail(403, { regClosed: true });
 
 			await upsertConfirmed(db, { did: locals.did, handle }, checked.value, {
 				waiver: waiver.version,

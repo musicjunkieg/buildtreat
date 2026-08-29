@@ -11,12 +11,16 @@
 		deadlineDisplay = null,
 		organizerAvatar = null,
 		busy = false,
+		surveyHref = null,
+		surveyLabel = null,
 		onconfirm
 	}: {
 		state: 'open' | 'declined' | 'closed';
 		deadlineDisplay?: string | null;
 		organizerAvatar?: string | null;
 		busy?: boolean;
+		surveyHref?: string | null;
+		surveyLabel?: string | null;
 		onconfirm: () => void;
 	} = $props();
 
@@ -53,11 +57,12 @@
 				{/if}
 			</li>
 		{/each}
+		<li><span class="fact-label">{registration.registerBy} {deadlineDisplay ?? 'Sept 7'}</span></li>
 	</ul>
 
 	{#if regState === 'closed'}
 		<p class="note" role="status">
-			<strong>{registration.closedLead}</strong>
+			<strong>{registration.closedLeadPrefix} {deadlineDisplay ?? 'Sept 7'}.</strong>
 			{registration.closedBody}
 			<a class="handle" href={retreat.organizerLink} target="_blank" rel="noopener">@{retreat.organizerHandle}</a>.
 		</p>
@@ -87,7 +92,10 @@
 		<span class="avatar" style:background-image={organizerAvatar ? `url(${organizerAvatar})` : undefined}></span>
 		<span class="author-text"
 			>{retreat.organizerLine}
-			<a class="handle" href={retreat.organizerLink} target="_blank" rel="noopener">@{retreat.organizerHandle}</a></span
+			<a class="handle" href={retreat.organizerLink} target="_blank" rel="noopener">@{retreat.organizerHandle}</a>
+			{#if surveyHref}
+				<a class="survey-link" href={surveyHref}>{surveyLabel}</a>
+			{/if}</span
 		>
 	</p>
 </div>
@@ -216,6 +224,18 @@
 	.author-text {
 		line-height: 1.35;
 		text-wrap: balance;
+	}
+
+	.survey-link {
+		display: block;
+		margin-top: 0.15rem;
+		color: var(--ink-45);
+		text-decoration: underline;
+		text-underline-offset: 3px;
+	}
+
+	.survey-link:hover {
+		color: var(--ink);
 	}
 
 	.avatar {

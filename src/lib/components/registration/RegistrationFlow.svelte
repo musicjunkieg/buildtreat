@@ -33,40 +33,26 @@
 				state={closedForNew ? 'closed' : declined ? 'declined' : 'open'}
 				deadlineDisplay={data.regDeadlineDisplay}
 				organizerAvatar={data.organizer.avatar}
+				surveyHref="/?survey"
+				surveyLabel={copy.surveyLink}
 				onconfirm={() => (editing = true)}
 			/>
 		</FeedItem>
 	</main>
-	<!-- Fixed-position only makes sense over the single-viewport announcement;
-	     the form/registered states are scrollable documents where a fixed
-	     link would float over their own content as the page scrolls. -->
-	<p class="survey-link"><a href="/?survey">{copy.surveyLink}</a></p>
 {:else if mode === 'form'}
 	<RegistrationForm {data} {form} oncancel={() => (editing = false)} />
 {:else}
-	<RegisteredSummary registration={reg!} regClosed={data.regClosed} onedit={() => (editing = true)} />
+	<RegisteredSummary
+		registration={reg!}
+		regClosed={data.regClosed}
+		organizerAvatar={data.organizer.avatar}
+		onedit={() => (editing = true)}
+	/>
 {/if}
 
 <style>
 	.reg-feed {
 		height: 100dvh;
 		overflow: hidden;
-	}
-
-	.survey-link {
-		position: fixed;
-		right: var(--gutter);
-		bottom: calc(var(--space-2) + env(safe-area-inset-bottom));
-		font-size: var(--text-author);
-	}
-
-	.survey-link a {
-		color: var(--ink-45);
-		text-decoration: underline;
-		text-underline-offset: 3px;
-	}
-
-	.survey-link a:hover {
-		color: var(--ink);
 	}
 </style>

@@ -70,7 +70,7 @@
 		}}
 	>
 		{#if closedRefusal}
-			<p class="flash" role="alert"><strong>{copy.closedLead}</strong> {copy.closedBody} <a class="handle" href={retreat.organizerLink} target="_blank" rel="noopener">@{retreat.organizerHandle}</a>.</p>
+			<p class="flash" role="alert"><strong>{copy.closedLeadPrefix} {data.regDeadlineDisplay ?? 'Sept 7'}.</strong> {copy.closedBody} <a class="handle" href={retreat.organizerLink} target="_blank" rel="noopener">@{retreat.organizerHandle}</a>.</p>
 		{:else if message}
 			<p class="flash" role="alert">{message}</p>
 		{/if}
@@ -130,7 +130,7 @@
 			<div class="sec-head"><span class="kicker">{copy.sections.accessibility.head}</span><span class="hint">{copy.sections.accessibility.hint}</span></div>
 			<label class="field">
 				<span class="kicker lbl">{copy.sections.accessibility.label}</span>
-				<textarea class="input textarea" name="accessibility" rows="2" placeholder={copy.sections.accessibility.placeholder}>{initial.accessibility}</textarea>
+				<textarea class="input textarea" name="accessibility" rows="3" placeholder={copy.sections.accessibility.placeholder}>{initial.accessibility}</textarea>
 			</label>
 		</section>
 
@@ -193,21 +193,21 @@
 
 <style>
 	.doc { position: relative; min-height: 100dvh; background: var(--ground); }
-	.band { position: relative; height: 34vh; min-height: 250px; overflow: hidden; }
+	.band { position: relative; height: 34vh; min-height: 300px; overflow: hidden; }
 	.band img { width: 100%; height: 100%; object-fit: cover; object-position: 50% 35%; }
 	.band .scrim { position: absolute; inset: 0; background: linear-gradient(to bottom, rgba(11,9,8,0.1) 0%, rgba(11,9,8,0.35) 45%, rgba(11,9,8,1) 100%); }
 	.band .grain { position: absolute; inset: 0; background: url('/media/grain.png'); background-size: 340px; opacity: 0.07; mix-blend-mode: overlay; pointer-events: none; }
 	.band-kicker { position: absolute; top: calc(var(--space-3) + env(safe-area-inset-top)); left: var(--gutter); }
-	.head { padding: 0 var(--gutter); margin-top: -3.2rem; position: relative; }
+	.head { padding: 0 var(--gutter); margin-top: -3.2rem; position: relative; max-width: 42rem; }
 	.title { font-size: clamp(2.2rem, 7.5vw, 3.6rem); }
 	.sub { margin-top: var(--space-2); color: var(--ink-70); font-size: 0.9375rem; line-height: 1.45; max-width: 34ch; }
-	.body { padding: var(--space-4) var(--gutter) calc(var(--space-5) + env(safe-area-inset-bottom)); display: grid; gap: var(--space-5); }
+	.body { padding: var(--space-4) var(--gutter) calc(var(--space-5) + env(safe-area-inset-bottom)); display: grid; gap: var(--space-5); max-width: 42rem; }
 	section { display: grid; gap: var(--space-3); }
 	.sec-head { display: flex; justify-content: space-between; align-items: baseline; padding-top: var(--space-2); border-top: var(--hairline); }
 	.hint { font-size: var(--text-author); color: var(--ink-45); }
 	.field { display: grid; gap: 0.35rem; }
 	.lbl { color: var(--ink-70); }
-	.input { width: 100%; background: transparent; border: 0; border-bottom: 1px solid var(--ink-45); border-radius: 0; padding: 0.55rem 0; font-size: 1.125rem; color: var(--ink); }
+	.input { width: 100%; background: transparent; border: 0; border-bottom: 1px solid var(--ink-45); border-radius: 0; padding: 0.55rem 0; font: inherit; font-size: 1.125rem; color: var(--ink); }
 	.input::placeholder { color: var(--ink-45); }
 	.input:focus { outline: none; border-bottom-color: var(--ink); }
 	.textarea { resize: none; line-height: 1.4; font-size: 1rem; }
