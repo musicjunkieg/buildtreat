@@ -104,7 +104,6 @@
 		</section>
 
 		<div class="foot">
-			<button class="pill ghost" onclick={onedit}>{copy.edit}</button>
 			{#if regClosed}<p class="hint">Registration is closed to new sign-ups, but yours stays editable.</p>{/if}
 			<form
 				method="POST"
@@ -130,7 +129,7 @@
 
 <style>
 	.doc { position: relative; min-height: 100dvh; background: var(--ground); }
-	.band { position: relative; height: 34vh; min-height: 250px; overflow: hidden; }
+	.band { position: relative; height: 34vh; min-height: 300px; overflow: hidden; }
 	.band img { width: 100%; height: 100%; object-fit: cover; object-position: 50% 35%; }
 	.band .scrim { position: absolute; inset: 0; background: linear-gradient(to bottom, rgba(11,9,8,0.1) 0%, rgba(11,9,8,0.35) 45%, rgba(11,9,8,1) 100%); }
 	.band .grain { position: absolute; inset: 0; background: url('/media/grain.png'); background-size: 340px; opacity: 0.07; mix-blend-mode: overlay; pointer-events: none; }

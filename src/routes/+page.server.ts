@@ -117,7 +117,7 @@ export const load: PageServerLoad = async ({ locals, platform, url, cookies }) =
 						emergencyPhone: '555-0101',
 						dietary: ['vegetarian', 'nut_allergy'],
 						dietaryOther: '',
-						accessibility: '',
+						accessibility: variant === 'declined' ? '' : 'Ground-floor room if possible',
 						notes: '',
 						travelArrival: 'Fri afternoon, PSP',
 						travelDeparture: '',
