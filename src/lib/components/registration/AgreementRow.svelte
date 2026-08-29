@@ -59,5 +59,8 @@
 	.ver { color: var(--ink-45); font-size: 0.75rem; letter-spacing: 0.1em; text-transform: uppercase; margin-left: 0.4rem; }
 	.error { margin-top: 0.4rem; font-size: var(--text-author); color: var(--ink); }
 	.body { margin: var(--space-2) 0 0 2.05rem; display: grid; gap: var(--space-2); color: var(--ink-70); font-size: 0.9375rem; line-height: 1.5; max-width: 60ch; }
+	.body[hidden] {
+		display: none;
+	}
 	.body-title { color: var(--ink); font-weight: 550; }
 </style>
