@@ -10,7 +10,7 @@
 	import type { Registration, RegistrationCounts, TravelStatus } from '$lib/server/registration';
 	import type { AllowlistEntry } from '$lib/server/organizer';
 
-	type RegistrationRow = Registration & { travel: TravelStatus; registered: boolean };
+	type RegistrationView = Registration & { travel: TravelStatus; registered: boolean };
 
 	let {
 		registrations,
@@ -19,7 +19,7 @@
 		deadlineDisplay,
 		closed
 	}: {
-		registrations: RegistrationRow[];
+		registrations: RegistrationView[];
 		counts: RegistrationCounts;
 		missing: AllowlistEntry[];
 		deadlineDisplay: string | null;
@@ -29,12 +29,12 @@
 	const confirmed = $derived(registrations.filter((r) => r.status === 'confirmed'));
 	const declined = $derived(registrations.filter((r) => r.status === 'declined'));
 
-	function diet(r: RegistrationRow): string {
+	function diet(r: RegistrationView): string {
 		const labels = r.dietary.map((id) => dietaryOptions.find((o) => o.id === id)?.label ?? id);
 		if (r.dietaryOther) labels.push(r.dietaryOther);
 		return labels.join(', ') || '—';
 	}
-	function mode(r: RegistrationRow): string {
+	function mode(r: RegistrationView): string {
 		return r.travelMode ? (travelModes.find((m) => m.id === r.travelMode)?.label ?? r.travelMode) : '—';
 	}
 	function when(iso: string): string {
@@ -64,7 +64,7 @@
 		<div class="table-wrap">
 			<table class="reg-table">
 				<thead>
-					<tr><th class="kicker">Who</th><th class="kicker">Food</th><th class="kicker">Access</th><th class="kicker">Travel</th><th class="kicker">Agreed</th><th class="kicker">Updated</th></tr>
+					<tr><th class="kicker" scope="col">Who</th><th class="kicker" scope="col">Food</th><th class="kicker" scope="col">Access</th><th class="kicker" scope="col">Travel</th><th class="kicker" scope="col">Agreed</th><th class="kicker" scope="col">Updated</th></tr>
 				</thead>
 				<tbody>
 					{#each confirmed as r (r.did)}
@@ -98,15 +98,15 @@
 </section>
 
 <style>
-	.section-head { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: var(--space-2); }
+	.section-head { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: var(--space-2); }
 	.section-title { font-size: clamp(1.35rem, 4.2vw, 1.9rem); font-weight: 650; letter-spacing: 0.01em; }
 	.section-sub { margin-top: 0.35rem; font-size: 0.8125rem; color: var(--ink-70); }
-	.section-empty { color: var(--ink-70); font-size: 0.9375rem; padding: 0.65rem 0; border-top: var(--hairline); border-bottom: var(--hairline); }
+	.section-empty { color: var(--ink-70); font-size: 0.9375rem; padding: var(--space-3) 0; border-top: var(--hairline); border-bottom: var(--hairline); }
 	.quiet { color: var(--ink-70); text-decoration: underline; text-underline-offset: 3px; }
 	.quiet:hover { color: var(--ink); }
 	.counts { margin: var(--space-3) 0; }
 	.counts .kicker { color: var(--ink-70); }
-	.counts .n { font-family: var(--font-display); font-weight: 700; font-size: 1.6rem; line-height: 0.92; font-variant-numeric: tabular-nums; }
+	.counts .n { font-family: var(--font-display); font-weight: 650; font-size: clamp(1.35rem, 4.2vw, 1.9rem); line-height: 0.92; font-variant-numeric: tabular-nums; }
 	.table-wrap { overflow-x: auto; }
 	.reg-table { width: 100%; border-collapse: collapse; font-size: 0.9375rem; }
 	.reg-table th { text-align: left; padding: 0.5rem 0.6rem 0.5rem 0; border-bottom: var(--hairline); color: var(--ink-70); }
