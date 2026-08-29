@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>reg-ann-b — Four Days, Filled</title>
+<link rel="stylesheet" href="reg-base.css" />
+<style>
+	body { height: 100dvh; overflow: hidden; }
+	.item { position: relative; height: 100dvh; display: flex; flex-direction: column; padding: calc(var(--space-3) + env(safe-area-inset-top)) var(--gutter) calc(var(--space-3) + env(safe-area-inset-bottom)); }
+	.photo { position: absolute; inset: 0; z-index: -2; }
+	.photo img { width: 100%; height: 100%; object-fit: cover; object-position: 50% 30%; }
+	.scrim { position: absolute; inset: 0; z-index: -1; background: linear-gradient(to bottom, rgba(11,9,8,0) 0%, rgba(11,9,8,0.2) 40%, rgba(11,9,8,0.88) 62%, rgba(11,9,8,0.98) 100%); }
+	.breathe { flex: 1 1 auto; min-height: 10vh; }
+	.ack { font-size: var(--text-ack); line-height: 1.4; margin-bottom: var(--space-3); max-width: 22ch; }
+	.month { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: var(--space-2); }
+	.month .display { font-size: var(--title); }
+	.week { display: grid; grid-template-columns: repeat(7, 1fr); gap: 3px; }
+	.dow { font-size: 0.625rem; letter-spacing: 0.12em; font-weight: 500; text-align: center; color: var(--ink-70); padding-bottom: 0.25rem; }
+	.day { aspect-ratio: 1; border-radius: 6px; border: 1px solid rgba(255,255,255,0.07); display: grid; place-items: center; font-size: 0.875rem; font-weight: 500; font-variant-numeric: tabular-nums; color: var(--ink-70); }
+	.day.on { background: var(--ink); color: var(--on-pill); border-color: var(--ink); }
+	.day.half { background: linear-gradient(to bottom, var(--ink) 50%, var(--ink-12) 50%); color: var(--on-pill); border-color: transparent; }
+	.day.out { color: var(--ink-35); border-color: transparent; }
+	.legend { font-size: var(--text-author); color: var(--ink-70); margin-top: var(--space-2); }
+	.ledger { margin: var(--space-3) 0; }
+	.actions { display: grid; gap: var(--space-2); justify-items: center; }
+</style>
+</head>
+<body class="grain grain-photo">
+<section class="item">
+	<div class="photo"><img src="../../static/media/hero-portrait.png" alt="" /></div>
+	<div class="scrim"></div>
+	<p class="kicker">The date is set</p>
+	<div class="breathe"></div>
+	<p class="ack">You helped pick the days. Here they are.</p>
+	<div class="month"><h1 class="display">December.</h1><span class="kicker">Fri – Mon</span></div>
+	<div class="week">
+		<span class="dow">M</span><span class="dow">T</span><span class="dow">W</span><span class="dow">T</span><span class="dow">F</span><span class="dow">S</span><span class="dow">S</span>
+		<span class="day out">30</span><span class="day">1</span><span class="day">2</span><span class="day">3</span><span class="day on">4</span><span class="day on">5</span><span class="day on">6</span>
+		<span class="day half">7</span><span class="day">8</span><span class="day">9</span><span class="day">10</span><span class="day">11</span><span class="day">12</span><span class="day">13</span>
+	</div>
+	<p class="legend">Arrive Friday, leave Monday morning.</p>
+	<ul class="ledger">
+		<li><span>Palm Springs or Coachella Valley</span></li>
+		<li><span class="muted">Venue locks with the headcount</span></li>
+		<li><span>Register by Sept 7</span></li>
+	</ul>
+	<div class="actions">
+		<button class="pill">I'm in</button>
+		<a class="quiet" href="#">I can't make it</a>
+	</div>
+</section>
+</body>
+</html>

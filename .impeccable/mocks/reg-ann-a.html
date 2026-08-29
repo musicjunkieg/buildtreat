@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>reg-ann-a — The Date, Stacked</title>
+<link rel="stylesheet" href="reg-base.css" />
+<style>
+	body { height: 100dvh; overflow: hidden; }
+	.item { position: relative; height: 100dvh; display: flex; flex-direction: column; padding: calc(var(--space-3) + env(safe-area-inset-top)) var(--gutter) calc(var(--space-3) + env(safe-area-inset-bottom)); }
+	.photo { position: absolute; inset: 0; z-index: -2; }
+	.photo img { width: 100%; height: 100%; object-fit: cover; object-position: 50% 30%; }
+	.scrim { position: absolute; inset: 0; z-index: -1; background: linear-gradient(to bottom, rgba(11,9,8,0) 0%, rgba(11,9,8,0.15) 38%, rgba(11,9,8,0.82) 62%, rgba(11,9,8,0.97) 100%); }
+	.breathe { flex: 1 1 auto; min-height: 10vh; }
+	.ack { font-size: var(--text-ack); line-height: 1.4; margin-bottom: var(--space-2); max-width: 20ch; }
+	.l1 { font-size: var(--display-l1); }
+	.l2 { font-size: var(--display-l2); }
+	.ledger { margin: var(--space-3) 0 var(--space-3); }
+	.actions { display: grid; gap: var(--space-2); justify-items: center; }
+	.author { margin-top: var(--space-3); }
+</style>
+</head>
+<body class="grain grain-photo">
+<section class="item">
+	<div class="photo"><img src="../../static/media/hero-portrait.png" alt="" /></div>
+	<div class="scrim"></div>
+	<p class="kicker">The date is set</p>
+	<div class="breathe"></div>
+	<p class="ack">You helped pick the days. Here they are.</p>
+	<h1 class="display"><span class="l1">December</span><br /><span class="l2">4–7, 2026.</span></h1>
+	<ul class="ledger">
+		<li><span>Palm Springs or Coachella Valley</span></li>
+		<li><span class="muted">Venue locks with the headcount</span></li>
+		<li><span>Lodging &amp; food covered</span><span class="muted">Bluesky</span></li>
+		<li><span>Register by Sept 7</span></li>
+	</ul>
+	<div class="actions">
+		<button class="pill">I'm in</button>
+		<a class="quiet" href="#">I can't make it</a>
+	</div>
+	<p class="author"><span class="avatar"></span> organized by @chaosgreml.in</p>
+</section>
+</body>
+</html>

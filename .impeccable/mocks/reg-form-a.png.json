@@ -1,0 +1,8 @@
+{
+  "prompt": "Sectioned Ledger \u2014 registration form on flat grained ground. 34vh photo band with scrim into ground, YOU'RE IN. title + 34ch sub, six hairline-topped kicker sections (Contact, Food chips, Emergency, Accessibility, Anything else, Travel with optional-now hint) then Agreements as ring rows with inline read links + version, pill Register, author line. Full page 393 wide.",
+  "createdAt": "2026-08-29T20:14:18.293257+00:00",
+  "tool": "coded-comp (HTML/CSS in project tokens, screenshot via scripts/shot.mjs)",
+  "source": "reg-form-a.html",
+  "approved": true,
+  "approvedBy": "Bryan, 2026-08-29 (AskUserQuestion comp gate)"
+}
