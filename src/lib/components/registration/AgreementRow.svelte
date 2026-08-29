@@ -17,14 +17,18 @@
 		error?: string | null;
 	} = $props();
 
-	let on = $state(checked);
+	let on = $state(false);
 	let open = $state(false);
 	const id = $derived(`${name}-text`);
+
+	$effect(() => {
+		on = checked;
+	});
 </script>
 
 <li class="row" class:on>
 	<label class="check">
-		<input type="checkbox" {name} bind:checked={on} aria-describedby={id} aria-invalid={error ? 'true' : undefined} />
+		<input type="checkbox" {name} bind:checked={on} required aria-describedby={id} aria-invalid={error ? 'true' : undefined} />
 		<span class="ring" aria-hidden="true"></span>
 		<span class="text">
 			{label}
