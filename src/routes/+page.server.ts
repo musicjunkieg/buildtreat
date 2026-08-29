@@ -4,8 +4,13 @@ import { dev } from '$app/environment';
 import { loadBskyProfile } from '@svelte-atproto/oauth/bsky';
 import { actorToDid } from '@svelte-atproto/oauth/helper';
 import { cloudflareKV } from '@svelte-atproto/oauth/server/stores/cloudflare';
-import { retreat } from '$lib/content';
+import { codeOfConduct, retreat, waiver } from '$lib/content';
 import { checkAllowlist, getResponse } from '$lib/server/db';
+import { deadlineStatus } from '$lib/server/deadline';
+import { sendEmail } from '$lib/server/email';
+import { getRegistration, setDeclined, upsertConfirmed, type Registration } from '$lib/server/registration';
+import { confirmationEmail } from '$lib/server/registration-email';
+import { parseRegistrationForm, validateRegistration } from '$lib/registration';
 import {
 	backfillWaitlistHandle,
 	getWaitlistEntry,
@@ -78,6 +83,13 @@ export const load: PageServerLoad = async ({ locals, platform, url, cookies }) =
 	// A signed-in respondent gets a second look below for a late pass.
 	const { deadline, closed } = await surveyGate(db, platform?.env?.DEADLINE, null);
 
+	// Registration era: its own deadline, same parsing as the survey's.
+	const reg = deadlineStatus(platform?.env?.REG_DEADLINE);
+	const regBase = { regDeadline: reg.deadline, regDeadlineDisplay: reg.display, regClosed: reg.closed };
+	// `?survey` reopens the read-only survey feed for people who want to see
+	// what they answered; everything else lands on registration.
+	const wantsSurvey = url.searchParams.has('survey');
+
 	const profileCache = platform?.env?.PROFILE_CACHE
 		? cloudflareKV(platform.env.PROFILE_CACHE, { ttl: 3600 })
 		: undefined;
@@ -91,6 +103,33 @@ export const load: PageServerLoad = async ({ locals, platform, url, cookies }) =
 	if (dev && url.searchParams.has('preview')) {
 		const variant = url.searchParams.get('preview');
 		const uninvited = variant === 'notinvited' || variant === 'member';
+		const regVariant = variant === 'register' || variant === 'registered' || variant === 'declined';
+		const previewReg: Registration | null =
+			variant === 'registered' || variant === 'declined'
+				? {
+						did: 'did:plc:preview',
+						handle: 'preview.bsky.social',
+						name: 'Preview Builder',
+						email: 'preview@example.com',
+						status: variant === 'declined' ? 'declined' : 'confirmed',
+						phone: '555-0100',
+						emergencyName: 'Sam Preview',
+						emergencyPhone: '555-0101',
+						dietary: ['vegetarian', 'nut_allergy'],
+						dietaryOther: '',
+						accessibility: '',
+						notes: '',
+						travelArrival: 'Fri afternoon, PSP',
+						travelDeparture: '',
+						travelMode: 'flying',
+						travelDetails: '',
+						waiverVersion: variant === 'declined' ? null : 'v1',
+						cocVersion: variant === 'declined' ? null : 'v1',
+						agreedAt: variant === 'declined' ? null : '2026-08-30T18:00:00Z',
+						createdAt: '2026-08-30T18:00:00Z',
+						updatedAt: '2026-08-30T18:00:00Z'
+					}
+				: null;
 		return {
 			user: {
 				did: 'did:plc:preview',
@@ -107,7 +146,11 @@ export const load: PageServerLoad = async ({ locals, platform, url, cookies }) =
 			deadline,
 			closed,
 			knownUser,
-			authError
+			authError,
+			...regBase,
+			registrationMode: regVariant,
+			registration: previewReg,
+			prefill: { name: 'Preview Builder', email: 'preview@example.com' }
 		};
 	}
 
@@ -123,7 +166,11 @@ export const load: PageServerLoad = async ({ locals, platform, url, cookies }) =
 			deadline,
 			closed,
 			knownUser,
-			authError
+			authError,
+			...regBase,
+			registrationMode: false,
+			registration: null as Registration | null,
+			prefill: { name: '', email: '' }
 		};
 	}
 
@@ -188,6 +235,15 @@ export const load: PageServerLoad = async ({ locals, platform, url, cookies }) =
 				})
 			: null;
 
+	// Registration row for the front door (allowed users only).
+	const registration =
+		db && allowed
+			? await getRegistration(db, locals.did).catch((e) => {
+					console.error('registration load failed for', logDid(locals.did), e);
+					return null;
+				})
+			: null;
+
 	// Uninvited visitors: are they already on the waitlist? Drives the
 	// invitation-vs-confirmation state on the hero. (Promoted people are
 	// `allowed` and never reach this branch.)
@@ -223,7 +279,14 @@ export const load: PageServerLoad = async ({ locals, platform, url, cookies }) =
 		deadline,
 		closed: closedForUser,
 		knownUser,
-		authError
+		authError,
+		...regBase,
+		registrationMode: allowed && !wantsSurvey,
+		registration,
+		prefill: {
+			name: stored?.draft.name ?? user.displayName ?? '',
+			email: stored?.draft.email ?? ''
+		}
 	};
 };
 
@@ -256,5 +319,81 @@ export const actions: Actions = {
 			return fail(500, { waitlistError: 'Something went wrong adding you — please try again.' });
 		}
 		return { joined: true };
+	},
+
+	// Confirm attendance + the full form. Deadline rule: a NEW confirmation
+	// is refused after REG_DEADLINE; an existing confirmed row may always be
+	// edited (travel firms up late by design).
+	register: async ({ locals, platform, request }) => {
+		if (!locals.did) return fail(401, { regMessage: 'Sign in first.' });
+		const db = platform?.env?.DB;
+		if (!db) return fail(503, { regMessage: 'Storage is not available right now — try again shortly.' });
+
+		const input = parseRegistrationForm(await request.formData());
+		const checked = validateRegistration(input);
+		if (!checked.ok) return fail(400, { regErrors: checked.errors, regValues: input });
+
+		const profileCache = platform?.env?.PROFILE_CACHE
+			? cloudflareKV(platform.env.PROFILE_CACHE, { ttl: 3600 })
+			: undefined;
+		const profile = await loadBskyProfile(locals.did, { cache: profileCache }).catch(() => undefined);
+		const handle = profile?.handle ?? null;
+
+		try {
+			const allowed = await checkAllowlist(db, { did: locals.did, handle });
+			if (!allowed) return fail(403, { regMessage: 'Registration is for invited builders.' });
+
+			const existing = await getRegistration(db, locals.did);
+			const { closed } = deadlineStatus(platform?.env?.REG_DEADLINE);
+			if (closed && existing?.status !== 'confirmed') return fail(403, { regClosed: true });
+
+			await upsertConfirmed(db, { did: locals.did, handle }, checked.value, {
+				waiver: waiver.version,
+				coc: codeOfConduct.version
+			});
+
+			// Best-effort confirmation: never blocks the registration.
+			if (!existing || existing.status !== 'confirmed') {
+				const saved = await getRegistration(db, locals.did);
+				if (saved) {
+					const mail = confirmationEmail(saved);
+					const result = await sendEmail(platform?.env ?? {}, { to: saved.email, ...mail });
+					if (!result.ok) console.error('registration confirmation email failed', result.code, result.detail ?? '');
+				}
+			}
+		} catch (e) {
+			console.error('registration save failed for', logDid(locals.did), e);
+			return fail(500, { regMessage: 'Something went wrong saving your registration — please try again.' });
+		}
+		return { registered: true };
+	},
+
+	// One tap, no form. Always allowed, before or after the deadline.
+	decline: async ({ locals, platform }) => {
+		if (!locals.did) return fail(401, { regMessage: 'Sign in first.' });
+		const db = platform?.env?.DB;
+		if (!db) return fail(503, { regMessage: 'Storage is not available right now — try again shortly.' });
+
+		const profileCache = platform?.env?.PROFILE_CACHE
+			? cloudflareKV(platform.env.PROFILE_CACHE, { ttl: 3600 })
+			: undefined;
+		const profile = await loadBskyProfile(locals.did, { cache: profileCache }).catch(() => undefined);
+		const handle = profile?.handle ?? null;
+
+		try {
+			const allowed = await checkAllowlist(db, { did: locals.did, handle });
+			if (!allowed) return fail(403, { regMessage: 'Registration is for invited builders.' });
+			const stored = await getResponse(db, locals.did).catch(() => null);
+			await setDeclined(db, {
+				did: locals.did,
+				handle,
+				name: stored?.draft.name ?? profile?.displayName ?? handle ?? locals.did,
+				email: stored?.draft.email ?? ''
+			});
+		} catch (e) {
+			console.error('registration decline failed for', logDid(locals.did), e);
+			return fail(500, { regMessage: 'Something went wrong — please try again.' });
+		}
+		return { declined: true };
 	}
 };
