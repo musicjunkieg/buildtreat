@@ -1,0 +1,17 @@
+{
+  "detector": {
+    "ignoreRules": [],
+    "ignoreFiles": [],
+    "ignoreValues": [
+      {
+        "rule": "flat-type-hierarchy",
+        "value": "*",
+        "files": [
+          ".impeccable/mocks/reg-form-c.html"
+        ],
+        "createdAt": "2026-08-29T21:19:26.327Z",
+        "reason": "Claude: unapproved alternate comp (Bryan approved reg-form-a at the 2026-08-29 comp gate); kept as source for reference only, never shipped"
+      }
+    ]
+  }
+}
