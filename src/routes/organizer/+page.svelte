@@ -6,6 +6,7 @@
 	import Icon from '$lib/components/Icon.svelte';
 	import EmailPanel from '$lib/components/organizer/EmailPanel.svelte';
 	import Heatmap from '$lib/components/organizer/Heatmap.svelte';
+	import RegistrationsPanel from '$lib/components/organizer/RegistrationsPanel.svelte';
 	import ResponsesTable from '$lib/components/organizer/ResponsesTable.svelte';
 	import {
 		bestWindows,
@@ -612,6 +613,14 @@ finish review, the verdict, and DESIGN.md.
 					{/if}
 				{/if}
 			</section>
+
+			<RegistrationsPanel
+				registrations={data.registrations}
+				counts={data.regCounts}
+				missing={data.regMissing}
+				deadlineDisplay={data.regDeadlineDisplay}
+				closed={data.regClosed}
+			/>
 
 			<EmailPanel
 				configured={data.emailConfigured}
