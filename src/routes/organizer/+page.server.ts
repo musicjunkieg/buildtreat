@@ -82,6 +82,8 @@ export interface OrganizerPageData {
 	anchors: string[];
 	/** True when the anchor read failed — mutations are disabled for this load. */
 	anchorsUnavailable: boolean;
+	/** True when the registrations read failed — the panel shows an error, not an empty list. */
+	registrationsUnavailable: boolean;
 	/** False until COMAIL_API_KEY + vars are set — renders setup hints. */
 	emailConfigured: boolean;
 	broadcasts: BroadcastView[];
@@ -104,6 +106,7 @@ const EMPTY: Omit<OrganizerPageData, 'authState'> = {
 	deadlinePassed: false,
 	anchors: [],
 	anchorsUnavailable: false,
+	registrationsUnavailable: false,
 	emailConfigured: false,
 	broadcasts: [],
 	registrations: [],
@@ -153,6 +156,10 @@ export const load: PageServerLoad = async ({ locals, platform, url }): Promise<O
 	// silently delete rows that were never displayed. The flag disables all
 	// anchor mutations for the rest of the page load.
 	let anchorsUnavailable = false;
+	// A failed registration read must not look like "no registrations": the
+	// panel would then render an empty ledger instead of surfacing the
+	// failure. The flag switches the panel to an error state instead.
+	let registrationsUnavailable = false;
 	const [responses, allowlist, latePasses, waitlist, reopened, anchors, broadcasts, registrations] =
 		await Promise.all([
 			getAllResponses(db),
@@ -171,6 +178,7 @@ export const load: PageServerLoad = async ({ locals, platform, url }): Promise<O
 			}),
 			listRegistrations(db).catch((e) => {
 				console.error('registration list failed', e);
+				registrationsUnavailable = true;
 				return [] as Registration[];
 			})
 		]);
@@ -188,6 +196,7 @@ export const load: PageServerLoad = async ({ locals, platform, url }): Promise<O
 		deadlinePassed: base.closed,
 		anchors,
 		anchorsUnavailable,
+		registrationsUnavailable,
 		emailConfigured: emailConfigured(platform?.env ?? {}),
 		broadcasts,
 		registrations: registrations.map(toRegistrationView),
@@ -529,6 +538,7 @@ function previewData(): Omit<OrganizerPageData, 'authState' | 'preview' | 'deadl
 		deadlinePassed: false,
 		anchors: ['did:plc:preview2', 'did:plc:preview5'],
 		anchorsUnavailable: false,
+		registrationsUnavailable: false,
 		emailConfigured: true,
 		regDeadlineDisplay: 'September 7',
 		regClosed: false,

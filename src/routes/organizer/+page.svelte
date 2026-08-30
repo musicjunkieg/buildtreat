@@ -620,6 +620,7 @@ finish review, the verdict, and DESIGN.md.
 				missing={data.regMissing}
 				deadlineDisplay={data.regDeadlineDisplay}
 				closed={data.regClosed}
+				unavailable={data.registrationsUnavailable}
 			/>
 
 			<EmailPanel
@@ -1202,7 +1203,7 @@ finish review, the verdict, and DESIGN.md.
 		height: 0.6rem;
 		flex-shrink: 0;
 		border-radius: 999px;
-		border: 1.5px solid currentColor;
+		border: 1.5px solid currentcolor;
 		background: var(--ink);
 	}
 
@@ -1274,7 +1275,7 @@ finish review, the verdict, and DESIGN.md.
 		width: 0.6rem;
 		height: 0.6rem;
 		border-radius: 999px;
-		border: 1.5px solid currentColor;
+		border: 1.5px solid currentcolor;
 		align-self: center;
 	}
 

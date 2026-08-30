@@ -7,11 +7,13 @@
 		registration: reg,
 		regClosed,
 		organizerAvatar = null,
+		message = null,
 		onedit
 	}: {
 		registration: Registration;
 		regClosed: boolean;
 		organizerAvatar?: string | null;
+		message?: string | null;
 		onedit: () => void;
 	} = $props();
 
@@ -118,6 +120,7 @@
 			>
 				<button class="quiet" type="submit" disabled={declining}>{copy.declineAfter}</button>
 			</form>
+			{#if message}<p class="error" role="alert">{message}</p>{/if}
 		</div>
 
 		<p class="author">
@@ -154,6 +157,7 @@
 	.foot .hint { color: var(--ink-70); }
 	.quiet { font-size: var(--text-author); color: var(--ink-70); text-decoration: underline; text-underline-offset: 3px; }
 	.quiet:disabled { opacity: 0.55; }
+	.error { font-size: var(--text-author); color: var(--ink); }
 	.author { display: flex; align-items: center; gap: 0.6rem; font-size: var(--text-author); color: var(--ink-70); }
 	.avatar { width: 1.9rem; height: 1.9rem; border-radius: 999px; border: 1px solid var(--ink-45); background: var(--ink-12) center/cover no-repeat; }
 	.handle { color: var(--ink); font-weight: 550; text-decoration: underline; text-underline-offset: 3px; }

@@ -17,13 +17,15 @@
 		counts,
 		missing,
 		deadlineDisplay,
-		closed
+		closed,
+		unavailable = false
 	}: {
 		registrations: RegistrationView[];
 		counts: RegistrationCounts;
 		missing: AllowlistEntry[];
 		deadlineDisplay: string | null;
 		closed: boolean;
+		unavailable?: boolean;
 	} = $props();
 
 	const confirmed = $derived(registrations.filter((r) => r.status === 'confirmed'));
@@ -43,57 +45,63 @@
 </script>
 
 <section aria-labelledby="reg-head">
-	<div class="section-head">
-		<h2 id="reg-head" class="display section-title">Registrations</h2>
-		<p class="section-sub">
-			{#if closed}Closed {deadlineDisplay}{:else if deadlineDisplay}Register by {deadlineDisplay}{/if}
-			· <a class="quiet" href="/organizer/registrations.csv">Download CSV</a>
-		</p>
-	</div>
-
-	<ul class="ledger counts">
-		<li><span class="kicker">Confirmed</span><span class="n">{counts.confirmed}</span></li>
-		<li><span class="kicker">Fully registered</span><span class="n">{counts.registered}</span></li>
-		<li><span class="kicker">Declined</span><span class="n">{counts.declined}</span></li>
-		<li><span class="kicker">No response yet</span><span class="n">{counts.noResponse}</span></li>
-	</ul>
-
-	{#if confirmed.length === 0}
-		<p class="section-empty">No one has registered yet.</p>
-	{:else}
-		<div class="table-wrap">
-			<table class="reg-table">
-				<thead>
-					<tr><th class="kicker" scope="col">Who</th><th class="kicker" scope="col">Food</th><th class="kicker" scope="col">Access</th><th class="kicker" scope="col">Travel</th><th class="kicker" scope="col">Agreed</th><th class="kicker" scope="col">Updated</th></tr>
-				</thead>
-				<tbody>
-					{#each confirmed as r (r.did)}
-						<tr>
-							<td><strong>{r.name}</strong><br /><span class="dim">{r.handle ? `@${r.handle}` : r.did.slice(0, 16)}</span></td>
-							<td>{diet(r)}</td>
-							<td class:dim={!r.accessibility}>{r.accessibility || '—'}</td>
-							<td><span class="kicker status-{r.travel}">{r.travel}</span><br /><span class="dim">{mode(r)}{r.travelArrival ? ` · ${r.travelArrival}` : ''}{r.travelDeparture ? ` → ${r.travelDeparture}` : ''}</span></td>
-							<td>{r.registered ? `${r.waiverVersion} / ${r.cocVersion}` : '—'}</td>
-							<td class="dim">{when(r.updatedAt)}</td>
-						</tr>
-					{/each}
-				</tbody>
-			</table>
+	{#if !unavailable}
+		<div class="section-head">
+			<h2 id="reg-head" class="display section-title">Registrations</h2>
+			<p class="section-sub">
+				{#if closed}Closed {deadlineDisplay}{:else if deadlineDisplay}Register by {deadlineDisplay}{/if}
+				· <a class="quiet" href="/organizer/registrations.csv">Download CSV</a>
+			</p>
 		</div>
 	{/if}
 
-	{#if declined.length}
-		<details class="sub">
-			<summary class="kicker">Declined · {declined.length}</summary>
-			<ul class="plain">{#each declined as r (r.did)}<li>{r.name} <span class="dim">{r.handle ? `@${r.handle}` : ''}</span></li>{/each}</ul>
-		</details>
-	{/if}
+	{#if unavailable}
+		<p class="section-empty" role="alert">Registrations couldn’t be loaded — storage read failed. Refresh to try again.</p>
+	{:else}
+		<ul class="ledger counts">
+			<li><span class="kicker">Confirmed</span><span class="n">{counts.confirmed}</span></li>
+			<li><span class="kicker">Fully registered</span><span class="n">{counts.registered}</span></li>
+			<li><span class="kicker">Declined</span><span class="n">{counts.declined}</span></li>
+			<li><span class="kicker">No response yet</span><span class="n">{counts.noResponse}</span></li>
+		</ul>
 
-	{#if missing.length}
-		<details class="sub">
-			<summary class="kicker">No response yet · {missing.length}</summary>
-			<ul class="plain">{#each missing as m (m.handle)}<li>@{m.handle}</li>{/each}</ul>
-		</details>
+		{#if confirmed.length === 0}
+			<p class="section-empty">No one has registered yet.</p>
+		{:else}
+			<div class="table-wrap">
+				<table class="reg-table">
+					<thead>
+						<tr><th class="kicker" scope="col">Who</th><th class="kicker" scope="col">Food</th><th class="kicker" scope="col">Access</th><th class="kicker" scope="col">Travel</th><th class="kicker" scope="col">Agreed</th><th class="kicker" scope="col">Updated</th></tr>
+					</thead>
+					<tbody>
+						{#each confirmed as r (r.did)}
+							<tr>
+								<td><strong>{r.name}</strong><br /><span class="dim">{r.handle ? `@${r.handle}` : r.did.slice(0, 16)}</span></td>
+								<td>{diet(r)}</td>
+								<td class:dim={!r.accessibility}>{r.accessibility || '—'}</td>
+								<td><span class="kicker status-{r.travel}">{r.travel}</span><br /><span class="dim">{mode(r)}{r.travelArrival ? ` · ${r.travelArrival}` : ''}{r.travelDeparture ? ` → ${r.travelDeparture}` : ''}</span></td>
+								<td>{r.registered ? `${r.waiverVersion} / ${r.cocVersion}` : '—'}</td>
+								<td class="dim">{when(r.updatedAt)}</td>
+							</tr>
+						{/each}
+					</tbody>
+				</table>
+			</div>
+		{/if}
+
+		{#if declined.length}
+			<details class="sub">
+				<summary class="kicker">Declined · {declined.length}</summary>
+				<ul class="plain">{#each declined as r (r.did)}<li>{r.name} <span class="dim">{r.handle ? `@${r.handle}` : ''}</span></li>{/each}</ul>
+			</details>
+		{/if}
+
+		{#if missing.length}
+			<details class="sub">
+				<summary class="kicker">No response yet · {missing.length}</summary>
+				<ul class="plain">{#each missing as m (m.handle)}<li>@{m.handle}</li>{/each}</ul>
+			</details>
+		{/if}
 	{/if}
 </section>
 

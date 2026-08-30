@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "exported_at": "2026-08-29T23:17:37.581634+00:00",
+  "exported_at": "2026-08-30T00:03:36.098255+00:00",
   "issues": [
     {
       "id": 101,
@@ -86,6 +86,16 @@
         {
           "content": "[action] Registration SDD: tasks 1-8 complete (HEAD be0795c), verification green (31 tests, check, build, detector). Migration 0006 applied to prod. Finish review (impeccable) + whole-branch code review both in flight; then fix wave → PR.",
           "created_at": "2026-08-29T23:03:33.033374+00:00",
+          "kind": "note"
+        },
+        {
+          "content": "[action] Registration flow complete: PR #25 open (feat/registration @ 05fbf80), finish review SHIP, code review resolved, migration 0006 in prod. Follow-ups #98-#101.",
+          "created_at": "2026-08-29T23:18:52.926346+00:00",
+          "kind": "note"
+        },
+        {
+          "content": "PR #25 open at 05fbf80. Finish review disposition SHIP; code review 'with fixes' resolved. Migration 0006 applied to prod pre-merge. Follow-ups #98-#101 filed.",
+          "created_at": "2026-08-29T23:18:52.932730+00:00",
           "kind": "note"
         }
       ],

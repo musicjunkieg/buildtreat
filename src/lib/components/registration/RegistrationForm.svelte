@@ -28,8 +28,8 @@
 						travelDeparture: stored.travelDeparture,
 						travelMode: stored.travelMode,
 						travelDetails: stored.travelDetails,
-						agreeWaiver: stored.agreedAt !== null,
-						agreeCoc: stored.agreedAt !== null
+						agreeWaiver: stored.agreedAt !== null && stored.waiverVersion === waiver.version,
+						agreeCoc: stored.agreedAt !== null && stored.cocVersion === codeOfConduct.version
 					}
 				: { ...emptyRegistration(), name: data.prefill.name, email: data.prefill.email })
 	);

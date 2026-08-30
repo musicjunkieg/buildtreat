@@ -6,7 +6,7 @@ export function confirmationEmail(reg: Registration): { subject: string; text: s
 	const first = reg.name.split(' ')[0] || reg.name;
 	const mode = reg.travelMode ? travelModes.find((m) => m.id === reg.travelMode)?.label : null;
 	const travel =
-		mode || reg.travelArrival || reg.travelDeparture
+		mode || reg.travelArrival || reg.travelDeparture || reg.travelDetails
 			? [
 					'Your travel so far:',
 					mode ? `  Getting there: ${mode}` : null,

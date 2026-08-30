@@ -20,6 +20,10 @@
 		editing ? 'form' : registered ? 'registered' : 'announce'
 	);
 
+	// The ?/decline action can fail(*, { regMessage }) from either the
+	// announcement or the registered-summary decline form.
+	const regMessage = $derived(form && 'regMessage' in form ? (form.regMessage as string) : null);
+
 	// A successful save closes the form; the load re-runs with the new row.
 	$effect(() => {
 		if (form && 'registered' in form && form.registered) editing = false;
@@ -35,6 +39,7 @@
 				organizerAvatar={data.organizer.avatar}
 				surveyHref="/?survey"
 				surveyLabel={copy.surveyLink}
+				message={regMessage}
 				onconfirm={() => (editing = true)}
 			/>
 		</FeedItem>
@@ -46,6 +51,7 @@
 		registration={reg!}
 		regClosed={data.regClosed}
 		organizerAvatar={data.organizer.avatar}
+		message={regMessage}
 		onedit={() => (editing = true)}
 	/>
 {/if}

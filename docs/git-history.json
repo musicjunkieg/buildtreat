@@ -1,5 +1,13 @@
 [
   {
+    "hash": "05fbf8078d0e145b51d930a8bb4c6304f317b499",
+    "short_hash": "05fbf80",
+    "author": "Bryan Guffey",
+    "date": "2026-08-29T16:17:37-07:00",
+    "message": "fix: single Edit per section on the registered summary; band min-height parity; preview accessibility text\n\nCo-Authored-By: Claude Fable 5 <noreply@anthropic.com>\nClaude-Session: https://claude.ai/code/session_01RwSQjGei7n9wVRMcqcMAga",
+    "files_changed": 3
+  },
+  {
     "hash": "ab82711c9c8ae61fe023bdc62489ff3fa66cd52e",
     "short_hash": "ab82711",
     "author": "chaos gremlin",

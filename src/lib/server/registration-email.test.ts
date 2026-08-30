@@ -25,4 +25,10 @@ describe('confirmationEmail', () => {
 		expect(text).toContain('Fri 3pm');
 		expect(text).toContain('Mon 9am');
 	});
+
+	it('treats travelDetails-only as travel present, skipping the nudge', () => {
+		const { text } = confirmationEmail({ ...base, travelDetails: 'AS 1234' });
+		expect(text).toContain('AS 1234');
+		expect(text).not.toContain('haven’t added travel');
+	});
 });

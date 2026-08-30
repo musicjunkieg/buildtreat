@@ -83,7 +83,7 @@ button { background: none; border: none; cursor: pointer; }
 .agree { list-style: none; }
 .agree > li { display: flex; align-items: center; gap: 0.9rem; padding: 0.85rem 0; border-top: var(--hairline); }
 .agree > li:last-child { border-bottom: var(--hairline); }
-.ring { flex: none; width: 1.15rem; height: 1.15rem; border-radius: 999px; border: 1.75px solid currentColor; }
+.ring { flex: none; width: 1.15rem; height: 1.15rem; border-radius: 999px; border: 1.75px solid currentcolor; }
 .ring.on { background: var(--ink); box-shadow: inset 0 0 0 3px var(--ground); }
 .agree .text { font-size: 0.9375rem; line-height: 1.35; }
 .agree .text a { color: var(--ink-70); text-decoration: underline; text-underline-offset: 3px; font-size: 0.8125rem; }

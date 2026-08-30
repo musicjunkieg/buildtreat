@@ -13,6 +13,7 @@
 		busy = false,
 		surveyHref = null,
 		surveyLabel = null,
+		message = null,
 		onconfirm
 	}: {
 		state: 'open' | 'declined' | 'closed';
@@ -21,6 +22,7 @@
 		busy?: boolean;
 		surveyHref?: string | null;
 		surveyLabel?: string | null;
+		message?: string | null;
 		onconfirm: () => void;
 	} = $props();
 
@@ -85,6 +87,7 @@
 			>
 				<button class="quiet" type="submit" disabled={declining || busy}>{registration.decline}</button>
 			</form>
+			{#if message}<p class="error" role="alert">{message}</p>{/if}
 		</div>
 	{/if}
 
@@ -190,6 +193,11 @@
 
 	.quiet:disabled {
 		opacity: 0.55;
+	}
+
+	.error {
+		font-size: var(--text-author);
+		color: var(--ink);
 	}
 
 	.note {
