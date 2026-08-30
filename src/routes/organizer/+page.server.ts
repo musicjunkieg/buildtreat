@@ -22,6 +22,16 @@ import {
 	type OrganizerResponse
 } from '$lib/server/organizer';
 import { listWaitlist, promoteFromWaitlist, type WaitlistEntry } from '$lib/server/waitlist';
+import {
+	isRegistered,
+	listRegistrations,
+	noResponseHandles,
+	registrationCounts,
+	travelStatus,
+	type Registration,
+	type RegistrationCounts,
+	type TravelStatus
+} from '$lib/server/registration';
 import { emailConfigured, sendEmail } from '$lib/server/email';
 import {
 	createBroadcast,
@@ -42,6 +52,21 @@ import { EMAIL_RE } from '$lib/server/db';
  *  - organizer → everything
  */
 
+/**
+ * Registrations panel view row. `isRegistered`/`travelStatus` from
+ * $lib/server/registration are pure but the module lives under $lib/server,
+ * so a client component (RegistrationsPanel.svelte, and +page.svelte itself)
+ * cannot import them as values — SvelteKit's illegal-import guard blocks any
+ * runtime import from $lib/server/* into browser-reachable code, regardless
+ * of what the module actually touches at runtime. So the derived fields are
+ * computed once here, server-side, and shipped down as plain data.
+ */
+export type RegistrationView = Registration & { travel: TravelStatus; registered: boolean };
+
+function toRegistrationView(r: Registration): RegistrationView {
+	return { ...r, travel: travelStatus(r), registered: isRegistered(r) };
+}
+
 export interface OrganizerPageData {
 	authState: 'signed-out' | 'ok';
 	/** True only for the dev ?preview fixture state — rendered on-surface. */
@@ -57,9 +82,16 @@ export interface OrganizerPageData {
 	anchors: string[];
 	/** True when the anchor read failed — mutations are disabled for this load. */
 	anchorsUnavailable: boolean;
+	/** True when the registrations read failed — the panel shows an error, not an empty list. */
+	registrationsUnavailable: boolean;
 	/** False until COMAIL_API_KEY + vars are set — renders setup hints. */
 	emailConfigured: boolean;
 	broadcasts: BroadcastView[];
+	registrations: RegistrationView[];
+	regDeadlineDisplay: string | null;
+	regClosed: boolean;
+	regCounts: RegistrationCounts;
+	regMissing: AllowlistEntry[];
 }
 
 const EMPTY: Omit<OrganizerPageData, 'authState'> = {
@@ -74,8 +106,14 @@ const EMPTY: Omit<OrganizerPageData, 'authState'> = {
 	deadlinePassed: false,
 	anchors: [],
 	anchorsUnavailable: false,
+	registrationsUnavailable: false,
 	emailConfigured: false,
-	broadcasts: []
+	broadcasts: [],
+	registrations: [],
+	regDeadlineDisplay: null,
+	regClosed: false,
+	regCounts: { confirmed: 0, registered: 0, declined: 0, noResponse: 0 },
+	regMissing: []
 };
 
 function requireOrganizer(locals: App.Locals, platform: App.Platform | undefined): void {
@@ -113,26 +151,37 @@ export const load: PageServerLoad = async ({ locals, platform, url }): Promise<O
 	if (!db) error(503, { message: 'Storage is not available right now' });
 
 	const base = deadlineStatus(platform?.env?.DEADLINE);
+	const reg = deadlineStatus(platform?.env?.REG_DEADLINE);
 	// A failed anchor read must not look like "no anchors": Clear would then
 	// silently delete rows that were never displayed. The flag disables all
 	// anchor mutations for the rest of the page load.
 	let anchorsUnavailable = false;
-	const [responses, allowlist, latePasses, waitlist, reopened, anchors, broadcasts] = await Promise.all([
-		getAllResponses(db),
-		listAllowlist(db),
-		listLatePasses(db),
-		listWaitlist(db),
-		isReopened(db),
-		listAnchors(db).catch((e) => {
-			console.error('anchor load failed', e);
-			anchorsUnavailable = true;
-			return [] as string[];
-		}),
-		listBroadcasts(db).catch((e) => {
-			console.error('broadcast list failed', e);
-			return [] as BroadcastView[];
-		})
-	]);
+	// A failed registration read must not look like "no registrations": the
+	// panel would then render an empty ledger instead of surfacing the
+	// failure. The flag switches the panel to an error state instead.
+	let registrationsUnavailable = false;
+	const [responses, allowlist, latePasses, waitlist, reopened, anchors, broadcasts, registrations] =
+		await Promise.all([
+			getAllResponses(db),
+			listAllowlist(db),
+			listLatePasses(db),
+			listWaitlist(db),
+			isReopened(db),
+			listAnchors(db).catch((e) => {
+				console.error('anchor load failed', e);
+				anchorsUnavailable = true;
+				return [] as string[];
+			}),
+			listBroadcasts(db).catch((e) => {
+				console.error('broadcast list failed', e);
+				return [] as BroadcastView[];
+			}),
+			listRegistrations(db).catch((e) => {
+				console.error('registration list failed', e);
+				registrationsUnavailable = true;
+				return [] as Registration[];
+			})
+		]);
 
 	return {
 		authState: 'ok',
@@ -147,8 +196,14 @@ export const load: PageServerLoad = async ({ locals, platform, url }): Promise<O
 		deadlinePassed: base.closed,
 		anchors,
 		anchorsUnavailable,
+		registrationsUnavailable,
 		emailConfigured: emailConfigured(platform?.env ?? {}),
-		broadcasts
+		broadcasts,
+		registrations: registrations.map(toRegistrationView),
+		regDeadlineDisplay: reg.display,
+		regClosed: reg.closed,
+		regCounts: registrationCounts(registrations, allowlist),
+		regMissing: noResponseHandles(registrations, allowlist)
 	};
 };
 
@@ -390,14 +445,88 @@ function previewData(): Omit<OrganizerPageData, 'authState' | 'preview' | 'deadl
 		});
 	}
 
+	const previewAllowlist: AllowlistEntry[] = [
+		...responses.slice(0, 30).map((r) => ({ handle: r.handle as string, did: r.did, responded: true })),
+		{ handle: 'waverly.bsky.social', did: null, responded: false },
+		{ handle: 'clara.notes.dev', did: null, responded: false },
+		{ handle: 'buildwithbeck.com', did: null, responded: false }
+	];
+
+	const previewRegistrations: Registration[] = [
+		{
+			did: 'did:plc:preview0',
+			handle: 'maren0.bsky.social',
+			name: 'Maren Costa',
+			email: 'maren0@example.com',
+			status: 'confirmed',
+			phone: '555-0100',
+			emergencyName: 'Sam Costa',
+			emergencyPhone: '555-0101',
+			dietary: ['vegetarian', 'nut_allergy'],
+			dietaryOther: '',
+			accessibility: '',
+			notes: '',
+			travelArrival: 'Fri 3pm PSP',
+			travelDeparture: 'Mon 9am',
+			travelMode: 'flying',
+			travelDetails: 'AS 1234',
+			waiverVersion: 'v1',
+			cocVersion: 'v1',
+			agreedAt: '2026-08-30T18:00:00Z',
+			createdAt: '2026-08-30T18:00:00Z',
+			updatedAt: '2026-08-31T09:00:00Z'
+		},
+		{
+			did: 'did:plc:preview1',
+			handle: 'chris1.bsky.social',
+			name: 'Chris Lee',
+			email: 'chris1@example.com',
+			status: 'confirmed',
+			phone: '',
+			emergencyName: 'Pat Lee',
+			emergencyPhone: '555-0102',
+			dietary: [],
+			dietaryOther: '',
+			accessibility: 'Ground-floor room, please',
+			notes: '',
+			travelArrival: '',
+			travelDeparture: '',
+			travelMode: 'driving',
+			travelDetails: '',
+			waiverVersion: 'v1',
+			cocVersion: 'v1',
+			agreedAt: '2026-08-30T19:00:00Z',
+			createdAt: '2026-08-30T19:00:00Z',
+			updatedAt: '2026-08-30T19:00:00Z'
+		},
+		{
+			did: 'did:plc:preview2',
+			handle: 'koko2.bsky.social',
+			name: 'Koko Nguyen',
+			email: 'koko2@example.com',
+			status: 'declined',
+			phone: '',
+			emergencyName: '',
+			emergencyPhone: '',
+			dietary: [],
+			dietaryOther: '',
+			accessibility: '',
+			notes: '',
+			travelArrival: '',
+			travelDeparture: '',
+			travelMode: null,
+			travelDetails: '',
+			waiverVersion: null,
+			cocVersion: null,
+			agreedAt: null,
+			createdAt: '2026-08-30T20:00:00Z',
+			updatedAt: '2026-08-30T20:00:00Z'
+		}
+	];
+
 	return {
 		responses,
-		allowlist: [
-			...responses.slice(0, 30).map((r) => ({ handle: r.handle as string, did: r.did, responded: true })),
-			{ handle: 'waverly.bsky.social', did: null, responded: false },
-			{ handle: 'clara.notes.dev', did: null, responded: false },
-			{ handle: 'buildwithbeck.com', did: null, responded: false }
-		],
+		allowlist: previewAllowlist,
 		latePasses: [{ handle: 'waverly.bsky.social', did: null, grantedAt: '2026-08-06T21:04:00Z' }],
 		waitlist: [
 			{ did: 'did:plc:wl0', handle: 'juno.bsky.social', email: 'juno@example.com', createdAt: '2026-08-10T15:22:00Z', promotedAt: null },
@@ -409,7 +538,13 @@ function previewData(): Omit<OrganizerPageData, 'authState' | 'preview' | 'deadl
 		deadlinePassed: false,
 		anchors: ['did:plc:preview2', 'did:plc:preview5'],
 		anchorsUnavailable: false,
+		registrationsUnavailable: false,
 		emailConfigured: true,
+		regDeadlineDisplay: 'September 7',
+		regClosed: false,
+		registrations: previewRegistrations.map(toRegistrationView),
+		regCounts: registrationCounts(previewRegistrations, previewAllowlist),
+		regMissing: noResponseHandles(previewRegistrations, previewAllowlist),
 		broadcasts: [
 			{
 				id: 1,

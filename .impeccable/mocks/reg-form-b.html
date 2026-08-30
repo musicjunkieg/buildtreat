@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>reg-form-b — Questions, Stacked</title>
+<link rel="stylesheet" href="reg-base.css" />
+<style>
+	.band { position: relative; height: 44vh; min-height: 300px; }
+	.band img { width: 100%; height: 100%; object-fit: cover; object-position: 50% 35%; }
+	.band .scrim { position: absolute; inset: 0; background: linear-gradient(to bottom, rgba(11,9,8,0.05) 0%, rgba(11,9,8,0.3) 45%, rgba(11,9,8,1) 100%); }
+	.band .kicker { position: absolute; top: var(--space-3); left: var(--gutter); }
+	.band .ack { position: absolute; left: var(--gutter); right: var(--gutter); bottom: var(--space-2); font-size: var(--text-ack); line-height: 1.4; max-width: 20ch; }
+	.doc { padding: 0 var(--gutter) var(--space-5); display: grid; gap: calc(var(--space-5) + var(--space-3)); }
+	.q { display: grid; gap: var(--space-3); }
+	.q h2 { font-size: var(--title); max-width: 9ch; }
+	.q .lead { color: var(--ink-70); font-size: 0.9375rem; line-height: 1.45; max-width: 34ch; margin-top: calc(-1 * var(--space-2)); }
+	.grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-3); }
+	.submit { display: grid; gap: var(--space-2); justify-items: center; }
+</style>
+</head>
+<body class="grain">
+<div class="band">
+	<img src="../../static/media/hero-portrait.png" alt="" />
+	<div class="scrim"></div>
+	<p class="kicker">Registration · Dec 4–7</p>
+	<p class="ack">Four questions, and you're registered.</p>
+</div>
+<main class="doc">
+	<section class="q">
+		<h2 class="display">Who's coming?</h2>
+		<div class="field"><span class="kicker">Name</span><input class="input filled" value="Maren Costa" /></div>
+		<div class="field"><span class="kicker">Email</span><input class="input filled" value="maren@costa.dev" /></div>
+		<div class="field"><span class="kicker">Phone</span><input class="input" placeholder="For day-of texts" /></div>
+	</section>
+	<section class="q">
+		<h2 class="display">What should we feed you?</h2>
+		<div class="chips">
+			<span class="chip on">Vegetarian</span><span class="chip">Vegan</span><span class="chip">Gluten-free</span><span class="chip">Dairy-free</span><span class="chip">Kosher</span><span class="chip">Halal</span><span class="chip on">Nut allergy</span><span class="chip">Shellfish allergy</span>
+		</div>
+		<div class="field"><span class="kicker">Anything else</span><input class="input" placeholder="Allergies, dislikes, coffee opinions" /></div>
+	</section>
+	<section class="q">
+		<h2 class="display">Who do we call?</h2>
+		<p class="lead">Emergency contact. We hope we never need it.</p>
+		<div class="grid2">
+			<div class="field"><span class="kicker">Name</span><input class="input" placeholder="Who we call" /></div>
+			<div class="field"><span class="kicker">Phone</span><input class="input" placeholder="+1" /></div>
+		</div>
+	</section>
+	<section class="q">
+		<h2 class="display">What should we plan for?</h2>
+		<p class="lead">Accessibility needs, and anything else we should know. Both optional.</p>
+		<div class="field"><span class="kicker">Accessibility</span><textarea class="input textarea" placeholder="Mobility, sensory, sleep, medical — whatever helps us set the house up right"></textarea></div>
+		<div class="field"><span class="kicker">Anything else</span><input class="input" placeholder="Notes for the organizers" /></div>
+	</section>
+	<section class="q">
+		<h2 class="display">How are you getting here?</h2>
+		<p class="lead">Skip this for now if you don't know yet. Come back anytime.</p>
+		<div class="chips"><span class="chip">Flying</span><span class="chip on">Driving</span><span class="chip">Train</span><span class="chip">Other</span></div>
+		<div class="grid2">
+			<div class="field"><span class="kicker">Arriving</span><input class="input" placeholder="Fri afternoon" /></div>
+			<div class="field"><span class="kicker">Leaving</span><input class="input" placeholder="Mon morning" /></div>
+		</div>
+	</section>
+	<section class="q">
+		<h2 class="display">The fine print.</h2>
+		<ul class="agree">
+			<li><span class="ring on"></span><span class="text">I've read the liability waiver <a href="#">read it</a><span class="ver">v1</span></span></li>
+			<li><span class="ring"></span><span class="text">I'll follow the code of conduct <a href="#">read it</a><span class="ver">v1</span></span></li>
+		</ul>
+	</section>
+	<div class="submit">
+		<button class="pill">Register</button>
+		<p class="hint">You can change everything later.</p>
+	</div>
+</main>
+</body>
+</html>

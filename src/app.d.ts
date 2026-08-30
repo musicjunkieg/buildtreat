@@ -16,6 +16,7 @@ declare global {
 			env: {
 				ORIGIN?: string;
 				DEADLINE?: string;
+				REG_DEADLINE?: string;
 				ORGANIZER_DIDS?: string;
 				EMAIL_FROM?: string;
 				COMAIL_DID?: string;

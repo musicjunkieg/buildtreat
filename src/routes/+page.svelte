@@ -7,6 +7,7 @@
 	import HeroItem from '$lib/components/HeroItem.svelte';
 	import LocationItem from '$lib/components/LocationItem.svelte';
 	import Rail from '$lib/components/Rail.svelte';
+	import RegistrationFlow from '$lib/components/registration/RegistrationFlow.svelte';
 	import ReviewItem from '$lib/components/ReviewItem.svelte';
 	import SignInSheet from '$lib/components/SignInSheet.svelte';
 	import YouItem from '$lib/components/YouItem.svelte';
@@ -105,6 +106,7 @@
 	}
 
 	function onkeydown(e: KeyboardEvent) {
+		if (data.registrationMode) return;
 		if (sheetOpen) return;
 		if (!signedIn) return;
 		const t = e.target as HTMLElement;
@@ -173,6 +175,9 @@
 
 <svelte:window {onkeydown} />
 
+{#if data.registrationMode}
+	<RegistrationFlow {data} {form} />
+{:else}
 <main class="feed" class:locked={!signedIn} inert={sheetOpen} bind:this={feed}>
 	<FeedItem
 		id="hero"
@@ -257,6 +262,7 @@
 	{/if}
 </div>
 <SignInSheet bind:open={sheetOpen} error={data.authError} knownUser={data.knownUser} />
+{/if}
 
 <style>
 	.feed {

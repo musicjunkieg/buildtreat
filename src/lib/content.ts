@@ -7,14 +7,11 @@ export const retreat = {
 	name: 'Atmospheric Builders’ Retreat',
 	nameLines: ['ATMOSPHERIC', 'BUILDERS’ RETREAT.'] as [string, string],
 	kicker: 'For the (very cool) builders of the Atmosphere',
-	acknowledgment: ['An awesome event is calling', 'Help us pick the dates and narrow down a location.'] as [
-		string,
-		string
-	],
+	acknowledgment: ['The date is set.', 'December 4–7 — register to lock your spot.'] as [string, string],
 	facts: [
 		{ label: 'What', value: '3 nights · 2 full days' },
-		{ label: 'Where', value: 'Southern California' },
-		{ label: 'When', value: 'Sometime between Sept 1 – Nov 15' },
+		{ label: 'Where', value: 'Palm Springs or Coachella Valley' },
+		{ label: 'When', value: 'December 4–7, 2026' },
 		{ label: 'Your Costs', value: 'Travel only. Lodging & food all taken care of' }
 	],
 	signIn: 'Sign in with Atmosphere',
@@ -139,3 +136,127 @@ export const itemTitles: Record<FeedItemId, string> = {
 	location: 'Location',
 	review: 'Review'
 };
+/* ── Registration era (date locked 2026-08-25) ──────────────────────────
+ * Spec: docs/superpowers/specs/2026-08-25-registration-design.md
+ */
+
+export const retreatDates = {
+	start: '2026-12-04',
+	end: '2026-12-07',
+	display: 'December 4–7, 2026',
+	short: 'Dec 4–7',
+	nights: 3,
+	arrive: 'Friday',
+	depart: 'Monday morning'
+} as const;
+
+export const retreatLocation = {
+	display: 'Palm Springs or Coachella Valley',
+	pending: 'Venue locks with the headcount',
+	explainer:
+		'We book the house once we know how many are coming — Palm Springs or the Coachella Valley, decided by the final count.'
+} as const;
+
+export const dietaryOptions = [
+	{ id: 'vegetarian', label: 'Vegetarian' },
+	{ id: 'vegan', label: 'Vegan' },
+	{ id: 'gluten_free', label: 'Gluten-free' },
+	{ id: 'dairy_free', label: 'Dairy-free' },
+	{ id: 'kosher', label: 'Kosher' },
+	{ id: 'halal', label: 'Halal' },
+	{ id: 'nut_allergy', label: 'Nut allergy' },
+	{ id: 'shellfish_allergy', label: 'Shellfish allergy' }
+] as const;
+export type DietaryId = (typeof dietaryOptions)[number]['id'];
+
+export const travelModes = [
+	{ id: 'flying', label: 'Flying' },
+	{ id: 'driving', label: 'Driving' },
+	{ id: 'train', label: 'Train' },
+	{ id: 'other', label: 'Other' }
+] as const;
+export type TravelMode = (typeof travelModes)[number]['id'];
+
+/**
+ * DRAFT agreement texts written by Claude, not a lawyer. Bryan may swap the
+ * bodies at will; bump `version` when the substance changes so each
+ * registration records which text it agreed to.
+ */
+export const waiver = {
+	version: 'v1',
+	title: 'Liability waiver',
+	body: `I'm choosing to attend the Atmospheric Builders' Retreat (December 4–7, 2026, in the Palm Springs / Coachella Valley area) voluntarily.
+
+I understand the retreat involves travel, shared lodging, group meals, and informal activities, and that these carry ordinary risks — including illness, injury, and loss of or damage to my belongings. I accept those risks for myself.
+
+To the fullest extent the law allows, I release the organizers — Bryan Guffey, Bluesky Social, PBC, and anyone helping them run the retreat — from claims for injury, illness, loss, or damage arising from my participation, except where caused by their gross negligence or willful misconduct.
+
+If I'm hurt or become ill, I consent to reasonable first aid and emergency care, and I understand I'm responsible for the cost of my own medical treatment. I confirm I have, or will arrange, any travel or health coverage I want for this trip.
+
+I'll take reasonable care of the house and the people in it, and I'll cover damage I cause.`
+} as const;
+
+export const codeOfConduct = {
+	version: 'v1',
+	title: 'Code of conduct',
+	body: `The retreat is a small group of builders living and working together for three nights. It only works if everyone feels safe and welcome.
+
+Be kind and generous. Assume good faith. Make room for people quieter than you.
+
+Harassment of any kind isn't tolerated — including unwelcome comments about someone's identity, unwanted physical contact or attention, deliberate intimidation, and photographing or recording people without consent. If someone asks you to stop, stop.
+
+Respect boundaries in shared space: quiet hours, closed doors, other people's food and belongings, and anyone's choice not to drink.
+
+If something happens — to you or to someone else — tell Bryan (@chaosgreml.in) in person, by DM, or by text at the number on the itinerary. Reports are handled discreetly. Anyone asked to leave for violating this code covers their own way home.`
+} as const;
+
+export const registration = {
+	kicker: 'The date is set',
+	ack: ['You helped pick the days.', 'Here they are.'] as [string, string],
+	dateLines: ['December', '4–7, 2026.'] as [string, string],
+	facts: [
+		{ label: 'Palm Springs or Coachella Valley', value: '' },
+		{ label: 'Venue locks with the headcount', value: '', muted: true },
+		{ label: 'Lodging & food covered', value: 'Bluesky' }
+	] as { label: string; value: string; muted?: boolean }[],
+	registerBy: 'Register by',
+	confirm: 'I’m in',
+	decline: 'I can’t make it',
+	declinedLead: 'Noted — we’ll miss you.',
+	declinedBody: 'If your December opens up, come back here and change your answer.',
+	declinedUndo: 'Actually, I can come',
+	closedLeadPrefix: 'Registration closed',
+	closedBody: 'We’ve locked the headcount to book the house. If you can still make it, DM',
+	formKicker: 'Registration',
+	formTitle: 'You’re in.',
+	formSub: 'December 4–7, Palm Springs or the Coachella Valley. Six short sections. Travel can wait until you know.',
+	sections: {
+		contact: { head: 'Contact', name: 'Name', email: 'Email', phone: 'Phone', phoneHint: 'For day-of texts' },
+		food: { head: 'Food', hint: 'Pick any', other: 'Anything else about food', otherHint: 'Allergies, strong dislikes, coffee opinions' },
+		emergency: { head: 'Emergency contact', name: 'Name', nameHint: 'Who we call', phone: 'Phone', phoneHint: '+1' },
+		accessibility: { head: 'Accessibility', hint: 'Optional', label: 'Anything we should plan for', placeholder: 'Mobility, sensory, sleep, medical — whatever helps us set the house up right' },
+		notes: { head: 'Anything else', hint: 'Optional', placeholder: 'Notes for the organizers' },
+		travel: { head: 'Travel', hint: 'Optional now · update anytime', arriving: 'Arriving', arrivingHint: 'Fri afternoon, PSP', leaving: 'Leaving', leavingHint: 'Mon morning', details: 'Details', detailsHint: 'Flight numbers, rideshare offers' },
+		agreements: { head: 'Agreements', waiver: 'I’ve read the liability waiver', coc: 'I’ll follow the code of conduct', read: 'read it' }
+	},
+	submit: 'Register',
+	submitHint: 'You can change everything later.',
+	saving: 'Saving…',
+	registeredTitle: 'You’re registered.',
+	registeredSub: 'December 4–7. We’ll email the venue and itinerary once the house is booked.',
+	travelNudge: 'Update as plans firm up',
+	edit: 'Edit',
+	declineAfter: 'I can’t make it after all',
+	surveyLink: 'Your availability survey answers',
+	errors: {
+		name: 'Tell us your name',
+		email: 'Enter a valid email',
+		emergencyName: 'Who should we call?',
+		emergencyPhone: 'A phone number for them',
+		agreeWaiver: 'Please read and agree to the waiver',
+		agreeCoc: 'Please agree to the code of conduct',
+		dietary: 'Unknown food option',
+		travelMode: 'Unknown travel mode'
+	}
+} as const;
+

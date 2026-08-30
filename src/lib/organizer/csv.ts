@@ -1,5 +1,6 @@
-import { NO_PREFERENCE } from '$lib/content';
-import type { OrganizerResponse } from '$lib/server/organizer';
+import { NO_PREFERENCE } from '../content';
+import type { OrganizerResponse } from '../server/organizer';
+import { isRegistered, type Registration } from '../server/registration';
 
 /**
  * RFC 4180-style CSV: quote fields containing commas, quotes, or newlines.
@@ -60,6 +61,24 @@ export function responsesCsv(responses: OrganizerResponse[]): string {
 				.join('; '),
 			r.submittedAt,
 			r.updatedAt
+		]);
+	}
+	return toCsv(rows);
+}
+
+export function registrationsCsv(regs: Registration[]): string {
+	const rows: (string | number | null)[][] = [
+		[
+			'handle', 'did', 'name', 'email', 'status', 'registered', 'phone', 'emergency_name', 'emergency_phone',
+			'dietary', 'dietary_other', 'accessibility', 'notes', 'travel_mode', 'travel_arrival', 'travel_departure',
+			'travel_details', 'waiver_version', 'coc_version', 'agreed_at', 'updated_at'
+		]
+	];
+	for (const r of regs) {
+		rows.push([
+			r.handle, r.did, r.name, r.email, r.status, isRegistered(r) ? 'yes' : 'no', r.phone, r.emergencyName,
+			r.emergencyPhone, r.dietary.join('; '), r.dietaryOther, r.accessibility, r.notes, r.travelMode,
+			r.travelArrival, r.travelDeparture, r.travelDetails, r.waiverVersion, r.cocVersion, r.agreedAt, r.updatedAt
 		]);
 	}
 	return toCsv(rows);

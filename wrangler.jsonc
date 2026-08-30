@@ -18,6 +18,9 @@
 		"ORIGIN": "https://buildersretre.at",
 		// Respond-by deadline: Aug 15 2026, 11:59:59 PM Pacific (PDT = UTC-7).
 		"DEADLINE": "2026-08-16T06:59:59Z",
+		// Registration deadline: Sep 7 2026, 11:59:59 PM Pacific (PDT = UTC-7).
+		// After this, no NEW confirmations; edits and declines stay open.
+		"REG_DEADLINE": "2026-09-08T06:59:59Z",
 		// DIDs allowed into /organizer (comma-separated).
 		// Bryan (@chaosgreml.in), Alex (@alex.bsky.team).
 		"ORGANIZER_DIDS": "did:plc:h3wpawnrlptr4534chevddo6,did:plc:vmt7o7y6titkqzzxav247zrn",

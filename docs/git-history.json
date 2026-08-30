@@ -1,5 +1,21 @@
 [
   {
+    "hash": "05fbf8078d0e145b51d930a8bb4c6304f317b499",
+    "short_hash": "05fbf80",
+    "author": "Bryan Guffey",
+    "date": "2026-08-29T16:17:37-07:00",
+    "message": "fix: single Edit per section on the registered summary; band min-height parity; preview accessibility text\n\nCo-Authored-By: Claude Fable 5 <noreply@anthropic.com>\nClaude-Session: https://claude.ai/code/session_01RwSQjGei7n9wVRMcqcMAga",
+    "files_changed": 3
+  },
+  {
+    "hash": "ab82711c9c8ae61fe023bdc62489ff3fa66cd52e",
+    "short_hash": "ab82711",
+    "author": "chaos gremlin",
+    "date": "2026-08-20T16:19:55-07:00",
+    "message": "feat: email sending via comail.at (transport + organizer broadcast) (#23)\n\n* docs: spec for email sending via comail.at (transport + organizer broadcast)\n\nCo-Authored-By: Claude Fable 5 <noreply@anthropic.com>\nClaude-Session: https://claude.ai/code/session_01RwSQjGei7n9wVRMcqcMAga\n\n* docs: implementation plan for comail email sending\n\nCo-Authored-By: Claude Fable 5 <noreply@anthropic.com>\nClaude-Session: https://claude.ai/code/session_01RwSQjGei7n9wVRMcqcMAga\n\n* chore: add vitest + comail env plumbing\n\n* feat: comail.at email transport module\n\n* feat: broadcast schema and data layer\n\n* feat: broadcast run loop with stop-on-retryable resume semantics\n\n* feat: organizer email actions — test send, broadcast, retry\n\n* feat: organizer email panel — compose, test send, broadcast, history\n\n* fix: scope organizer page styles locally in EmailPanel\n\nCSS classes used in EmailPanel.svelte (.warn, .section-head,\n.section-title, .section-sub, .compose .kicker) had their rules\ndefined only in +page.svelte's scoped <style> block, so they never\napplied inside the component. Duplicate the needed rule bodies\nlocally, following the precedent set by ResponsesTable/Heatmap.\n\n* fix: handle comail rejected recipients, degrade missing broadcasts table, guard retry double-submit\n\n- email.ts: a 200 response with an empty accepted array but a rejected\n  entry (e.g. suppressed broadcast recipients) now returns a non-retryable\n  REJECTED result instead of falling through to retryable BAD_RESPONSE,\n  which previously made runBroadcast stop and retry the same recipient\n  forever. BAD_RESPONSE stays for the truly empty accepted+rejected case.\n- +page.server.ts: listBroadcasts(db) now follows the listAnchors\n  precedent and catches into an empty array, so a pre-migration-0005\n  deploy degrades the email history panel instead of 500ing the whole\n  organizer page.\n- EmailPanel.svelte: the retry form now guards against double-submit with\n  a per-broadcast SvelteSet, disabling the Retry button while its\n  emailRetry action is in flight.\n\n* fix: address CodeRabbit review — rejected[].error field, send timeout, trimmed dedupe emails\n\nCo-Authored-By: Claude Fable 5 <noreply@anthropic.com>\nClaude-Session: https://claude.ai/code/session_01RwSQjGei7n9wVRMcqcMAga\n\n---------\n\nCo-authored-by: Bryan Guffey <bryan.guffey@grytlabs.com>\nCo-authored-by: Claude Fable 5 <noreply@anthropic.com>",
+    "files_changed": 17
+  },
+  {
     "hash": "93b0cc99884618ce2a428c891d4e46af24d98375",
     "short_hash": "93b0cc9",
     "author": "Bryan Guffey",

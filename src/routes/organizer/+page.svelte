@@ -6,6 +6,7 @@
 	import Icon from '$lib/components/Icon.svelte';
 	import EmailPanel from '$lib/components/organizer/EmailPanel.svelte';
 	import Heatmap from '$lib/components/organizer/Heatmap.svelte';
+	import RegistrationsPanel from '$lib/components/organizer/RegistrationsPanel.svelte';
 	import ResponsesTable from '$lib/components/organizer/ResponsesTable.svelte';
 	import {
 		bestWindows,
@@ -613,6 +614,15 @@ finish review, the verdict, and DESIGN.md.
 				{/if}
 			</section>
 
+			<RegistrationsPanel
+				registrations={data.registrations}
+				counts={data.regCounts}
+				missing={data.regMissing}
+				deadlineDisplay={data.regDeadlineDisplay}
+				closed={data.regClosed}
+				unavailable={data.registrationsUnavailable}
+			/>
+
 			<EmailPanel
 				configured={data.emailConfigured}
 				broadcasts={data.broadcasts}
@@ -1193,7 +1203,7 @@ finish review, the verdict, and DESIGN.md.
 		height: 0.6rem;
 		flex-shrink: 0;
 		border-radius: 999px;
-		border: 1.5px solid currentColor;
+		border: 1.5px solid currentcolor;
 		background: var(--ink);
 	}
 
@@ -1265,7 +1275,7 @@ finish review, the verdict, and DESIGN.md.
 		width: 0.6rem;
 		height: 0.6rem;
 		border-radius: 999px;
-		border: 1.5px solid currentColor;
+		border: 1.5px solid currentcolor;
 		align-self: center;
 	}
 
