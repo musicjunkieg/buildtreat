@@ -14,6 +14,12 @@ export interface EmailFact {
 	value: string;
 }
 
+export interface EmailImage {
+	src: string;
+	alt: string;
+	label?: string;
+}
+
 export interface BrandedEmailOptions {
 	/** Display headline, rendered stacked and uppercase. */
 	heading: string;
@@ -21,6 +27,8 @@ export interface BrandedEmailOptions {
 	body: string;
 	/** Hairline ledger rows shown under the headline. */
 	facts?: EmailFact[];
+	/** Photo row under the ledger — side by side, labeled in fact style. */
+	images?: EmailImage[];
 	cta?: { label: string; url: string };
 	/** Quiet closing line under the final hairline. */
 	footer?: string;
@@ -77,6 +85,21 @@ function factRows(facts: EmailFact[]): string {
 		.join('\n');
 }
 
+function imageRow(images: EmailImage[]): string {
+	const width = Math.floor((600 - (images.length - 1) * 12) / images.length);
+	const cells = images
+		.map(
+			(img, i) => `<td width="${width}" valign="top" style="padding-left:${i === 0 ? 0 : 12}px;">
+<img src="${escapeHtml(img.src)}" alt="${escapeHtml(img.alt)}" width="${width}" style="display:block;width:100%;height:auto;color:${INK_70};font-family:${BODY_STACK};font-size:13px;">
+${img.label ? `<div style="padding-top:8px;font-family:${BODY_STACK};font-size:12px;letter-spacing:1.5px;text-transform:uppercase;color:${INK_70};">${escapeHtml(img.label)}</div>` : ''}
+</td>`
+		)
+		.join('\n');
+	return `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:24px 0 0;"><tr>
+${cells}
+</tr></table>`;
+}
+
 export function brandedEmail(opts: BrandedEmailOptions): string {
 	const preheader = opts.body.replace(/\s+/g, ' ').trim().slice(0, 120);
 	const facts = opts.facts?.length
@@ -84,6 +107,7 @@ export function brandedEmail(opts: BrandedEmailOptions): string {
 ${factRows(opts.facts)}
 </table>`
 		: '';
+	const images = opts.images?.length ? imageRow(opts.images) : '';
 	const cta = opts.cta
 		? `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:8px 0 0;"><tr><td>
 <a href="${escapeHtml(opts.cta.url)}" style="display:block;text-align:center;background:${INK};color:${GROUND};font-family:${BODY_STACK};font-size:17px;font-weight:bold;text-decoration:none;padding:16px 32px;border-radius:999px;">${escapeHtml(opts.cta.label)}</a>
@@ -112,7 +136,7 @@ ${factRows(opts.facts)}
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:600px;">
 <tr><td style="font-family:${BODY_STACK};font-size:11px;font-weight:500;letter-spacing:3px;text-transform:uppercase;color:${INK};padding-bottom:20px;">The Atmospheric Builders&#8217; Retreat</td></tr>
 <tr><td class="heading" style="font-family:${DISPLAY_STACK};font-size:52px;font-weight:bold;line-height:0.95;letter-spacing:0.5px;text-transform:uppercase;color:${INK};padding-bottom:4px;">${escapeHtml(opts.heading)}</td></tr>
-<tr><td>${facts}</td></tr>
+<tr><td>${facts}${images}</td></tr>
 <tr><td style="padding-top:28px;">
 ${paragraphs(opts.body)}
 ${cta}
@@ -132,12 +156,29 @@ export function retreatFacts(): EmailFact[] {
 	];
 }
 
+/** The two venue contenders — swap for the booked house once the venue locks. */
+export function locationImages(): EmailImage[] {
+	return [
+		{
+			src: 'https://buildersretre.at/media/email-loc-palm-springs.jpg',
+			alt: 'Palm Springs city lights at dusk from the Aerial Tramway',
+			label: 'Palm Springs'
+		},
+		{
+			src: 'https://buildersretre.at/media/email-loc-coachella-valley.jpg',
+			alt: 'Palm oasis in the Coachella Valley Preserve',
+			label: 'Coachella Valley'
+		}
+	];
+}
+
 /** Standard wrapper for organizer broadcasts: subject as headline, retreat ledger, home CTA. */
 export function broadcastHtml(subject: string, body: string): string {
 	return brandedEmail({
 		heading: subject,
 		body,
 		facts: retreatFacts(),
+		images: locationImages(),
 		cta: { label: 'buildersretre.at', url: 'https://buildersretre.at' },
 		footer: 'You’re getting this because you’re on the Builders’ Retreat list. Reply any time — it goes straight to Bryan.'
 	});

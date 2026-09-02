@@ -1,5 +1,5 @@
 import { retreatDates, retreatLocation, travelModes } from '../content';
-import { brandedEmail, retreatFacts } from './email-template';
+import { brandedEmail, locationImages, retreatFacts } from './email-template';
 import type { Registration } from './registration';
 
 /** Confirmation (text + branded html), sent best-effort after a completed registration. */
@@ -40,6 +40,7 @@ export function confirmationEmail(reg: Registration): { subject: string; text: s
 		heading: 'You’re in',
 		body: text,
 		facts: [...retreatFacts(), { label: 'Arrive', value: retreatDates.arrive }, { label: 'Leave', value: retreatDates.depart }],
+		images: locationImages(),
 		cta: { label: 'Update your travel', url: 'https://buildersretre.at' },
 		footer: 'Reply to this email any time — it goes straight to Bryan.'
 	});

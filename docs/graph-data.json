@@ -1198,6 +1198,50 @@
       "created_at": "2026-08-29T16:18:41.813047-07:00",
       "updated_at": "2026-08-29T16:18:41.813047-07:00",
       "metadata_json": "{\"branch\":\"feat/registration\",\"confidence\":95}"
+    },
+    {
+      "id": 110,
+      "change_id": "6e3d63dd-c4f0-424d-9d4c-dd76a74e1b86",
+      "node_type": "goal",
+      "title": "Branded HTML email template matching site style",
+      "description": null,
+      "status": "pending",
+      "created_at": "2026-09-02T15:48:25.038934-07:00",
+      "updated_at": "2026-09-02T15:48:25.038934-07:00",
+      "metadata_json": "{\"branch\":\"feat/email-template\",\"confidence\":95,\"prompt\":\"can we make an email template that matches our style and I can write the message?\"}"
+    },
+    {
+      "id": 111,
+      "change_id": "34691842-6d48-4fd5-9b74-1e888d3c9c4e",
+      "node_type": "option",
+      "title": "Server-side brandedEmail() renderer wrapping panel plain text",
+      "description": null,
+      "status": "pending",
+      "created_at": "2026-09-02T15:48:25.053096-07:00",
+      "updated_at": "2026-09-02T15:48:25.053096-07:00",
+      "metadata_json": "{\"branch\":\"feat/email-template\",\"confidence\":90}"
+    },
+    {
+      "id": 112,
+      "change_id": "bf9bb56c-4e62-46f9-80b3-68efcc9fd129",
+      "node_type": "decision",
+      "title": "Wrap author plain text server-side; subject = display headline; email-safe hex/table translation of Dusk Feed",
+      "description": null,
+      "status": "pending",
+      "created_at": "2026-09-02T15:48:25.066343-07:00",
+      "updated_at": "2026-09-02T15:48:25.066343-07:00",
+      "metadata_json": "{\"branch\":\"feat/email-template\",\"confidence\":90}"
+    },
+    {
+      "id": 113,
+      "change_id": "9118a526-f18b-4a91-9d2c-72923c9769be",
+      "node_type": "action",
+      "title": "Implemented email-template.ts + wired broadcast/test/confirmation (PR #26)",
+      "description": null,
+      "status": "pending",
+      "created_at": "2026-09-02T15:48:25.083506-07:00",
+      "updated_at": "2026-09-02T15:48:25.083506-07:00",
+      "metadata_json": "{\"branch\":\"feat/email-template\",\"commit\":\"580dd0b\",\"confidence\":95}"
     }
   ],
   "edges": [
@@ -2399,6 +2443,39 @@
       "weight": 1.0,
       "rationale": "Notable finding",
       "created_at": "2026-08-29T16:18:41.820093-07:00"
+    },
+    {
+      "id": 110,
+      "from_node_id": 110,
+      "to_node_id": 111,
+      "from_change_id": "6e3d63dd-c4f0-424d-9d4c-dd76a74e1b86",
+      "to_change_id": "34691842-6d48-4fd5-9b74-1e888d3c9c4e",
+      "edge_type": "leads_to",
+      "weight": 1.0,
+      "rationale": "approach",
+      "created_at": "2026-09-02T15:48:25.091240-07:00"
+    },
+    {
+      "id": 111,
+      "from_node_id": 111,
+      "to_node_id": 112,
+      "from_change_id": "34691842-6d48-4fd5-9b74-1e888d3c9c4e",
+      "to_change_id": "bf9bb56c-4e62-46f9-80b3-68efcc9fd129",
+      "edge_type": "leads_to",
+      "weight": 1.0,
+      "rationale": "chosen",
+      "created_at": "2026-09-02T15:48:25.098295-07:00"
+    },
+    {
+      "id": 112,
+      "from_node_id": 112,
+      "to_node_id": 113,
+      "from_change_id": "bf9bb56c-4e62-46f9-80b3-68efcc9fd129",
+      "to_change_id": "9118a526-f18b-4a91-9d2c-72923c9769be",
+      "edge_type": "leads_to",
+      "weight": 1.0,
+      "rationale": "implementation",
+      "created_at": "2026-09-02T15:48:25.105117-07:00"
     }
   ]
 }

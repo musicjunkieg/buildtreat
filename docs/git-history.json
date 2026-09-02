@@ -1,5 +1,13 @@
 [
   {
+    "hash": "580dd0b4f29e0a91b084f1ee11ed75bbf9f98adf",
+    "short_hash": "580dd0b",
+    "author": "Bryan Guffey",
+    "date": "2026-09-02T15:47:56-07:00",
+    "message": "feat: branded HTML email template (Dusk Feed) for broadcasts + confirmation\n\nServer-side brandedEmail() renderer: table layout, inline styles, solid\nhex stand-ins for ink opacity steps, Arial Narrow display fallback.\nBroadcasts wrap the organizer's subject/body; the registration\nconfirmation gets a You're-in headline with the retreat ledger. Text\nversion stays the author's untouched plain text.\n\nCo-Authored-By: Claude Fable 5 <noreply@anthropic.com>\nClaude-Session: https://claude.ai/code/session_01YS7dro4fFpSEXJ9WtXmaBX",
+    "files_changed": 6
+  },
+  {
     "hash": "05fbf8078d0e145b51d930a8bb4c6304f317b499",
     "short_hash": "05fbf80",
     "author": "Bryan Guffey",

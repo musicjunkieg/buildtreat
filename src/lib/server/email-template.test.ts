@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { brandedEmail, broadcastHtml, escapeHtml, retreatFacts } from './email-template';
+import { brandedEmail, broadcastHtml, escapeHtml, locationImages, retreatFacts } from './email-template';
 
 describe('escapeHtml', () => {
 	it('escapes the five html-significant characters', () => {
@@ -56,6 +56,22 @@ describe('brandedEmail', () => {
 		const html = brandedEmail({ heading: 'H', body: 'Just words.' });
 		expect(html).not.toContain('border-radius:999px');
 		expect(html).not.toContain('letter-spacing:1.5px');
+	});
+});
+
+describe('images', () => {
+	it('renders a labeled side-by-side photo row with alt text', () => {
+		const html = brandedEmail({ heading: 'H', body: 'B', images: locationImages() });
+		expect(html).toContain('https://buildersretre.at/media/email-loc-palm-springs.jpg');
+		expect(html).toContain('https://buildersretre.at/media/email-loc-coachella-valley.jpg');
+		expect(html).toContain('alt="Palm Springs city lights at dusk from the Aerial Tramway"');
+		expect(html).toContain('>Palm Springs</div>');
+		expect(html).toContain('>Coachella Valley</div>');
+	});
+
+	it('splits the 600px column evenly with a 12px gutter', () => {
+		const html = brandedEmail({ heading: 'H', body: 'B', images: locationImages() });
+		expect(html).toContain('width="294"');
 	});
 });
 
