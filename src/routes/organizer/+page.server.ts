@@ -33,6 +33,7 @@ import {
 	type TravelStatus
 } from '$lib/server/registration';
 import { emailConfigured, sendEmail } from '$lib/server/email';
+import { broadcastHtml } from '$lib/server/email-template';
 import {
 	createBroadcast,
 	dedupeRecipients,
@@ -321,7 +322,7 @@ export const actions: Actions = {
 		const body = String(form.get('body') ?? '').trim();
 		if (!EMAIL_RE.test(to)) return fail(400, { message: 'Enter a valid test address' });
 		if (!subject || !body) return fail(400, { message: 'Subject and body are both required' });
-		const result = await sendEmail(platform?.env ?? {}, { to, subject, text: body });
+		const result = await sendEmail(platform?.env ?? {}, { to, subject, text: body, html: broadcastHtml(subject, body) });
 		if (!result.ok) {
 			return fail(502, { message: `Test send failed (${result.code})${result.detail ? ` — ${result.detail}` : ''}` });
 		}
@@ -346,7 +347,7 @@ export const actions: Actions = {
 		const worklist = await unsentRecipients(db, id);
 		const run = await runBroadcast(
 			worklist,
-			(to) => sendEmail(platform!.env, { to, subject, text: body, category: 'broadcast' }),
+			(to) => sendEmail(platform!.env, { to, subject, text: body, html: broadcastHtml(subject, body), category: 'broadcast' }),
 			(did, result) => markRecipient(db, id, did, result)
 		);
 		return { message: broadcastMessage(run) };
@@ -366,7 +367,14 @@ export const actions: Actions = {
 		if (!worklist.length) return fail(400, { message: 'Nothing left to retry for that broadcast' });
 		const run = await runBroadcast(
 			worklist,
-			(to) => sendEmail(platform!.env, { to, subject: broadcast.subject, text: broadcast.body, category: 'broadcast' }),
+			(to) =>
+				sendEmail(platform!.env, {
+					to,
+					subject: broadcast.subject,
+					text: broadcast.body,
+					html: broadcastHtml(broadcast.subject, broadcast.body),
+					category: 'broadcast'
+				}),
 			(did, result) => markRecipient(db, id, did, result)
 		);
 		return { message: broadcastMessage(run) };
