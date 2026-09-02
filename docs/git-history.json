@@ -1,5 +1,13 @@
 [
   {
+    "hash": "23c7be4334968968c0ba323f7ecff64cdb16f1fa",
+    "short_hash": "23c7be4",
+    "author": "Bryan Guffey",
+    "date": "2026-09-02T15:54:11-07:00",
+    "message": "feat: contender location photos in branded emails\n\nTwo-up labeled image row (Palm Springs / Coachella Valley) under the\nfacts ledger in broadcasts and the registration confirmation.\nEmail-weight 3:2 crops (44KB/121KB) of the already-credited site\nphotography, served from /media. locationImages() is the single swap\npoint for the booked house once the venue locks.\n\nCo-Authored-By: Claude Fable 5 <noreply@anthropic.com>\nClaude-Session: https://claude.ai/code/session_01YS7dro4fFpSEXJ9WtXmaBX",
+    "files_changed": 8
+  },
+  {
     "hash": "580dd0b4f29e0a91b084f1ee11ed75bbf9f98adf",
     "short_hash": "580dd0b",
     "author": "Bryan Guffey",

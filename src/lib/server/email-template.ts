@@ -25,6 +25,12 @@ export interface BrandedEmailOptions {
 	heading: string;
 	/** Plain text; blank lines split paragraphs, single newlines become <br>. */
 	body: string;
+	/**
+	 * Dusk photograph behind the kicker + headline, pre-scrimmed so its
+	 * bottom edge fades to the ground color. Blocked-image clients fall
+	 * back to the flat ground via bgcolor; text stays live HTML.
+	 */
+	hero?: { src: string };
 	/** Hairline ledger rows shown under the headline. */
 	facts?: EmailFact[];
 	/** Photo row under the ledger — side by side, labeled in fact style. */
@@ -100,6 +106,33 @@ ${cells}
 </tr></table>`;
 }
 
+const KICKER_TD = `style="font-family:${BODY_STACK};font-size:11px;font-weight:500;letter-spacing:3px;text-transform:uppercase;color:${INK};padding-bottom:20px;"`;
+const HEADING_TD = `class="heading" style="font-family:${DISPLAY_STACK};font-size:52px;font-weight:bold;line-height:0.95;letter-spacing:0.5px;text-transform:uppercase;color:${INK};padding-bottom:4px;"`;
+const KICKER_TEXT = 'The Atmospheric Builders&#8217; Retreat';
+
+/**
+ * Kicker + headline, optionally set over a pre-scrimmed hero photograph.
+ * The hero image's baked fade ends at the ground color, and center-bottom /
+ * cover positioning pins that faded edge to the cell's bottom, so the block
+ * hands off seamlessly to the flat ground below. No Outlook VML fill: the
+ * Word engine ignores background-image and shows the bgcolor ground, which
+ * is the intended degraded state.
+ */
+function header(opts: BrandedEmailOptions): string {
+	if (!opts.hero) {
+		return `<tr><td ${KICKER_TD}>${KICKER_TEXT}</td></tr>
+<tr><td ${HEADING_TD}>${escapeHtml(opts.heading)}</td></tr>`;
+	}
+	const src = escapeHtml(opts.hero.src);
+	return `<tr><td background="${src}" bgcolor="${GROUND}" style="background:${GROUND} url('${src}') center bottom / cover no-repeat;">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0">
+<tr><td style="padding:230px 0 0;"></td></tr>
+<tr><td ${KICKER_TD}>${KICKER_TEXT}</td></tr>
+<tr><td ${HEADING_TD}>${escapeHtml(opts.heading)}</td></tr>
+</table>
+</td></tr>`;
+}
+
 export function brandedEmail(opts: BrandedEmailOptions): string {
 	const preheader = opts.body.replace(/\s+/g, ' ').trim().slice(0, 120);
 	const facts = opts.facts?.length
@@ -134,8 +167,7 @@ ${factRows(opts.facts)}
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" bgcolor="${GROUND}" style="background:${GROUND};">
 <tr><td align="center" class="pad" style="padding:44px 28px 52px;">
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:600px;">
-<tr><td style="font-family:${BODY_STACK};font-size:11px;font-weight:500;letter-spacing:3px;text-transform:uppercase;color:${INK};padding-bottom:20px;">The Atmospheric Builders&#8217; Retreat</td></tr>
-<tr><td class="heading" style="font-family:${DISPLAY_STACK};font-size:52px;font-weight:bold;line-height:0.95;letter-spacing:0.5px;text-transform:uppercase;color:${INK};padding-bottom:4px;">${escapeHtml(opts.heading)}</td></tr>
+${header(opts)}
 <tr><td>${facts}${images}</td></tr>
 <tr><td style="padding-top:28px;">
 ${paragraphs(opts.body)}
@@ -154,6 +186,11 @@ export function retreatFacts(): EmailFact[] {
 		{ label: 'When', value: retreatDates.display },
 		{ label: 'Where', value: retreatLocation.display }
 	];
+}
+
+/** Pre-scrimmed dusk hero derived from the site's hero-landscape photography. */
+export function heroImage(): { src: string } {
+	return { src: 'https://buildersretre.at/media/email-hero.jpg' };
 }
 
 /** The two venue contenders — swap for the booked house once the venue locks. */
@@ -177,6 +214,7 @@ export function broadcastHtml(subject: string, body: string): string {
 	return brandedEmail({
 		heading: subject,
 		body,
+		hero: heroImage(),
 		facts: retreatFacts(),
 		images: locationImages(),
 		cta: { label: 'buildersretre.at', url: 'https://buildersretre.at' },

@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { brandedEmail, broadcastHtml, escapeHtml, locationImages, retreatFacts } from './email-template';
+import { brandedEmail, broadcastHtml, escapeHtml, heroImage, locationImages, retreatFacts } from './email-template';
 
 describe('escapeHtml', () => {
 	it('escapes the five html-significant characters', () => {
@@ -75,10 +75,26 @@ describe('images', () => {
 	});
 });
 
+describe('hero', () => {
+	it('sets the headline over the hero background with a ground-color fallback', () => {
+		const html = brandedEmail({ heading: 'The date is set', body: 'B', hero: heroImage() });
+		expect(html).toContain('background="https://buildersretre.at/media/email-hero.jpg"');
+		expect(html).toContain('bgcolor="#0b0908"');
+		expect(html).toContain('center bottom / cover');
+		expect(html).toContain('The date is set');
+	});
+
+	it('renders the plain header without a hero', () => {
+		const html = brandedEmail({ heading: 'H', body: 'B' });
+		expect(html).not.toContain('email-hero.jpg');
+	});
+});
+
 describe('broadcastHtml', () => {
-	it('wraps the subject as headline with retreat facts and home cta', () => {
+	it('wraps the subject as headline with hero, retreat facts, and home cta', () => {
 		const html = broadcastHtml('See you in the desert', 'Details inside.');
 		expect(html).toContain('See you in the desert');
+		expect(html).toContain('email-hero.jpg');
 		expect(html).toContain('December 4–7, 2026');
 		expect(html).toContain('Palm Springs or Coachella Valley');
 		expect(html).toContain('href="https://buildersretre.at"');
