@@ -1,8 +1,9 @@
 import { retreatDates, retreatLocation, travelModes } from '../content';
+import { brandedEmail, heroImage, locationImages, retreatFacts } from './email-template';
 import type { Registration } from './registration';
 
-/** Plain-text confirmation, sent best-effort after a completed registration. */
-export function confirmationEmail(reg: Registration): { subject: string; text: string } {
+/** Confirmation (text + branded html), sent best-effort after a completed registration. */
+export function confirmationEmail(reg: Registration): { subject: string; text: string; html: string } {
 	const first = reg.name.split(' ')[0] || reg.name;
 	const mode = reg.travelMode ? travelModes.find((m) => m.id === reg.travelMode)?.label : null;
 	const travel =
@@ -35,5 +36,15 @@ export function confirmationEmail(reg: Registration): { subject: string; text: s
 		'— Bryan'
 	].join('\n');
 
-	return { subject: `You’re registered — ${retreatDates.display}`, text };
+	const html = brandedEmail({
+		heading: 'You’re in',
+		body: text,
+		hero: heroImage(),
+		facts: [...retreatFacts(), { label: 'Arrive', value: retreatDates.arrive }, { label: 'Leave', value: retreatDates.depart }],
+		images: locationImages(),
+		cta: { label: 'Update your travel', url: 'https://buildersretre.at' },
+		footer: 'Reply to this email any time — it goes straight to Bryan.'
+	});
+
+	return { subject: `You’re registered — ${retreatDates.display}`, text, html };
 }

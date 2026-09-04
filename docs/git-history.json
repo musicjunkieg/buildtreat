@@ -1,5 +1,29 @@
 [
   {
+    "hash": "8eb924ee50661255c148c8900d93ecd123c14c39",
+    "short_hash": "8eb924e",
+    "author": "Bryan Guffey",
+    "date": "2026-09-02T15:57:06-07:00",
+    "message": "feat: dusk hero photograph behind email header\n\nKicker + headline now sit over the site's hero-landscape photography,\npre-scrimmed so its bottom edge fades to the ground color (baked-in\ngradient — email clients can't layer CSS scrims). center bottom / cover\npins the faded edge to the cell bottom for a seamless handoff; blocked\nimages degrade to the flat ground via bgcolor. 57KB derivative served\nfrom /media.\n\nCo-Authored-By: Claude Fable 5 <noreply@anthropic.com>\nClaude-Session: https://claude.ai/code/session_01YS7dro4fFpSEXJ9WtXmaBX",
+    "files_changed": 7
+  },
+  {
+    "hash": "23c7be4334968968c0ba323f7ecff64cdb16f1fa",
+    "short_hash": "23c7be4",
+    "author": "Bryan Guffey",
+    "date": "2026-09-02T15:54:11-07:00",
+    "message": "feat: contender location photos in branded emails\n\nTwo-up labeled image row (Palm Springs / Coachella Valley) under the\nfacts ledger in broadcasts and the registration confirmation.\nEmail-weight 3:2 crops (44KB/121KB) of the already-credited site\nphotography, served from /media. locationImages() is the single swap\npoint for the booked house once the venue locks.\n\nCo-Authored-By: Claude Fable 5 <noreply@anthropic.com>\nClaude-Session: https://claude.ai/code/session_01YS7dro4fFpSEXJ9WtXmaBX",
+    "files_changed": 8
+  },
+  {
+    "hash": "580dd0b4f29e0a91b084f1ee11ed75bbf9f98adf",
+    "short_hash": "580dd0b",
+    "author": "Bryan Guffey",
+    "date": "2026-09-02T15:47:56-07:00",
+    "message": "feat: branded HTML email template (Dusk Feed) for broadcasts + confirmation\n\nServer-side brandedEmail() renderer: table layout, inline styles, solid\nhex stand-ins for ink opacity steps, Arial Narrow display fallback.\nBroadcasts wrap the organizer's subject/body; the registration\nconfirmation gets a You're-in headline with the retreat ledger. Text\nversion stays the author's untouched plain text.\n\nCo-Authored-By: Claude Fable 5 <noreply@anthropic.com>\nClaude-Session: https://claude.ai/code/session_01YS7dro4fFpSEXJ9WtXmaBX",
+    "files_changed": 6
+  },
+  {
     "hash": "05fbf8078d0e145b51d930a8bb4c6304f317b499",
     "short_hash": "05fbf80",
     "author": "Bryan Guffey",
