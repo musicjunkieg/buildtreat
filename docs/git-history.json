@@ -1,5 +1,13 @@
 [
   {
+    "hash": "8eb924ee50661255c148c8900d93ecd123c14c39",
+    "short_hash": "8eb924e",
+    "author": "Bryan Guffey",
+    "date": "2026-09-02T15:57:06-07:00",
+    "message": "feat: dusk hero photograph behind email header\n\nKicker + headline now sit over the site's hero-landscape photography,\npre-scrimmed so its bottom edge fades to the ground color (baked-in\ngradient — email clients can't layer CSS scrims). center bottom / cover\npins the faded edge to the cell bottom for a seamless handoff; blocked\nimages degrade to the flat ground via bgcolor. 57KB derivative served\nfrom /media.\n\nCo-Authored-By: Claude Fable 5 <noreply@anthropic.com>\nClaude-Session: https://claude.ai/code/session_01YS7dro4fFpSEXJ9WtXmaBX",
+    "files_changed": 7
+  },
+  {
     "hash": "23c7be4334968968c0ba323f7ecff64cdb16f1fa",
     "short_hash": "23c7be4",
     "author": "Bryan Guffey",

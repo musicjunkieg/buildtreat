@@ -69,9 +69,13 @@ describe('images', () => {
 		expect(html).toContain('>Coachella Valley</div>');
 	});
 
-	it('splits the 600px column evenly with a 12px gutter', () => {
+	it('uses fluid percentage cells so narrow clients shrink the row', () => {
 		const html = brandedEmail({ heading: 'H', body: 'B', images: locationImages() });
-		expect(html).toContain('width="294"');
+		expect(html).toContain('width="50.00%"');
+		expect(html).toContain('width:50.00%');
+		expect(html).toContain('max-width:294px');
+		expect(html).not.toMatch(/<td width="\d+"/);
+		expect(html).not.toMatch(/<img[^>]*width="\d+"/);
 	});
 });
 

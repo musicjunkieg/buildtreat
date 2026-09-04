@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "exported_at": "2026-09-02T22:57:06.181057+00:00",
+  "exported_at": "2026-09-04T16:15:31.469926+00:00",
   "issues": [
     {
       "id": 102,
@@ -180,7 +180,7 @@
       ],
       "comments": [
         {
-          "content": "RESOLVED: root cause was a typo in the comail control record — DNS had atmos-control.buildersretre.at instead of _atmos-control.buildersretre.at (missing leading underscore), so comail could never verify domain ownership and held all mail in queue. Bryan fixed the record 2026-08-30 (TXT did=did:plc:h3wpawnrlptr4534chevddo6, plus MX 10 smtp.atmos.email added per Scott). Test email sent 2026-09-02 delivered to bryan@bryanguffey.com at 15:02 UTC — first successful end-to-end delivery. Note: landed in SaneBox @SaneLater folder, not inbox.",
+          "content": "RESOLVED: root cause was a typo in the comail control record — DNS had atmos-control.buildersretre.at instead of _atmos-control.buildersretre.at (missing leading underscore), so comail could never verify domain ownership and held all mail in queue. Bryan fixed the record 2026-08-30 (control TXT re-added correctly, plus MX 10 smtp.atmos.email added per Scott). Test email sent 2026-09-02 delivered to the test recipient at 15:02 UTC — first successful end-to-end delivery. Note: landed in a SaneBox filing folder, not the inbox.",
           "created_at": "2026-09-02T22:40:55.759850+00:00",
           "kind": "note"
         }

@@ -92,11 +92,14 @@ function factRows(facts: EmailFact[]): string {
 }
 
 function imageRow(images: EmailImage[]): string {
-	const width = Math.floor((600 - (images.length - 1) * 12) / images.length);
+	// Fluid cells (percentage widths) so narrow clients shrink the row with
+	// the column; the pixel width survives only as the image's max-width.
+	const pct = (100 / images.length).toFixed(2);
+	const maxWidth = Math.floor((600 - (images.length - 1) * 12) / images.length);
 	const cells = images
 		.map(
-			(img, i) => `<td width="${width}" valign="top" style="padding-left:${i === 0 ? 0 : 12}px;">
-<img src="${escapeHtml(img.src)}" alt="${escapeHtml(img.alt)}" width="${width}" style="display:block;width:100%;height:auto;color:${INK_70};font-family:${BODY_STACK};font-size:13px;">
+			(img, i) => `<td width="${pct}%" valign="top" style="width:${pct}%;padding-left:${i === 0 ? 0 : 12}px;">
+<img src="${escapeHtml(img.src)}" alt="${escapeHtml(img.alt)}" style="display:block;width:100%;max-width:${maxWidth}px;height:auto;color:${INK_70};font-family:${BODY_STACK};font-size:13px;">
 ${img.label ? `<div style="padding-top:8px;font-family:${BODY_STACK};font-size:12px;letter-spacing:1.5px;text-transform:uppercase;color:${INK_70};">${escapeHtml(img.label)}</div>` : ''}
 </td>`
 		)
