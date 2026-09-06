@@ -1,5 +1,13 @@
 [
   {
+    "hash": "fa5b0a6430258412514d476bb6a35153ec795942",
+    "short_hash": "fa5b0a6",
+    "author": "Bryan Guffey",
+    "date": "2026-09-06T12:41:12-07:00",
+    "message": "refactor(survey): split DatesItem into grid, range editor, typed form\n\nDatesItem.svelte (731 → 394) stays the orchestrator: it owns survey.ranges\nmutations, anchor/drag/hover selection state, and the live-region messages.\nCalendarGrid.svelte renders the months and day cells and exposes focusDay()\nfor the roving tabindex; RangeEditor.svelte edits one committed range;\nTypedRangeForm.svelte is the no-pointer fallback. grid.ts holds the shared\nCellState type and weekday headers. Props and import path of DatesItem are\nunchanged; no behavior change.\n\nCo-Authored-By: Claude Fable 5 <noreply@anthropic.com>\nClaude-Session: https://claude.ai/code/session_01YS7dro4fFpSEXJ9WtXmaBX",
+    "files_changed": 8
+  },
+  {
     "hash": "d95fd89a0422664945f1d46f38fe1c0683e83a42",
     "short_hash": "d95fd89",
     "author": "Bryan Guffey",

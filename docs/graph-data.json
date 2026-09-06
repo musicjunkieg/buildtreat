@@ -1330,6 +1330,17 @@
       "created_at": "2026-09-06T12:39:36.162937-07:00",
       "updated_at": "2026-09-06T12:39:36.162937-07:00",
       "metadata_json": "{\"branch\":\"refactor/modular-layout\",\"commit\":\"d95fd89\",\"confidence\":90,\"files\":[\"src/routes/organizer/+page.server.ts\",\"src/lib/server/organizer/page-data.ts\",\"src/lib/server/organizer/preview.ts\"]}"
+    },
+    {
+      "id": 122,
+      "change_id": "aad71651-391f-4386-902e-6b479a8722aa",
+      "node_type": "action",
+      "title": "Split DatesItem.svelte → CalendarGrid + RangeEditor + TypedRangeForm + grid.ts",
+      "description": null,
+      "status": "pending",
+      "created_at": "2026-09-06T12:41:14.468793-07:00",
+      "updated_at": "2026-09-06T12:41:14.468793-07:00",
+      "metadata_json": "{\"branch\":\"refactor/modular-layout\",\"commit\":\"fa5b0a6\",\"confidence\":90,\"files\":[\"src/lib/survey/dates/DatesItem.svelte\",\"src/lib/survey/dates/CalendarGrid.svelte\",\"src/lib/survey/dates/RangeEditor.svelte\",\"src/lib/survey/dates/TypedRangeForm.svelte\"]}"
     }
   ],
   "edges": [
@@ -2641,6 +2652,17 @@
       "weight": 1.0,
       "rationale": "Split D of the modular layout",
       "created_at": "2026-09-06T12:39:43.091838-07:00"
+    },
+    {
+      "id": 120,
+      "from_node_id": 119,
+      "to_node_id": 122,
+      "from_change_id": "c01b5ead-7e2a-4382-9395-09d1699092f3",
+      "to_change_id": "aad71651-391f-4386-902e-6b479a8722aa",
+      "edge_type": "leads_to",
+      "weight": 1.0,
+      "rationale": "Split B of the modular layout",
+      "created_at": "2026-09-06T12:41:14.476074-07:00"
     }
   ]
 }
