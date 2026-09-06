@@ -1,5 +1,13 @@
 [
   {
+    "hash": "965f817bfce7c5c851e6e4d99e6339b83ef84d19",
+    "short_hash": "965f817",
+    "author": "Bryan Guffey",
+    "date": "2026-09-06T12:33:11-07:00",
+    "message": "refactor: relocate lib into feature folders (ui, survey, auth, registration, organizer, server/{email,organizer})\n\nPure moves plus import rewrites — no file contents changed beyond\nspecifiers. Sets up the per-folder AGENTS.md and the oversized-file\nsplits that follow.\n\nCo-Authored-By: Claude Fable 5 <noreply@anthropic.com>\nClaude-Session: https://claude.ai/code/session_01YS7dro4fFpSEXJ9WtXmaBX",
+    "files_changed": 87
+  },
+  {
     "hash": "8eb924ee50661255c148c8900d93ecd123c14c39",
     "short_hash": "8eb924e",
     "author": "Bryan Guffey",

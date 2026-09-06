@@ -1308,6 +1308,17 @@
       "created_at": "2026-09-06T12:31:04.058368-07:00",
       "updated_at": "2026-09-06T12:31:04.058368-07:00",
       "metadata_json": "{\"branch\":\"refactor/modular-layout\",\"confidence\":85}"
+    },
+    {
+      "id": 120,
+      "change_id": "eca6b171-d828-4f7d-8157-afc8f1f3f6f4",
+      "node_type": "action",
+      "title": "Relocated lib modules into feature folders; imports rewritten; svelte-check + vitest green",
+      "description": null,
+      "status": "pending",
+      "created_at": "2026-09-06T12:33:20.853023-07:00",
+      "updated_at": "2026-09-06T12:33:20.853023-07:00",
+      "metadata_json": "{\"branch\":\"refactor/modular-layout\",\"commit\":\"965f817\",\"confidence\":90}"
     }
   ],
   "edges": [
