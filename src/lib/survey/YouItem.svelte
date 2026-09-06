@@ -1,8 +1,8 @@
 <script lang="ts">
 	import { logout } from '@svelte-atproto/oauth/client';
-	import QuestionScaffold from '$lib/components/QuestionScaffold.svelte';
+	import QuestionScaffold from '$lib/ui/QuestionScaffold.svelte';
 	import { youQuestion } from '$lib/content';
-	import type { SurveyState } from '$lib/survey.svelte';
+	import type { SurveyState } from '$lib/survey/survey.svelte';
 
 	let {
 		survey,

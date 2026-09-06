@@ -1,6 +1,6 @@
 import { error } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
-import { getAllResponses, isOrganizer } from '$lib/server/organizer';
+import { getAllResponses, isOrganizer } from '$lib/server/organizer/admin';
 import { responsesCsv } from '$lib/organizer/csv';
 
 export const GET: RequestHandler = async ({ locals, platform }) => {

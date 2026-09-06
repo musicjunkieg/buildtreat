@@ -1,4 +1,4 @@
-import { dietaryOptions, registration, travelModes, type DietaryId, type TravelMode } from './content';
+import { dietaryOptions, registration, travelModes, type DietaryId, type TravelMode } from '$lib/content';
 
 /**
  * Registration form model shared by the server action and the UI. Pure:

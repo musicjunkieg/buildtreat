@@ -16,7 +16,7 @@
         "rule": "design-system-font",
         "value": "big shoulders",
         "files": [
-          "src/lib/server/email-template.ts"
+          "src/lib/server/email/email-template.ts"
         ],
         "createdAt": "2026-09-02T22:45:43.151Z",
         "reason": "email medium: same brand face via Google Fonts static name (Big Shoulders Variable can't load in email clients)"
@@ -25,7 +25,7 @@
         "rule": "design-system-font",
         "value": "hanken grotesk",
         "files": [
-          "src/lib/server/email-template.ts"
+          "src/lib/server/email/email-template.ts"
         ],
         "createdAt": "2026-09-02T22:45:43.187Z",
         "reason": "email medium: same brand face via Google Fonts static name"
@@ -34,7 +34,7 @@
         "rule": "design-system-font-size",
         "value": "52px",
         "files": [
-          "src/lib/server/email-template.ts"
+          "src/lib/server/email/email-template.ts"
         ],
         "createdAt": "2026-09-02T22:45:43.222Z",
         "reason": "email needs fixed px; 52px sits inside the documented headline clamp range"
@@ -43,7 +43,7 @@
         "rule": "design-system-font-size",
         "value": "40px",
         "files": [
-          "src/lib/server/email-template.ts"
+          "src/lib/server/email/email-template.ts"
         ],
         "createdAt": "2026-09-02T22:45:43.256Z",
         "reason": "email mobile step; inside the documented title clamp range"

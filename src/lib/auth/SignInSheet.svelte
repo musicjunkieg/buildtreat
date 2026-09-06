@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { login } from '@svelte-atproto/oauth/client';
-	import Icon from '$lib/components/Icon.svelte';
+	import Icon from '$lib/ui/Icon.svelte';
 	import { retreat } from '$lib/content';
 	import type { KnownUser } from '$lib/types';
 

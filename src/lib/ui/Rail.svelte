@@ -1,5 +1,5 @@
 <script lang="ts">
-	import Icon, { type IconName } from '$lib/components/Icon.svelte';
+	import Icon, { type IconName } from '$lib/ui/Icon.svelte';
 	import { itemTitles, type FeedItemId } from '$lib/content';
 
 	let {

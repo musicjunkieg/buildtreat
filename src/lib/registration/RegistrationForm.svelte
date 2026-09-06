@@ -1,9 +1,9 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
-	import AgreementRow from '$lib/components/registration/AgreementRow.svelte';
+	import AgreementRow from '$lib/registration/AgreementRow.svelte';
 	import { codeOfConduct, dietaryOptions, registration as copy, retreat, travelModes, waiver } from '$lib/content';
-	import { emptyRegistration, type RegistrationErrors, type RegistrationInput } from '$lib/registration';
-	import type { PageData, ActionData } from '../../../routes/$types';
+	import { emptyRegistration, type RegistrationErrors, type RegistrationInput } from '$lib/registration/registration';
+	import type { PageData, ActionData } from '../../routes/$types';
 
 	let { data, form, oncancel }: { data: PageData; form: ActionData; oncancel: () => void } = $props();
 

@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
 	import { SvelteSet } from 'svelte/reactivity';
-	import type { BroadcastView } from '$lib/server/broadcasts';
+	import type { BroadcastView } from '$lib/server/email/broadcasts';
 
 	let {
 		configured,

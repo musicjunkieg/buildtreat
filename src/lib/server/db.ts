@@ -1,5 +1,5 @@
 import type { D1Database } from '@cloudflare/workers-types';
-import type { SurveyDraft } from '$lib/survey.svelte';
+import type { SurveyDraft } from '$lib/survey/survey.svelte';
 import type { AvailabilityRange, InterestValue, TravelValue } from '$lib/content';
 import { locations, NO_PREFERENCE, retreat } from '$lib/content';
 

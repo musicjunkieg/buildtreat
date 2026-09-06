@@ -1,6 +1,6 @@
 <script lang="ts">
-	import Icon from '$lib/components/Icon.svelte';
-	import NextChip from '$lib/components/NextChip.svelte';
+	import Icon from '$lib/ui/Icon.svelte';
+	import NextChip from '$lib/ui/NextChip.svelte';
 	import { datesQuestion, retreat, type AvailabilityRange, type DayPortion } from '$lib/content';
 	import {
 		addDays,
@@ -13,7 +13,7 @@
 		rangeNights,
 		windowMonths
 	} from '$lib/dates';
-	import type { SurveyState } from '$lib/survey.svelte';
+	import type { SurveyState } from '$lib/survey/survey.svelte';
 
 	let {
 		survey,

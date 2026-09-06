@@ -8,7 +8,7 @@
 	// live server-side in +page.server.ts instead; this component only
 	// receives their already-computed results as props.
 	import type { Registration, RegistrationCounts, TravelStatus } from '$lib/server/registration';
-	import type { AllowlistEntry } from '$lib/server/organizer';
+	import type { AllowlistEntry } from '$lib/server/organizer/admin';
 
 	type RegistrationView = Registration & { travel: TravelStatus; registered: boolean };
 

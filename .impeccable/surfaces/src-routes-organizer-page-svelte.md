@@ -2,7 +2,7 @@
 version: 1
 slug: "src-routes-organizer-page-svelte"
 primary_target: "src/routes/organizer/+page.svelte"
-related_targets: ["src/routes/organizer/+page.server.ts","src/lib/server/organizer.ts"]
+related_targets: ["src/routes/organizer/+page.server.ts","src/lib/server/organizer/admin.ts"]
 ---
 
 # Surface: organizer backend (/organizer)

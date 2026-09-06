@@ -20,7 +20,7 @@ import {
 	type AllowlistEntry,
 	type LatePass,
 	type OrganizerResponse
-} from '$lib/server/organizer';
+} from '$lib/server/organizer/admin';
 import { listWaitlist, promoteFromWaitlist, type WaitlistEntry } from '$lib/server/waitlist';
 import {
 	isRegistered,
@@ -32,8 +32,8 @@ import {
 	type RegistrationCounts,
 	type TravelStatus
 } from '$lib/server/registration';
-import { emailConfigured, sendEmail } from '$lib/server/email';
-import { broadcastHtml } from '$lib/server/email-template';
+import { emailConfigured, sendEmail } from '$lib/server/email/email';
+import { broadcastHtml } from '$lib/server/email/email-template';
 import {
 	createBroadcast,
 	dedupeRecipients,
@@ -43,7 +43,7 @@ import {
 	runBroadcast,
 	unsentRecipients,
 	type BroadcastView
-} from '$lib/server/broadcasts';
+} from '$lib/server/email/broadcasts';
 import { EMAIL_RE } from '$lib/server/db';
 
 /**

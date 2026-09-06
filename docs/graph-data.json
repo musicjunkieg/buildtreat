@@ -1264,6 +1264,50 @@
       "created_at": "2026-09-02T15:57:12.204930-07:00",
       "updated_at": "2026-09-02T15:57:12.204930-07:00",
       "metadata_json": "{\"branch\":\"feat/email-template\",\"commit\":\"8eb924e\",\"confidence\":95}"
+    },
+    {
+      "id": 116,
+      "change_id": "31c36370-1389-4ebf-99b2-6897f2788fb3",
+      "node_type": "goal",
+      "title": "Modular layout refactor: ≤500-line files, coherent folders, AGENTS.md per folder",
+      "description": null,
+      "status": "pending",
+      "created_at": "2026-09-06T12:28:39.641879-07:00",
+      "updated_at": "2026-09-06T12:28:39.641879-07:00",
+      "metadata_json": "{\"branch\":\"refactor/modular-layout\",\"confidence\":85,\"prompt\":\"Hey I want you to try something. \\n\\nbreak up this app into a soft cap of 400-500 lines per file and organize them into logically coherent folders, then add an agents.md into those folders appropriate for it.\\n\\nDo this on a separate branch - we're going to then see how well that version of the app works.\"}"
+    },
+    {
+      "id": 117,
+      "change_id": "67cab60c-37e3-49cd-8348-c13ac1b9700a",
+      "node_type": "option",
+      "title": "Feature-oriented folders (ui/survey/auth/registration/organizer + server/{email,organizer}); split 4 oversized files into section components",
+      "description": null,
+      "status": "pending",
+      "created_at": "2026-09-06T12:31:04.033175-07:00",
+      "updated_at": "2026-09-06T12:31:04.033175-07:00",
+      "metadata_json": "{\"branch\":\"refactor/modular-layout\",\"confidence\":85}"
+    },
+    {
+      "id": 118,
+      "change_id": "0dde714b-02de-4d58-a31c-dde8ce7c23ee",
+      "node_type": "option",
+      "title": "Layer-oriented (components/ stores/ server/) with only the 4 splits",
+      "description": null,
+      "status": "pending",
+      "created_at": "2026-09-06T12:31:04.045932-07:00",
+      "updated_at": "2026-09-06T12:31:04.045932-07:00",
+      "metadata_json": "{\"branch\":\"refactor/modular-layout\",\"confidence\":50}"
+    },
+    {
+      "id": 119,
+      "change_id": "c01b5ead-7e2a-4382-9395-09d1699092f3",
+      "node_type": "decision",
+      "title": "Go feature-oriented: folders = product areas so each AGENTS.md has one coherent story; keep $lib/server as the server-only root",
+      "description": null,
+      "status": "pending",
+      "created_at": "2026-09-06T12:31:04.058368-07:00",
+      "updated_at": "2026-09-06T12:31:04.058368-07:00",
+      "metadata_json": "{\"branch\":\"refactor/modular-layout\",\"confidence\":85}"
     }
   ],
   "edges": [
@@ -2520,6 +2564,50 @@
       "weight": 1.0,
       "rationale": "follow-on: Bryan asked for faded background treatment behind top text",
       "created_at": "2026-09-02T15:57:12.213375-07:00"
+    },
+    {
+      "id": 115,
+      "from_node_id": 116,
+      "to_node_id": 117,
+      "from_change_id": "31c36370-1389-4ebf-99b2-6897f2788fb3",
+      "to_change_id": "67cab60c-37e3-49cd-8348-c13ac1b9700a",
+      "edge_type": "leads_to",
+      "weight": 1.0,
+      "rationale": "approach",
+      "created_at": "2026-09-06T12:31:04.066405-07:00"
+    },
+    {
+      "id": 116,
+      "from_node_id": 116,
+      "to_node_id": 118,
+      "from_change_id": "31c36370-1389-4ebf-99b2-6897f2788fb3",
+      "to_change_id": "0dde714b-02de-4d58-a31c-dde8ce7c23ee",
+      "edge_type": "leads_to",
+      "weight": 1.0,
+      "rationale": "approach",
+      "created_at": "2026-09-06T12:31:04.074141-07:00"
+    },
+    {
+      "id": 117,
+      "from_node_id": 117,
+      "to_node_id": 119,
+      "from_change_id": "67cab60c-37e3-49cd-8348-c13ac1b9700a",
+      "to_change_id": "c01b5ead-7e2a-4382-9395-09d1699092f3",
+      "edge_type": "leads_to",
+      "weight": 1.0,
+      "rationale": "chosen",
+      "created_at": "2026-09-06T12:31:04.081864-07:00"
+    },
+    {
+      "id": 118,
+      "from_node_id": 118,
+      "to_node_id": 119,
+      "from_change_id": "0dde714b-02de-4d58-a31c-dde8ce7c23ee",
+      "to_change_id": "c01b5ead-7e2a-4382-9395-09d1699092f3",
+      "edge_type": "leads_to",
+      "weight": 1.0,
+      "rationale": "rejected: layer folders don't give AGENTS.md a coherent scope",
+      "created_at": "2026-09-06T12:31:04.107129-07:00"
     }
   ]
 }

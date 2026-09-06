@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
 	import { logout } from '@svelte-atproto/oauth/client';
-	import Icon from '$lib/components/Icon.svelte';
+	import Icon from '$lib/ui/Icon.svelte';
 	import { retreat, waitlist } from '$lib/content';
 
 	let {

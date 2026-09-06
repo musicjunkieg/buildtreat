@@ -1,21 +1,40 @@
 {
   "version": 1,
-  "exported_at": "2026-09-04T16:15:31.469926+00:00",
+  "exported_at": "2026-09-06T19:33:18.677765+00:00",
   "issues": [
+    {
+      "id": 103,
+      "title": "Refactor: modular layout (≤500-line files, coherent folders, AGENTS.md)",
+      "description": null,
+      "status": "open",
+      "priority": "medium",
+      "parent_id": null,
+      "labels": [],
+      "comments": [],
+      "created_at": "2026-09-06T19:28:31.386575+00:00",
+      "updated_at": "2026-09-06T19:28:31.386575+00:00",
+      "closed_at": null
+    },
     {
       "id": 102,
       "title": "Branded HTML email template for broadcasts",
       "description": null,
-      "status": "open",
+      "status": "closed",
       "priority": "high",
       "parent_id": null,
       "labels": [
         "feature"
       ],
-      "comments": [],
+      "comments": [
+        {
+          "content": "Shipped: PR #26 merged (a710ce0 base → merge). brandedEmail() renderer with hero photo treatment, contender location photos, retreat facts ledger, pill CTA; wired into broadcasts, test sends, and registration confirmation. CodeRabbit findings (PII in export, fixed-width image row) fixed and threads resolved.",
+          "created_at": "2026-09-04T17:11:25.006167+00:00",
+          "kind": "note"
+        }
+      ],
       "created_at": "2026-09-02T22:43:44.688238+00:00",
-      "updated_at": "2026-09-02T22:43:44.688238+00:00",
-      "closed_at": null
+      "updated_at": "2026-09-04T17:11:25.015710+00:00",
+      "closed_at": "2026-09-04T17:11:25.015710+00:00"
     },
     {
       "id": 101,

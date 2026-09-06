@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { confirmationEmail } from './registration-email';
-import type { Registration } from './registration';
+import type { Registration } from '$lib/server/registration';
 
 const base: Registration = {
 	did: 'did:plc:a', handle: 'maren.dev', name: 'Maren Costa', email: 'maren@costa.dev', status: 'confirmed',

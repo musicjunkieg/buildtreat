@@ -1,6 +1,6 @@
-import { retreatDates, retreatLocation, travelModes } from '../content';
+import { retreatDates, retreatLocation, travelModes } from '$lib/content';
 import { brandedEmail, heroImage, locationImages, retreatFacts } from './email-template';
-import type { Registration } from './registration';
+import type { Registration } from '$lib/server/registration';
 
 /** Confirmation (text + branded html), sent best-effort after a completed registration. */
 export function confirmationEmail(reg: Registration): { subject: string; text: string; html: string } {

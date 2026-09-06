@@ -1,6 +1,6 @@
-import { NO_PREFERENCE } from '../content';
-import type { OrganizerResponse } from '../server/organizer';
-import { isRegistered, type Registration } from '../server/registration';
+import { NO_PREFERENCE } from '$lib/content';
+import type { OrganizerResponse } from '$lib/server/organizer/admin';
+import { isRegistered, type Registration } from '$lib/server/registration';
 
 /**
  * RFC 4180-style CSV: quote fields containing commas, quotes, or newlines.

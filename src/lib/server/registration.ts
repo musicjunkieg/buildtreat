@@ -1,8 +1,8 @@
 import type { D1Database } from '@cloudflare/workers-types';
-import type { TravelMode } from '../content';
-import type { RegistrationInput } from '../registration';
-import { isTravelMode } from '../registration';
-import type { AllowlistEntry } from './organizer';
+import type { TravelMode } from '$lib/content';
+import type { RegistrationInput } from '$lib/registration/registration';
+import { isTravelMode } from '$lib/registration/registration';
+import type { AllowlistEntry } from './organizer/admin';
 
 /**
  * D1 access for registrations — one upserted row per DID. Mirrors the

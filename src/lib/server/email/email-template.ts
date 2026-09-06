@@ -7,7 +7,7 @@
  * produces the html alternative.
  */
 
-import { retreatDates, retreatLocation } from '../content';
+import { retreatDates, retreatLocation } from '$lib/content';
 
 export interface EmailFact {
 	label: string;
