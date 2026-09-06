@@ -1,5 +1,13 @@
 [
   {
+    "hash": "dd1dd46044ac2ed7dbddb79e1aac81b851b4ab5b",
+    "short_hash": "dd1dd46",
+    "author": "Bryan Guffey",
+    "date": "2026-09-06T12:57:07-07:00",
+    "message": "docs: point CLAUDE.md at src/AGENTS.md and fill the template TODOs\n\nCo-Authored-By: Claude Fable 5 <noreply@anthropic.com>\nClaude-Session: https://claude.ai/code/session_01YS7dro4fFpSEXJ9WtXmaBX",
+    "files_changed": 4
+  },
+  {
     "hash": "60095f986abe1d14d9f1863d7517325d3c960296",
     "short_hash": "60095f9",
     "author": "Bryan Guffey",
@@ -8,12 +16,12 @@
     "files_changed": 13
   },
   {
-    "hash": "b499dadae24615e7c697172128ed976bad3b3993",
-    "short_hash": "b499dad",
+    "hash": "60095f986abe1d14d9f1863d7517325d3c960296",
+    "short_hash": "60095f9",
     "author": "Bryan Guffey",
-    "date": "2026-09-06T12:55:51-07:00",
-    "message": "fix(organizer): pass the all/yes filter as prop + callback, not bind:\n\nA `bind:` on a component prop makes the SSR compiler wrap the page body\nin a settle loop that renders through a copied renderer. That copy is\nnot in its parent's output tree, so the page's <svelte:head><title>\nloses the depth-first path comparison and the layout title wins. The\norganizer page lost its title after the AvailabilitySection split for\nexactly this reason; the page now owns `filter` and hands the section\nan `onfilter` callback. SSR output is byte-identical to main again.\n\nCo-Authored-By: Claude Fable 5 <noreply@anthropic.com>\nClaude-Session: https://claude.ai/code/session_01YS7dro4fFpSEXJ9WtXmaBX",
-    "files_changed": 5
+    "date": "2026-09-06T12:56:09-07:00",
+    "message": "docs: add AGENTS.md to every feature folder under src/\n\nTwelve folder guides: what lives in the folder, the boundaries that\nmatter there (server-only imports, scoped-style duplication, D1\nparameterization, the bind:/title SSR trap), the props each component\ntakes, and what to run before calling a change done. src/AGENTS.md is\nthe map that points at the rest.\n\nCo-Authored-By: Claude Fable 5 <noreply@anthropic.com>\nClaude-Session: https://claude.ai/code/session_01YS7dro4fFpSEXJ9WtXmaBX",
+    "files_changed": 13
   },
   {
     "hash": "4c523a53a0fc8d79317d011b952dd0171dca3a20",

@@ -1407,6 +1407,17 @@
       "created_at": "2026-09-06T12:56:11.705614-07:00",
       "updated_at": "2026-09-06T12:56:11.705614-07:00",
       "metadata_json": "{\"branch\":\"refactor/modular-layout\",\"commit\":\"60095f9\",\"confidence\":95,\"files\":[\"src/AGENTS.md\",\"src/routes/AGENTS.md\",\"src/lib/AGENTS.md\"]}"
+    },
+    {
+      "id": 129,
+      "change_id": "66420e96-cbb2-4029-8097-3d41a9c60425",
+      "node_type": "outcome",
+      "title": "PR #27 opened: refactor/modular-layout — 9 commits, check/test/build clean, SSR byte-identical to main",
+      "description": null,
+      "status": "pending",
+      "created_at": "2026-09-06T12:58:06.477143-07:00",
+      "updated_at": "2026-09-06T12:58:06.477143-07:00",
+      "metadata_json": "{\"branch\":\"refactor/modular-layout\",\"commit\":\"dd1dd46\",\"confidence\":95}"
     }
   ],
   "edges": [
@@ -2795,6 +2806,28 @@
       "weight": 1.0,
       "rationale": "Second half of the request: AGENTS.md per folder",
       "created_at": "2026-09-06T12:56:11.726514-07:00"
+    },
+    {
+      "id": 127,
+      "from_node_id": 128,
+      "to_node_id": 129,
+      "from_change_id": "62c830a5-b17a-41c2-90b1-afa0ace72858",
+      "to_change_id": "66420e96-cbb2-4029-8097-3d41a9c60425",
+      "edge_type": "leads_to",
+      "weight": 1.0,
+      "rationale": "Branch pushed and PR opened",
+      "created_at": "2026-09-06T12:58:06.485595-07:00"
+    },
+    {
+      "id": 128,
+      "from_node_id": 126,
+      "to_node_id": 129,
+      "from_change_id": "a891b47d-1e1f-4586-9d22-5584baab4566",
+      "to_change_id": "66420e96-cbb2-4029-8097-3d41a9c60425",
+      "edge_type": "leads_to",
+      "weight": 1.0,
+      "rationale": "Fix included in the PR",
+      "created_at": "2026-09-06T12:58:06.492816-07:00"
     }
   ]
 }
