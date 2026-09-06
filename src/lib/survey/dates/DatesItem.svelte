@@ -8,12 +8,13 @@
 		dayOfWeek,
 		formatDay,
 		formatRange,
-		inRange,
-		portionLabel,
-		rangeNights,
-		windowMonths
+		inRange
 	} from '$lib/dates';
 	import type { SurveyState } from '$lib/survey/survey.svelte';
+	import CalendarGrid from './CalendarGrid.svelte';
+	import RangeEditor from './RangeEditor.svelte';
+	import TypedRangeForm from './TypedRangeForm.svelte';
+	import type { CellState } from './grid';
 
 	let {
 		survey,
@@ -26,9 +27,6 @@
 		onsignin: () => void;
 		onnext?: () => void;
 	} = $props();
-
-	const months = windowMonths();
-	const weekdays = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
 
 	/**
 	 * Pending range start (bits-ui style tap-anchor / tap-complete flow).
@@ -51,13 +49,11 @@
 	/** Roving-tabindex focus target so arrow keys walk the grid. */
 	let focusDate = $state<string>(retreat.window.start);
 
+	/** The grid instance, for handing DOM focus to the day buttons it owns. */
+	let grid = $state<{ focusDay: (day: string) => void } | undefined>();
+
 	/** Index into survey.ranges currently open in the editor; null = closed. */
 	let editing = $state<number | null>(null);
-
-	/** Typed-entry state (accessible alternative). */
-	let typedStart = $state('');
-	let typedEnd = $state('');
-	let typedError = $state('');
 
 	const dragLo = $derived(dragStart && dragEnd ? (dragStart < dragEnd ? dragStart : dragEnd) : null);
 	const dragHi = $derived(dragStart && dragEnd ? (dragStart < dragEnd ? dragEnd : dragStart) : null);
@@ -163,9 +159,7 @@
 	function moveFocus(day: string) {
 		const target = clampToWindow(day);
 		focusDate = target;
-		document
-			.querySelector<HTMLButtonElement>(`.calendar button[data-date="${target}"]`)
-			?.focus();
+		grid?.focusDay(target);
 	}
 
 	function dayKey(day: string, e: KeyboardEvent) {
@@ -198,26 +192,6 @@
 		hovered = day;
 	}
 
-	function addTyped() {
-		typedError = '';
-		if (!typedStart || !typedEnd) {
-			typedError = 'Pick both a start and an end date.';
-			return;
-		}
-		let lo = typedStart;
-		let hi = typedEnd;
-		if (lo > hi) [lo, hi] = [hi, lo];
-		if (hi < retreat.window.start || lo > retreat.window.end) {
-			typedError = `Dates must fall between Sept 1 and Nov 15.`;
-			return;
-		}
-		if (lo < retreat.window.start) lo = retreat.window.start;
-		if (hi > retreat.window.end) hi = retreat.window.end;
-		commitRange(lo, hi);
-		typedStart = '';
-		typedEnd = '';
-	}
-
 	function setPortion(edge: 'start' | 'end', portion: DayPortion) {
 		if (editing === null) return;
 		survey.updateRange(editing, edge === 'start' ? { startPortion: portion } : { endPortion: portion });
@@ -231,20 +205,15 @@
 		survey.saveLocal();
 	}
 
-	function cellState(day: string): {
-		selected: boolean;
-		preview: boolean;
-		portion: DayPortion;
-		isEdge: boolean;
-		active: boolean;
-	} {
+	function cellState(day: string): CellState {
+		const isAnchor = day === anchor;
 		const i = rangeIndexOf(day);
 		if (i !== -1) {
 			const r = survey.ranges[i];
 			const isStart = day === r.start;
 			const isEnd = day === r.end;
 			const portion: DayPortion = isStart && r.startPortion !== 'full' ? r.startPortion : isEnd && r.endPortion !== 'full' ? r.endPortion : 'full';
-			return { selected: true, preview: false, portion, isEdge: isStart || isEnd, active: editing === i };
+			return { selected: true, preview: false, portion, isEdge: isStart || isEnd, active: editing === i, isAnchor };
 		}
 		const selected = day === anchor || inDrag(day);
 		return {
@@ -252,17 +221,12 @@
 			preview: !selected && inPreview(day),
 			portion: 'full',
 			isEdge: false,
-			active: false
+			active: false,
+			isAnchor
 		};
 	}
 
 	const editingRange = $derived<AvailabilityRange | null>(editing !== null ? (survey.ranges[editing] ?? null) : null);
-
-	const portions: { value: DayPortion; label: string }[] = [
-		{ value: 'full', label: 'Full day' },
-		{ value: 'first_half', label: 'First half' },
-		{ value: 'second_half', label: 'Second half' }
-	];
 </script>
 
 <svelte:window
@@ -287,63 +251,19 @@
 		</button>
 	{/if}
 
-	<div
-		class="calendar"
-		class:locked={!signedIn}
-		role="presentation"
-		onpointerleave={() => {
-			// Pointer exit must not clear a preview that keyboard focus is
-			// driving: if a day cell still owns focus, keep previewing to it.
-			const active = document.activeElement;
-			hovered = active instanceof HTMLElement && active.dataset.date ? active.dataset.date : null;
-		}}
-	>
-		<p class="visually-hidden" aria-live="polite">{anchorMessage}</p>
-		{#each months as month (month.month)}
-			<div class="month" role="group" aria-labelledby="month-{month.month}">
-				<h3 class="kicker month-name" id="month-{month.month}">{month.name}</h3>
-				<div class="grid">
-					{#each weekdays as wd, i (i)}
-						<span class="wd" aria-hidden="true">{wd}</span>
-					{/each}
-					{#each { length: month.leading } as _, i (i)}
-						<span class="blank" aria-hidden="true"></span>
-					{/each}
-					{#each month.days as day (day.iso)}
-						{@const s = cellState(day.iso)}
-						{#if day.inWindow}
-							<button
-								class="day"
-								class:sel={s.selected}
-								class:preview={s.preview}
-								class:first-half={s.portion === 'first_half'}
-								class:second-half={s.portion === 'second_half'}
-								class:active={s.active}
-								data-date={day.iso}
-								tabindex={day.iso === focusDate ? 0 : -1}
-								onclick={() => dayActivate(day.iso)}
-								onpointerdown={(e) => pointerDown(day.iso, e)}
-								onpointerenter={(e) => pointerEnter(day.iso, e)}
-								onfocusin={() => dayFocus(day.iso)}
-								onkeydown={(e) => dayKey(day.iso, e)}
-								aria-pressed={s.selected}
-								aria-label="{month.name} {day.day}{day.iso === anchor
-									? ', range start'
-									: s.selected
-										? ', available' + (s.portion === 'full' ? '' : ', ' + portionLabel(s.portion, 'start'))
-										: ''}"
-								disabled={!signedIn}
-							>
-								<span class="num">{day.day}</span>
-							</button>
-						{:else}
-							<span class="day out" aria-hidden="true">{day.day}</span>
-						{/if}
-					{/each}
-				</div>
-			</div>
-		{/each}
-	</div>
+	<CalendarGrid
+		bind:this={grid}
+		locked={!signedIn}
+		liveMessage={anchorMessage}
+		{focusDate}
+		{cellState}
+		onactivate={dayActivate}
+		onpointerdown={pointerDown}
+		onpointerenter={pointerEnter}
+		onfocus={dayFocus}
+		onkey={dayKey}
+		onhoverchange={(day) => (hovered = day)}
+	/>
 
 	{#if signedIn}
 		<div class="under">
@@ -365,50 +285,7 @@
 					</button>
 				</div>
 			{:else if editingRange && editing !== null}
-				<div class="editor" role="group" aria-label="Edit range {formatRange(editingRange)}">
-					<div class="editor-head">
-						<p class="range-label">
-							{formatRange(editingRange)}
-							<span class="nights">{rangeNights(editingRange)} night{rangeNights(editingRange) === 1 ? '' : 's'}</span>
-						</p>
-						<button class="icon-btn" onclick={deleteEditing} aria-label="Remove this range">
-							<Icon name="x" size={16} />
-						</button>
-					</div>
-					<div class="edges">
-						<div class="edge">
-							<span class="kicker">First day</span>
-							<div class="seg" role="radiogroup" aria-label="First day availability">
-								{#each portions as p (p.value)}
-									<button
-										role="radio"
-										aria-checked={editingRange.startPortion === p.value}
-										class:on={editingRange.startPortion === p.value}
-										onclick={() => setPortion('start', p.value)}
-									>
-										{p.label}
-									</button>
-								{/each}
-							</div>
-						</div>
-						<div class="edge">
-							<span class="kicker">Last day</span>
-							<div class="seg" role="radiogroup" aria-label="Last day availability">
-								{#each portions as p (p.value)}
-									<button
-										role="radio"
-										aria-checked={editingRange.endPortion === p.value}
-										class:on={editingRange.endPortion === p.value}
-										onclick={() => setPortion('end', p.value)}
-									>
-										{p.label}
-									</button>
-								{/each}
-							</div>
-						</div>
-					</div>
-					<p class="hint">{datesQuestion.halfDayHint}</p>
-				</div>
+				<RangeEditor range={editingRange} onsetportion={setPortion} ondelete={deleteEditing} />
 			{:else}
 				{#if survey.ranges.length > 0}
 					<ul class="chips" aria-label="Your available ranges">
@@ -424,25 +301,7 @@
 						{/each}
 					</ul>
 				{/if}
-				<details class="typed">
-					<summary>{survey.ranges.length > 0 ? 'Add another range by typing' : 'Prefer to type your dates?'}</summary>
-					<div class="typed-row">
-						<label>
-							<span class="kicker">From</span>
-							<input type="date" min={retreat.window.start} max={retreat.window.end} bind:value={typedStart} />
-						</label>
-						<label>
-							<span class="kicker">To</span>
-							<input type="date" min={retreat.window.start} max={retreat.window.end} bind:value={typedEnd} />
-						</label>
-						<button class="icon-btn add" onclick={addTyped} aria-label="Add this range">
-							<Icon name="plus" size={18} />
-						</button>
-					</div>
-					{#if typedError}
-						<p class="hint" role="alert">{typedError}</p>
-					{/if}
-				</details>
+				<TypedRangeForm hasRanges={survey.ranges.length > 0} onadd={commitRange} />
 				{#if onnext}
 					<NextChip show={survey.ranges.length > 0} {onnext} />
 				{/if}
@@ -475,104 +334,6 @@
 		margin-block: var(--space-2);
 	}
 
-	.calendar {
-		flex: 1 1 0;
-		min-height: 0;
-		overflow-y: auto;
-		overscroll-behavior: contain;
-		display: flex;
-		flex-direction: column;
-		gap: var(--space-3);
-		padding-block: var(--space-2);
-		touch-action: pan-y;
-		scrollbar-width: thin;
-		scrollbar-color: var(--ink-35) transparent;
-	}
-
-	.calendar.locked {
-		opacity: 0.5;
-	}
-
-	.month-name {
-		margin-bottom: 0.6rem;
-		color: var(--ink-70);
-	}
-
-	.grid {
-		display: grid;
-		grid-template-columns: repeat(7, 1fr);
-		gap: 3px;
-	}
-
-	.wd {
-		text-align: center;
-		font-size: 0.625rem;
-		letter-spacing: 0.12em;
-		color: var(--ink-45);
-		padding-bottom: 0.3rem;
-	}
-
-	.day {
-		aspect-ratio: 1;
-		min-height: 2.35rem;
-		display: grid;
-		place-items: center;
-		font-size: 0.875rem;
-		font-weight: 500;
-		font-variant-numeric: tabular-nums;
-		color: var(--ink);
-		border-radius: 6px;
-		/* pan-y (not none): a touch starting on a day must still scroll the
-		   calendar — selection is tap-tap, not drag, on touch. */
-		touch-action: pan-y;
-		transition:
-			background 0.15s var(--ease-out),
-			color 0.15s var(--ease-out);
-	}
-
-	/* Hover must not repaint selected/preview cells — tap leaves sticky
-	   hover on touch devices, which would gray out the anchored day. */
-	.day:not(.out):not(:disabled):not(.sel):not(.preview):hover {
-		background: var(--ink-12);
-	}
-
-	.day.sel {
-		background: var(--ink);
-		color: var(--on-pill);
-	}
-
-	/* Tentative fill between a pending start and the hovered/focused day —
-	   a mid-step between hover (12%) and committed (full ink). */
-	.day.preview {
-		background: var(--ink-35);
-		color: var(--ink);
-	}
-
-	.day.sel.first-half {
-		background: linear-gradient(to bottom, var(--ink) 50%, var(--ink-12) 50%);
-	}
-
-	.day.sel.second-half {
-		background: linear-gradient(to top, var(--ink) 50%, var(--ink-12) 50%);
-	}
-
-	/* On half-filled cells the numeral crosses white and dark halves;
-	   difference-blend keeps it legible over both. */
-	.day.sel.first-half .num,
-	.day.sel.second-half .num {
-		color: #fff;
-		mix-blend-mode: difference;
-	}
-
-	.day.active {
-		box-shadow: 0 0 0 2px var(--ground), 0 0 0 3.5px var(--ink);
-	}
-
-	.day.out {
-		color: var(--ink-35);
-		opacity: 0.45;
-	}
-
 	.under {
 		min-height: 5.5rem;
 	}
@@ -584,71 +345,6 @@
 		gap: var(--space-2);
 		border-top: var(--hairline);
 		padding-top: var(--space-2);
-	}
-
-	.editor {
-		display: flex;
-		flex-direction: column;
-		gap: var(--space-2);
-		border-top: var(--hairline);
-		padding-top: var(--space-2);
-	}
-
-	.editor-head {
-		display: flex;
-		align-items: center;
-		justify-content: space-between;
-	}
-
-	.range-label {
-		font-weight: 600;
-		display: flex;
-		align-items: baseline;
-		gap: 0.6rem;
-	}
-
-	.nights {
-		font-size: var(--text-author);
-		font-weight: 400;
-		color: var(--ink-70);
-	}
-
-	.edges {
-		display: flex;
-		flex-wrap: wrap;
-		gap: var(--space-2) var(--space-4);
-	}
-
-	.edge {
-		display: flex;
-		flex-direction: column;
-		gap: 0.4rem;
-	}
-
-	.edge .kicker {
-		color: var(--ink-70);
-	}
-
-	.seg {
-		display: flex;
-		border: 1px solid var(--ink-45);
-		border-radius: 999px;
-		overflow: hidden;
-	}
-
-	.seg button {
-		padding: 0.35rem 0.8rem;
-		font-size: 0.8125rem;
-		color: var(--ink-70);
-		transition:
-			background 0.2s var(--ease-out),
-			color 0.2s var(--ease-out);
-	}
-
-	.seg button.on {
-		background: var(--ink);
-		color: var(--on-pill);
-		font-weight: 600;
 	}
 
 	.hint {
@@ -694,38 +390,5 @@
 		border-radius: 999px;
 		background: linear-gradient(to bottom, var(--ink) 50%, transparent 50%);
 		border: 1px solid var(--ink);
-	}
-
-	.typed summary {
-		font-size: var(--text-author);
-		color: var(--ink-70);
-		cursor: pointer;
-	}
-
-	.typed-row {
-		display: flex;
-		align-items: end;
-		gap: var(--space-2);
-		margin-top: var(--space-2);
-	}
-
-	.typed-row label {
-		display: flex;
-		flex-direction: column;
-		gap: 0.35rem;
-	}
-
-	.typed-row input {
-		background: transparent;
-		border: none;
-		border-bottom: 1px solid var(--ink-45);
-		border-radius: 0;
-		padding: 0.3rem 0;
-		color-scheme: dark;
-	}
-
-	.typed-row input:focus {
-		outline: none;
-		border-bottom-color: var(--ink);
 	}
 </style>

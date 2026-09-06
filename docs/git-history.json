@@ -1,5 +1,13 @@
 [
   {
+    "hash": "d95fd89a0422664945f1d46f38fe1c0683e83a42",
+    "short_hash": "d95fd89",
+    "author": "Bryan Guffey",
+    "date": "2026-09-06T12:39:33-07:00",
+    "message": "refactor(organizer): split page.server into page-data + preview modules\n\nRoute file keeps load + actions (304 lines). Shared view types, EMPTY,\nrequireOrganizer and broadcastMessage move to lib/server/organizer/page-data.ts;\nthe dev-only synthetic dataset moves to lib/server/organizer/preview.ts.\nNo behavior change.\n\nCo-Authored-By: Claude Fable 5 <noreply@anthropic.com>\nClaude-Session: https://claude.ai/code/session_01YS7dro4fFpSEXJ9WtXmaBX",
+    "files_changed": 6
+  },
+  {
     "hash": "965f817bfce7c5c851e6e4d99e6339b83ef84d19",
     "short_hash": "965f817",
     "author": "Bryan Guffey",

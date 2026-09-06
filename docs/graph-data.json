@@ -1319,6 +1319,17 @@
       "created_at": "2026-09-06T12:33:20.853023-07:00",
       "updated_at": "2026-09-06T12:33:20.853023-07:00",
       "metadata_json": "{\"branch\":\"refactor/modular-layout\",\"commit\":\"965f817\",\"confidence\":90}"
+    },
+    {
+      "id": 121,
+      "change_id": "eb6b6cbe-0aad-4f2f-a5bd-08848c0c4962",
+      "node_type": "action",
+      "title": "Split organizer +page.server.ts → page-data.ts + preview.ts",
+      "description": null,
+      "status": "pending",
+      "created_at": "2026-09-06T12:39:36.162937-07:00",
+      "updated_at": "2026-09-06T12:39:36.162937-07:00",
+      "metadata_json": "{\"branch\":\"refactor/modular-layout\",\"commit\":\"d95fd89\",\"confidence\":90,\"files\":[\"src/routes/organizer/+page.server.ts\",\"src/lib/server/organizer/page-data.ts\",\"src/lib/server/organizer/preview.ts\"]}"
     }
   ],
   "edges": [
@@ -2619,6 +2630,17 @@
       "weight": 1.0,
       "rationale": "rejected: layer folders don't give AGENTS.md a coherent scope",
       "created_at": "2026-09-06T12:31:04.107129-07:00"
+    },
+    {
+      "id": 119,
+      "from_node_id": 119,
+      "to_node_id": 121,
+      "from_change_id": "c01b5ead-7e2a-4382-9395-09d1699092f3",
+      "to_change_id": "eb6b6cbe-0aad-4f2f-a5bd-08848c0c4962",
+      "edge_type": "leads_to",
+      "weight": 1.0,
+      "rationale": "Split D of the modular layout",
+      "created_at": "2026-09-06T12:39:43.091838-07:00"
     }
   ]
 }
