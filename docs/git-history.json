@@ -1,5 +1,13 @@
 [
   {
+    "hash": "fff875a4e71be0e4913910a2c52ae4c55834fb02",
+    "short_hash": "fff875a",
+    "author": "Bryan Guffey",
+    "date": "2026-09-06T12:43:39-07:00",
+    "message": "refactor(organizer): split the console page into section components\n\nroutes/organizer/+page.svelte (1556 → 293) keeps composition, the shared\nanchor state (toggleAnchor/clearAnchors used by both the availability\nsection and the responses table), the all/yes filter binding, and the\nResponses section. Extracted into lib/organizer/: OrganizerGate (signed-out\nstate), OrganizerRail (stats, tallies, late passes), AvailabilitySection\n(heatmap, windows, roster drawer — owns the filter via $bindable),\nAllowlistSection, WaitlistSection. Styles moved verbatim with their markup;\nsection-head rules duplicated per component per codebase precedent. The\nLocations tally still follows the all/yes toggle as before. No behavior\nchange.\n\nCo-Authored-By: Claude Fable 5 <noreply@anthropic.com>\nClaude-Session: https://claude.ai/code/session_01YS7dro4fFpSEXJ9WtXmaBX",
+    "files_changed": 9
+  },
+  {
     "hash": "99c3dd7ddc4f66109df5f1740e210b34945c7526",
     "short_hash": "99c3dd7",
     "author": "Bryan Guffey",

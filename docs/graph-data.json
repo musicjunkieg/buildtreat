@@ -1352,6 +1352,17 @@
       "created_at": "2026-09-06T12:42:26.151867-07:00",
       "updated_at": "2026-09-06T12:42:26.151867-07:00",
       "metadata_json": "{\"branch\":\"refactor/modular-layout\",\"commit\":\"99c3dd7\",\"confidence\":90,\"files\":[\"src/lib/auth/SignInSheet.svelte\",\"src/lib/auth/HandleTypeahead.svelte\"]}"
+    },
+    {
+      "id": 124,
+      "change_id": "78bd93a1-618d-4546-9d4b-5fbdd035402b",
+      "node_type": "action",
+      "title": "Split organizer +page.svelte → Gate/Rail/Availability/Allowlist/Waitlist sections",
+      "description": null,
+      "status": "pending",
+      "created_at": "2026-09-06T12:43:41.401470-07:00",
+      "updated_at": "2026-09-06T12:43:41.401470-07:00",
+      "metadata_json": "{\"branch\":\"refactor/modular-layout\",\"commit\":\"fff875a\",\"confidence\":90,\"files\":[\"src/routes/organizer/+page.svelte\",\"src/lib/organizer/OrganizerRail.svelte\",\"src/lib/organizer/AvailabilitySection.svelte\"]}"
     }
   ],
   "edges": [
@@ -2685,6 +2696,17 @@
       "weight": 1.0,
       "rationale": "Split C of the modular layout",
       "created_at": "2026-09-06T12:42:26.159141-07:00"
+    },
+    {
+      "id": 122,
+      "from_node_id": 119,
+      "to_node_id": 124,
+      "from_change_id": "c01b5ead-7e2a-4382-9395-09d1699092f3",
+      "to_change_id": "78bd93a1-618d-4546-9d4b-5fbdd035402b",
+      "edge_type": "leads_to",
+      "weight": 1.0,
+      "rationale": "Split A of the modular layout",
+      "created_at": "2026-09-06T12:43:41.408943-07:00"
     }
   ]
 }
