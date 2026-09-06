@@ -1374,6 +1374,39 @@
       "created_at": "2026-09-06T12:44:25.745551-07:00",
       "updated_at": "2026-09-06T12:44:25.745551-07:00",
       "metadata_json": "{\"branch\":\"refactor/modular-layout\",\"commit\":\"4c523a5\",\"confidence\":90}"
+    },
+    {
+      "id": 126,
+      "change_id": "a891b47d-1e1f-4586-9d22-5584baab4566",
+      "node_type": "action",
+      "title": "Fixed organizer title regression: filter as prop+callback instead of bind:",
+      "description": null,
+      "status": "pending",
+      "created_at": "2026-09-06T12:56:11.676779-07:00",
+      "updated_at": "2026-09-06T12:56:11.676779-07:00",
+      "metadata_json": "{\"branch\":\"refactor/modular-layout\",\"commit\":\"HEAD~1\",\"confidence\":95,\"files\":[\"src/routes/organizer/+page.svelte\",\"src/lib/organizer/AvailabilitySection.svelte\"]}"
+    },
+    {
+      "id": 127,
+      "change_id": "8db77d72-4b35-4d0c-9342-9e71e7016a54",
+      "node_type": "observation",
+      "title": "Svelte 5 SSR: bind: on a component prop wraps the parent in a $settled loop via renderer.copy(); the copy has no path in its parent's out tree, so set_title rejects the parent's <title> and the layout title wins. Use prop + callback in pages that set a title.",
+      "description": null,
+      "status": "pending",
+      "created_at": "2026-09-06T12:56:11.688950-07:00",
+      "updated_at": "2026-09-06T12:56:11.688950-07:00",
+      "metadata_json": "{\"branch\":\"refactor/modular-layout\",\"confidence\":90}"
+    },
+    {
+      "id": 128,
+      "change_id": "62c830a5-b17a-41c2-90b1-afa0ace72858",
+      "node_type": "action",
+      "title": "Wrote 12 folder AGENTS.md files under src/",
+      "description": null,
+      "status": "pending",
+      "created_at": "2026-09-06T12:56:11.705614-07:00",
+      "updated_at": "2026-09-06T12:56:11.705614-07:00",
+      "metadata_json": "{\"branch\":\"refactor/modular-layout\",\"commit\":\"60095f9\",\"confidence\":95,\"files\":[\"src/AGENTS.md\",\"src/routes/AGENTS.md\",\"src/lib/AGENTS.md\"]}"
     }
   ],
   "edges": [
@@ -2729,6 +2762,39 @@
       "weight": 1.0,
       "rationale": "Folder-rule cleanup found while writing AGENTS.md",
       "created_at": "2026-09-06T12:44:25.752749-07:00"
+    },
+    {
+      "id": 124,
+      "from_node_id": 119,
+      "to_node_id": 126,
+      "from_change_id": "c01b5ead-7e2a-4382-9395-09d1699092f3",
+      "to_change_id": "a891b47d-1e1f-4586-9d22-5584baab4566",
+      "edge_type": "leads_to",
+      "weight": 1.0,
+      "rationale": "Regression found by SSR parity diff during the split",
+      "created_at": "2026-09-06T12:56:11.713851-07:00"
+    },
+    {
+      "id": 125,
+      "from_node_id": 126,
+      "to_node_id": 127,
+      "from_change_id": "a891b47d-1e1f-4586-9d22-5584baab4566",
+      "to_change_id": "8db77d72-4b35-4d0c-9342-9e71e7016a54",
+      "edge_type": "leads_to",
+      "weight": 1.0,
+      "rationale": "Root cause traced in svelte/internal/server/renderer.js",
+      "created_at": "2026-09-06T12:56:11.720025-07:00"
+    },
+    {
+      "id": 126,
+      "from_node_id": 119,
+      "to_node_id": 128,
+      "from_change_id": "c01b5ead-7e2a-4382-9395-09d1699092f3",
+      "to_change_id": "62c830a5-b17a-41c2-90b1-afa0ace72858",
+      "edge_type": "leads_to",
+      "weight": 1.0,
+      "rationale": "Second half of the request: AGENTS.md per folder",
+      "created_at": "2026-09-06T12:56:11.726514-07:00"
     }
   ]
 }
