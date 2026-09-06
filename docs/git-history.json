@@ -1,5 +1,13 @@
 [
   {
+    "hash": "4c523a53a0fc8d79317d011b952dd0171dca3a20",
+    "short_hash": "4c523a5",
+    "author": "Bryan Guffey",
+    "date": "2026-09-06T12:44:07-07:00",
+    "message": "refactor(organizer): move csv module under lib/server/organizer\n\ncsv.ts imports a runtime value from $lib/server/registration, so it was\nalready server-only in practice; only the three CSV endpoints import it.\nMoving it keeps lib/organizer purely client-importable.\n\nCo-Authored-By: Claude Fable 5 <noreply@anthropic.com>\nClaude-Session: https://claude.ai/code/session_01YS7dro4fFpSEXJ9WtXmaBX",
+    "files_changed": 10
+  },
+  {
     "hash": "fff875a4e71be0e4913910a2c52ae4c55834fb02",
     "short_hash": "fff875a",
     "author": "Bryan Guffey",

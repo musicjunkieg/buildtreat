@@ -18,7 +18,8 @@
 		anchorBusy,
 		anchorsLocked,
 		onclear,
-		filter = $bindable('all')
+		filter,
+		onfilter
 	}: {
 		/** Every response — the all/yes filter is applied in here. */
 		responses: OrganizerResponse[];
@@ -29,8 +30,11 @@
 		/** True when the saved anchor set couldn't be read — Clear is disabled. */
 		anchorsLocked: boolean;
 		onclear: () => void;
-		/** Bindable so the rail's location tally can follow the same toggle. */
-		filter?: 'all' | 'yes';
+		/** Owned by the page (a callback, not bind:) so the rail's location
+		 * tally can follow the same toggle. A bind: here would wrap the page's
+		 * SSR in a settle loop that drops its <title>. */
+		filter: 'all' | 'yes';
+		onfilter: (f: 'all' | 'yes') => void;
 	} = $props();
 
 	/* ── aggregates ── */
@@ -106,10 +110,10 @@
 			<p class="section-sub">Sept 1 – Nov 15 · brighter days mean more people</p>
 		</div>
 		<div class="filter" role="group" aria-label="Which respondents count">
-			<button class="filter-btn" class:on={filter === 'all'} onclick={() => (filter = 'all')} aria-pressed={filter === 'all'}>
+			<button class="filter-btn" class:on={filter === 'all'} onclick={() => onfilter('all')} aria-pressed={filter === 'all'}>
 				Everyone
 			</button>
-			<button class="filter-btn" class:on={filter === 'yes'} onclick={() => (filter = 'yes')} aria-pressed={filter === 'yes'}>
+			<button class="filter-btn" class:on={filter === 'yes'} onclick={() => onfilter('yes')} aria-pressed={filter === 'yes'}>
 				Yes only
 			</button>
 		</div>

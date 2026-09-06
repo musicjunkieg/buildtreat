@@ -14,9 +14,11 @@
 	let { data, form }: { data: PageData; form: ActionData } = $props();
 
 	/* ── all/yes filter ──
-	   Owned by the availability section (its control lives in that section
-	   head) and bound here so the rail's location tally, which reads the same
-	   narrowed set, follows the toggle. */
+	   The control lives in the availability section head, but the state is
+	   owned here so the rail's location tally, which reads the same narrowed
+	   set, follows the toggle. Passed down as a prop + callback rather than
+	   bind: — a component binding makes the SSR compiler wrap this page in a
+	   settle loop whose copied renderer loses the page <title>. */
 
 	let filter = $state<'all' | 'yes'>('all');
 
@@ -172,7 +174,8 @@ finish review, the verdict, and DESIGN.md.
 				{anchorBusy}
 				anchorsLocked={data.anchorsUnavailable}
 				onclear={clearAnchors}
-				bind:filter
+				{filter}
+				onfilter={(f) => (filter = f)}
 			/>
 
 			<section aria-labelledby="resp-head">
