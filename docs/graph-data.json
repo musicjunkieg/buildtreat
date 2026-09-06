@@ -1341,6 +1341,17 @@
       "created_at": "2026-09-06T12:41:14.468793-07:00",
       "updated_at": "2026-09-06T12:41:14.468793-07:00",
       "metadata_json": "{\"branch\":\"refactor/modular-layout\",\"commit\":\"fa5b0a6\",\"confidence\":90,\"files\":[\"src/lib/survey/dates/DatesItem.svelte\",\"src/lib/survey/dates/CalendarGrid.svelte\",\"src/lib/survey/dates/RangeEditor.svelte\",\"src/lib/survey/dates/TypedRangeForm.svelte\"]}"
+    },
+    {
+      "id": 123,
+      "change_id": "83919763-0512-4c8e-b01d-64e2195d8920",
+      "node_type": "action",
+      "title": "Split SignInSheet.svelte → HandleTypeahead.svelte",
+      "description": null,
+      "status": "pending",
+      "created_at": "2026-09-06T12:42:26.151867-07:00",
+      "updated_at": "2026-09-06T12:42:26.151867-07:00",
+      "metadata_json": "{\"branch\":\"refactor/modular-layout\",\"commit\":\"99c3dd7\",\"confidence\":90,\"files\":[\"src/lib/auth/SignInSheet.svelte\",\"src/lib/auth/HandleTypeahead.svelte\"]}"
     }
   ],
   "edges": [
@@ -2663,6 +2674,17 @@
       "weight": 1.0,
       "rationale": "Split B of the modular layout",
       "created_at": "2026-09-06T12:41:14.476074-07:00"
+    },
+    {
+      "id": 121,
+      "from_node_id": 119,
+      "to_node_id": 123,
+      "from_change_id": "c01b5ead-7e2a-4382-9395-09d1699092f3",
+      "to_change_id": "83919763-0512-4c8e-b01d-64e2195d8920",
+      "edge_type": "leads_to",
+      "weight": 1.0,
+      "rationale": "Split C of the modular layout",
+      "created_at": "2026-09-06T12:42:26.159141-07:00"
     }
   ]
 }

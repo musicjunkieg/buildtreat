@@ -1,5 +1,13 @@
 [
   {
+    "hash": "99c3dd7ddc4f66109df5f1740e210b34945c7526",
+    "short_hash": "99c3dd7",
+    "author": "Bryan Guffey",
+    "date": "2026-09-06T12:42:23-07:00",
+    "message": "refactor(auth): split HandleTypeahead out of SignInSheet\n\nSignInSheet.svelte (548 → 296) keeps the sheet: welcome-back state, the\n/api/invited pre-flight check, login(), and modal focus restore.\nHandleTypeahead.svelte (298) owns the combobox + typeahead.waow.tech search\nwith a $bindable value, mirrored dropdownOpen, and exported focus() /\ninvalidateSearch(). onDestroy(invalidateSearch) in the child preserves the\noriginal 'stale debounce reopens dropdown after close' guard, which the\nparent can no longer reach at teardown time. Rendered DOM and ARIA ids are\nunchanged; no behavior change.\n\nCo-Authored-By: Claude Fable 5 <noreply@anthropic.com>\nClaude-Session: https://claude.ai/code/session_01YS7dro4fFpSEXJ9WtXmaBX",
+    "files_changed": 5
+  },
+  {
     "hash": "fa5b0a6430258412514d476bb6a35153ec795942",
     "short_hash": "fa5b0a6",
     "author": "Bryan Guffey",
