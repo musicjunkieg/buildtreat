@@ -7,10 +7,10 @@ import { cloudflareKV } from '@svelte-atproto/oauth/server/stores/cloudflare';
 import { codeOfConduct, retreat, waiver } from '$lib/content';
 import { checkAllowlist, getResponse } from '$lib/server/db';
 import { deadlineStatus } from '$lib/server/deadline';
-import { sendEmail } from '$lib/server/email';
+import { sendEmail } from '$lib/server/email/email';
 import { getRegistration, setDeclined, upsertConfirmed, type Registration } from '$lib/server/registration';
-import { confirmationEmail } from '$lib/server/registration-email';
-import { canConfirm, parseRegistrationForm, validateRegistration } from '$lib/registration';
+import { confirmationEmail } from '$lib/server/email/registration-email';
+import { canConfirm, parseRegistrationForm, validateRegistration } from '$lib/registration/registration';
 import {
 	backfillWaitlistHandle,
 	getWaitlistEntry,
@@ -18,9 +18,9 @@ import {
 	joinWaitlist,
 	type WaitlistState
 } from '$lib/server/waitlist';
-import type { SurveyDraft } from '$lib/survey.svelte';
+import type { SurveyDraft } from '$lib/survey/survey.svelte';
 import type { KnownUser } from '$lib/types';
-import { surveyGate } from '$lib/server/organizer';
+import { surveyGate } from '$lib/server/organizer/admin';
 
 /** Enough of a DID to correlate log lines without logging the full identifier. */
 const logDid = (did: string) => `${did.slice(0, 14)}…`;

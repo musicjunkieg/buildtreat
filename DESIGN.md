@@ -116,11 +116,11 @@ components:
 # Design System: The Atmospheric Builders' Retreat
 
 <!-- Recorded post-build from the shipped code (scan mode). Ground truth is
-     src/app.css and src/lib/components/*; the direction contract lives in
+     src/app.css, src/lib/ui/* and src/lib/survey/*; the direction contract lives in
      src/routes/+layout.svelte (FORM: Full-Bleed Feed, seed 9380440b).
      Documenter ran inline (no subagent harness) per the degraded role.
      Extended 2026-08-07 from the second surface: src/routes/organizer/*
-     and src/lib/components/organizer/* (FORM: Command rail, approved comp
+     and src/lib/organizer/* (FORM: Command rail, approved comp
      .impeccable/mocks/org-b.png; finish review disposition: ship). -->
 
 ## Overview

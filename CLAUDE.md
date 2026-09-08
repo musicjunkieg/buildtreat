@@ -60,7 +60,11 @@ local sessions get them from both here and `~/.claude/CLAUDE.md`.
 
 <!-- One paragraph: what does this project do, who is it for? -->
 
-TODO: describe buildtreat.
+The Atmospheric Builders’ Retreat site (buildersretre.at): an invite-only
+availability survey plus Dec 4–7 registration flow for atproto builders, and
+the organizer console behind it. SvelteKit 2 / Svelte 5 on Cloudflare Workers
+with D1 + KV; ATProto OAuth sign-in; comail.at for email. Product truth
+(dates, venue, copy) is `PRODUCT.md`; the visual system is `DESIGN.md`.
 
 ## Architecture at a glance
 
@@ -69,7 +73,10 @@ TODO: describe buildtreat.
   System diagram or short description of the moving parts.
 -->
 
-TODO: sketch the architecture.
+Start at `src/AGENTS.md` — it maps the folders, and every feature folder
+under `src/` carries its own `AGENTS.md` with the boundaries that matter
+there. Files are kept under a soft cap of 400–500 lines; split by
+responsibility when one approaches it.
 
 ## How to work on this
 
@@ -82,14 +89,11 @@ TODO: sketch the architecture.
 ### Quick reference
 
 ```
-# Run tests
-TODO: cargo test  /  pnpm test  /  pytest
-
-# Run dev server
-TODO: cargo run  /  pnpm dev  /  python -m foo
-
-# Deploy
-TODO
+pnpm check   # svelte-kit sync + svelte-check — 0 errors, 0 warnings is the bar
+pnpm test    # vitest
+pnpm build   # vite build (Cloudflare adapter)
+pnpm dev     # local; /organizer?preview renders synthetic data in dev only
+# Deploy: Workers Builds auto-deploys main after a PR merges.
 ```
 
 ### Hot zones
@@ -100,7 +104,11 @@ TODO
   pricing logic, OAuth flows.
 -->
 
-TODO: list the parts of the codebase that need extra care.
+- `src/lib/server/**` — D1 access; every query parameterized, never imported
+  from client code except as `import type`.
+- `src/hooks.server.ts` — host canonicalization + OAuth returnTo workaround.
+- Pages that set a `<title>`: don’t `bind:` a component prop there (see
+  `src/lib/organizer/AGENTS.md`).
 
 ## Decision log
 

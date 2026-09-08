@@ -1,5 +1,77 @@
 [
   {
+    "hash": "dd1dd46044ac2ed7dbddb79e1aac81b851b4ab5b",
+    "short_hash": "dd1dd46",
+    "author": "Bryan Guffey",
+    "date": "2026-09-06T12:57:07-07:00",
+    "message": "docs: point CLAUDE.md at src/AGENTS.md and fill the template TODOs\n\nCo-Authored-By: Claude Fable 5 <noreply@anthropic.com>\nClaude-Session: https://claude.ai/code/session_01YS7dro4fFpSEXJ9WtXmaBX",
+    "files_changed": 4
+  },
+  {
+    "hash": "60095f986abe1d14d9f1863d7517325d3c960296",
+    "short_hash": "60095f9",
+    "author": "Bryan Guffey",
+    "date": "2026-09-06T12:56:09-07:00",
+    "message": "docs: add AGENTS.md to every feature folder under src/\n\nTwelve folder guides: what lives in the folder, the boundaries that\nmatter there (server-only imports, scoped-style duplication, D1\nparameterization, the bind:/title SSR trap), the props each component\ntakes, and what to run before calling a change done. src/AGENTS.md is\nthe map that points at the rest.\n\nCo-Authored-By: Claude Fable 5 <noreply@anthropic.com>\nClaude-Session: https://claude.ai/code/session_01YS7dro4fFpSEXJ9WtXmaBX",
+    "files_changed": 13
+  },
+  {
+    "hash": "60095f986abe1d14d9f1863d7517325d3c960296",
+    "short_hash": "60095f9",
+    "author": "Bryan Guffey",
+    "date": "2026-09-06T12:56:09-07:00",
+    "message": "docs: add AGENTS.md to every feature folder under src/\n\nTwelve folder guides: what lives in the folder, the boundaries that\nmatter there (server-only imports, scoped-style duplication, D1\nparameterization, the bind:/title SSR trap), the props each component\ntakes, and what to run before calling a change done. src/AGENTS.md is\nthe map that points at the rest.\n\nCo-Authored-By: Claude Fable 5 <noreply@anthropic.com>\nClaude-Session: https://claude.ai/code/session_01YS7dro4fFpSEXJ9WtXmaBX",
+    "files_changed": 13
+  },
+  {
+    "hash": "4c523a53a0fc8d79317d011b952dd0171dca3a20",
+    "short_hash": "4c523a5",
+    "author": "Bryan Guffey",
+    "date": "2026-09-06T12:44:07-07:00",
+    "message": "refactor(organizer): move csv module under lib/server/organizer\n\ncsv.ts imports a runtime value from $lib/server/registration, so it was\nalready server-only in practice; only the three CSV endpoints import it.\nMoving it keeps lib/organizer purely client-importable.\n\nCo-Authored-By: Claude Fable 5 <noreply@anthropic.com>\nClaude-Session: https://claude.ai/code/session_01YS7dro4fFpSEXJ9WtXmaBX",
+    "files_changed": 10
+  },
+  {
+    "hash": "fff875a4e71be0e4913910a2c52ae4c55834fb02",
+    "short_hash": "fff875a",
+    "author": "Bryan Guffey",
+    "date": "2026-09-06T12:43:39-07:00",
+    "message": "refactor(organizer): split the console page into section components\n\nroutes/organizer/+page.svelte (1556 → 293) keeps composition, the shared\nanchor state (toggleAnchor/clearAnchors used by both the availability\nsection and the responses table), the all/yes filter binding, and the\nResponses section. Extracted into lib/organizer/: OrganizerGate (signed-out\nstate), OrganizerRail (stats, tallies, late passes), AvailabilitySection\n(heatmap, windows, roster drawer — owns the filter via $bindable),\nAllowlistSection, WaitlistSection. Styles moved verbatim with their markup;\nsection-head rules duplicated per component per codebase precedent. The\nLocations tally still follows the all/yes toggle as before. No behavior\nchange.\n\nCo-Authored-By: Claude Fable 5 <noreply@anthropic.com>\nClaude-Session: https://claude.ai/code/session_01YS7dro4fFpSEXJ9WtXmaBX",
+    "files_changed": 9
+  },
+  {
+    "hash": "99c3dd7ddc4f66109df5f1740e210b34945c7526",
+    "short_hash": "99c3dd7",
+    "author": "Bryan Guffey",
+    "date": "2026-09-06T12:42:23-07:00",
+    "message": "refactor(auth): split HandleTypeahead out of SignInSheet\n\nSignInSheet.svelte (548 → 296) keeps the sheet: welcome-back state, the\n/api/invited pre-flight check, login(), and modal focus restore.\nHandleTypeahead.svelte (298) owns the combobox + typeahead.waow.tech search\nwith a $bindable value, mirrored dropdownOpen, and exported focus() /\ninvalidateSearch(). onDestroy(invalidateSearch) in the child preserves the\noriginal 'stale debounce reopens dropdown after close' guard, which the\nparent can no longer reach at teardown time. Rendered DOM and ARIA ids are\nunchanged; no behavior change.\n\nCo-Authored-By: Claude Fable 5 <noreply@anthropic.com>\nClaude-Session: https://claude.ai/code/session_01YS7dro4fFpSEXJ9WtXmaBX",
+    "files_changed": 5
+  },
+  {
+    "hash": "fa5b0a6430258412514d476bb6a35153ec795942",
+    "short_hash": "fa5b0a6",
+    "author": "Bryan Guffey",
+    "date": "2026-09-06T12:41:12-07:00",
+    "message": "refactor(survey): split DatesItem into grid, range editor, typed form\n\nDatesItem.svelte (731 → 394) stays the orchestrator: it owns survey.ranges\nmutations, anchor/drag/hover selection state, and the live-region messages.\nCalendarGrid.svelte renders the months and day cells and exposes focusDay()\nfor the roving tabindex; RangeEditor.svelte edits one committed range;\nTypedRangeForm.svelte is the no-pointer fallback. grid.ts holds the shared\nCellState type and weekday headers. Props and import path of DatesItem are\nunchanged; no behavior change.\n\nCo-Authored-By: Claude Fable 5 <noreply@anthropic.com>\nClaude-Session: https://claude.ai/code/session_01YS7dro4fFpSEXJ9WtXmaBX",
+    "files_changed": 8
+  },
+  {
+    "hash": "d95fd89a0422664945f1d46f38fe1c0683e83a42",
+    "short_hash": "d95fd89",
+    "author": "Bryan Guffey",
+    "date": "2026-09-06T12:39:33-07:00",
+    "message": "refactor(organizer): split page.server into page-data + preview modules\n\nRoute file keeps load + actions (304 lines). Shared view types, EMPTY,\nrequireOrganizer and broadcastMessage move to lib/server/organizer/page-data.ts;\nthe dev-only synthetic dataset moves to lib/server/organizer/preview.ts.\nNo behavior change.\n\nCo-Authored-By: Claude Fable 5 <noreply@anthropic.com>\nClaude-Session: https://claude.ai/code/session_01YS7dro4fFpSEXJ9WtXmaBX",
+    "files_changed": 6
+  },
+  {
+    "hash": "965f817bfce7c5c851e6e4d99e6339b83ef84d19",
+    "short_hash": "965f817",
+    "author": "Bryan Guffey",
+    "date": "2026-09-06T12:33:11-07:00",
+    "message": "refactor: relocate lib into feature folders (ui, survey, auth, registration, organizer, server/{email,organizer})\n\nPure moves plus import rewrites — no file contents changed beyond\nspecifiers. Sets up the per-folder AGENTS.md and the oversized-file\nsplits that follow.\n\nCo-Authored-By: Claude Fable 5 <noreply@anthropic.com>\nClaude-Session: https://claude.ai/code/session_01YS7dro4fFpSEXJ9WtXmaBX",
+    "files_changed": 87
+  },
+  {
     "hash": "8eb924ee50661255c148c8900d93ecd123c14c39",
     "short_hash": "8eb924e",
     "author": "Bryan Guffey",

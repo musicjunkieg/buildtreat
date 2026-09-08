@@ -1,16 +1,16 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import ChoiceItem from '$lib/components/ChoiceItem.svelte';
-	import DatesItem from '$lib/components/DatesItem.svelte';
-	import Dots from '$lib/components/Dots.svelte';
-	import FeedItem from '$lib/components/FeedItem.svelte';
-	import HeroItem from '$lib/components/HeroItem.svelte';
-	import LocationItem from '$lib/components/LocationItem.svelte';
-	import Rail from '$lib/components/Rail.svelte';
-	import RegistrationFlow from '$lib/components/registration/RegistrationFlow.svelte';
-	import ReviewItem from '$lib/components/ReviewItem.svelte';
-	import SignInSheet from '$lib/components/SignInSheet.svelte';
-	import YouItem from '$lib/components/YouItem.svelte';
+	import ChoiceItem from '$lib/survey/ChoiceItem.svelte';
+	import DatesItem from '$lib/survey/dates/DatesItem.svelte';
+	import Dots from '$lib/ui/Dots.svelte';
+	import FeedItem from '$lib/ui/FeedItem.svelte';
+	import HeroItem from '$lib/survey/HeroItem.svelte';
+	import LocationItem from '$lib/survey/LocationItem.svelte';
+	import Rail from '$lib/ui/Rail.svelte';
+	import RegistrationFlow from '$lib/registration/RegistrationFlow.svelte';
+	import ReviewItem from '$lib/survey/ReviewItem.svelte';
+	import SignInSheet from '$lib/auth/SignInSheet.svelte';
+	import YouItem from '$lib/survey/YouItem.svelte';
 	import {
 		feedItems,
 		interestQuestion,
@@ -19,7 +19,7 @@
 		type InterestValue,
 		type TravelValue
 	} from '$lib/content';
-	import { SurveyState } from '$lib/survey.svelte';
+	import { SurveyState } from '$lib/survey/survey.svelte';
 
 	let { data, form } = $props();
 
