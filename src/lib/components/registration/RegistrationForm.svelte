@@ -171,7 +171,7 @@
 		<section>
 			<div class="sec-head"><span class="kicker">{copy.sections.agreements.head}</span></div>
 			<ul class="agree">
-				<AgreementRow name="agreeWaiver" label={copy.sections.agreements.waiver} title={waiver.title} body={waiver.body} version={waiver.version} checked={initial.agreeWaiver} error={errors.agreeWaiver ?? null} />
+				<AgreementRow name="agreeWaiver" label={copy.sections.agreements.waiver} version={waiver.version} checked={initial.agreeWaiver} error={errors.agreeWaiver ?? null} />
 				<AgreementRow name="agreeCoc" label={copy.sections.agreements.coc} title={codeOfConduct.title} body={codeOfConduct.body} version={codeOfConduct.version} checked={initial.agreeCoc} error={errors.agreeCoc ?? null} />
 			</ul>
 		</section>

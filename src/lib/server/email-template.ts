@@ -64,8 +64,36 @@ export function escapeHtml(s: string): string {
 function linkify(escaped: string): string {
 	return escaped.replace(
 		/https?:\/\/[^\s&]+(?:&amp;[^\s&]+)*/g,
-		(url) => `<a href="${url}" style="color:${INK};text-decoration:underline;">${url}</a>`
+		(match) => {
+			// Sentence punctuation right after a URL belongs to the sentence.
+			const url = match.replace(/[.,;:!?)]+$/, '');
+			return `<a href="${url}" style="color:${INK};text-decoration:underline;">${url}</a>${match.slice(url.length)}`;
+		}
 	);
+}
+
+/**
+ * Minimal inline markup for organizer-written bodies, applied to already-
+ * escaped text: `[label](https://…)` → link, `**bold**`, `_italic_`. Runs
+ * before linkify so a bracketed link's URL is consumed here and not linked
+ * twice; only http(s) hrefs are honoured, anything else stays literal.
+ */
+function inlineMarkup(escaped: string): string {
+	return escaped
+		.replace(
+			/\[([^\]\n]+)\]\((https?:\/\/[^\s)]+)\)/g,
+			(_, label, url) => `<a href="${url}" style="color:${INK};text-decoration:underline;">${label}</a>`
+		)
+		.replace(/\*\*([^*\n]+)\*\*/g, `<strong style="color:${INK};">$1</strong>`)
+		.replace(/(^|[\s(])_([^_\n]+)_(?=$|[\s.,;:!?)])/g, '$1<em>$2</em>');
+}
+
+/** Bare URLs are linkified after inline markup, skipping ones already inside a href. */
+function linkifyOutsideAnchors(html: string): string {
+	return html
+		.split(/(<a [^>]*>.*?<\/a>)/)
+		.map((part, i) => (i % 2 ? part : linkify(part)))
+		.join('');
 }
 
 function paragraphs(body: string): string {
@@ -75,7 +103,7 @@ function paragraphs(body: string): string {
 		.filter(Boolean)
 		.map(
 			(p) =>
-				`<p style="margin:0 0 16px;font-family:${BODY_STACK};font-size:16px;line-height:1.55;color:${INK_70};">${linkify(escapeHtml(p)).replaceAll('\n', '<br>')}</p>`
+				`<p style="margin:0 0 16px;font-family:${BODY_STACK};font-size:16px;line-height:1.55;color:${INK_70};">${linkifyOutsideAnchors(inlineMarkup(escapeHtml(p))).replaceAll('\n', '<br>')}</p>`
 		)
 		.join('\n');
 }
