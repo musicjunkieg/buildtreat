@@ -1473,6 +1473,17 @@
       "created_at": "2026-09-08T13:58:58.552144-07:00",
       "updated_at": "2026-09-08T13:58:58.552144-07:00",
       "metadata_json": "{\"branch\":\"refactor/modular-layout\",\"confidence\":85}"
+    },
+    {
+      "id": 135,
+      "change_id": "a07370c1-8b9c-4ec9-82f1-0b057ebd52ac",
+      "node_type": "outcome",
+      "title": "PR #28 open: waiver v2 checkbox + email inline markup; check 0/0, 51 tests, build clean",
+      "description": null,
+      "status": "pending",
+      "created_at": "2026-09-08T14:01:25.091424-07:00",
+      "updated_at": "2026-09-08T14:01:25.091424-07:00",
+      "metadata_json": "{\"branch\":\"refactor/modular-layout\",\"commit\":\"210f834\",\"confidence\":90}"
     }
   ],
   "edges": [
@@ -2938,6 +2949,17 @@
       "weight": 1.0,
       "rationale": "implementation",
       "created_at": "2026-09-08T13:58:58.583561-07:00"
+    },
+    {
+      "id": 134,
+      "from_node_id": 134,
+      "to_node_id": 135,
+      "from_change_id": "d62e94fa-b689-4469-90b1-542520186722",
+      "to_change_id": "a07370c1-8b9c-4ec9-82f1-0b057ebd52ac",
+      "edge_type": "leads_to",
+      "weight": 1.0,
+      "rationale": "result",
+      "created_at": "2026-09-08T14:01:25.102224-07:00"
     }
   ]
 }

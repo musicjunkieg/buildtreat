@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "exported_at": "2026-09-08T21:00:44.108326+00:00",
+  "exported_at": "2026-09-09T01:36:07.844521+00:00",
   "issues": [
     {
       "id": 105,
@@ -29,7 +29,7 @@
       ],
       "comments": [
         {
-          "content": "All pre-existing on main (verified against origin/main line-for-line); deferred so PR #27 stays behavior-identical.\n1. lib/auth/HandleTypeahead.svelte:56 — clear results/highlight + close dropdown immediately on query change, before the debounce.\n2. lib/auth/HandleTypeahead.svelte:45-48 — track an AbortController and abort in invalidateSearch (keep the 3s timeout).\n3. lib/server/email/broadcasts.ts:109 — unsentRecipients should select status = 'pending', not != 'sent' (don't resend REJECTED).\n4. lib/server/email/email.ts:81 — guard that decoded body is a non-null object before reading accepted/rejected.\n5. lib/server/email/email.ts:73 — non-JSON branch: retryable only for 429/5xx, not 401/403.\n6. lib/server/organizer/admin.ts:199 — hasLatePass handle match should require did IS NULL (mirror checkAllowlist pinning).\n7. lib/survey/dates/DatesItem.svelte:234 — onpointercancel should clear drag state without commitRange.\n8. lib/ui/Dots.svelte + NextChip.svelte — add prefers-reduced-motion overrides.",
+          "content": "All pre-existing on main (verified against origin/main line-for-line); deferred so PR #27 stays behavior-identical.\n1. src/lib/auth/HandleTypeahead.svelte:56 — clear results/highlight + close dropdown immediately on query change, before the debounce.\n2. src/lib/auth/HandleTypeahead.svelte:45-48 — track an AbortController and abort in invalidateSearch (keep the 3s timeout).\n3. src/lib/server/email/broadcasts.ts:109 — unsentRecipients should select status = 'pending', not != 'sent' (don't resend REJECTED).\n4. src/lib/server/email/email.ts:81 — guard that decoded body is a non-null object before reading accepted/rejected.\n5. src/lib/server/email/email.ts:73 — non-JSON branch: retryable only for 429/5xx, not 401/403.\n6. src/lib/server/organizer/admin.ts:199 — hasLatePass handle match should require did IS NULL (mirror checkAllowlist pinning).\n7. src/lib/survey/dates/DatesItem.svelte:234 — onpointercancel should clear drag state without commitRange.\n8. src/lib/ui/Dots.svelte + src/lib/ui/NextChip.svelte — add prefers-reduced-motion overrides.",
           "created_at": "2026-09-06T20:32:16.193953+00:00",
           "kind": "note"
         }

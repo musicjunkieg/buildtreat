@@ -67,6 +67,24 @@ describe('brandedEmail', () => {
 		expect(html).not.toContain('<em>');
 	});
 
+	it('keeps balanced parentheses inside urls and emphasis markers out of hrefs', () => {
+		const html = brandedEmail({
+			heading: 'H',
+			body: 'See https://en.wikipedia.org/wiki/Foo_(bar). Or [wiki](https://en.wikipedia.org/wiki/Foo_(bar)) and [docs](https://example.test/**v2**/_x_) or https://example.test/**v3**.'
+		});
+		expect(html).toContain('<a href="https://en.wikipedia.org/wiki/Foo_(bar)" style="color:#ffffff;text-decoration:underline;">https://en.wikipedia.org/wiki/Foo_(bar)</a>.');
+		expect(html).toContain('>wiki</a>');
+		expect(html).toContain('<a href="https://example.test/**v2**/_x_"');
+		expect(html).toContain('<a href="https://example.test/**v3**"');
+		expect(html).not.toContain('<strong');
+		expect(html).not.toContain('<em>');
+	});
+
+	it('still trims an unbalanced trailing paren after a bare url', () => {
+		const html = brandedEmail({ heading: 'H', body: '(see https://example.test/a)' });
+		expect(html).toContain('<a href="https://example.test/a" style="color:#ffffff;text-decoration:underline;">https://example.test/a</a>)');
+	});
+
 	it('puts the opening body text in the hidden preheader', () => {
 		const html = brandedEmail({ heading: 'H', body: 'This is the preview line.\n\nMore below.' });
 		expect(html).toContain('This is the preview line.');

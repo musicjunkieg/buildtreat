@@ -60,40 +60,57 @@ export function escapeHtml(s: string): string {
 		.replaceAll("'", '&#39;');
 }
 
-/** Turn bare http(s) URLs in already-escaped text into white underlined links. */
-function linkify(escaped: string): string {
-	return escaped.replace(
-		/https?:\/\/[^\s&]+(?:&amp;[^\s&]+)*/g,
-		(match) => {
-			// Sentence punctuation right after a URL belongs to the sentence.
-			const url = match.replace(/[.,;:!?)]+$/, '');
-			return `<a href="${url}" style="color:${INK};text-decoration:underline;">${url}</a>${match.slice(url.length)}`;
-		}
-	);
+const URL_RE = /https?:\/\/[^\s&]+(?:&amp;[^\s&]+)*/g;
+const LABELED_LINK_RE = /\[([^\]\n]+)\]\((https?:\/\/(?:[^\s()]|\([^\s()]*\))+)\)/g;
+
+function anchor(href: string, label: string): string {
+	return `<a href="${href}" style="color:${INK};text-decoration:underline;">${label}</a>`;
 }
 
 /**
- * Minimal inline markup for organizer-written bodies, applied to already-
- * escaped text: `[label](https://…)` → link, `**bold**`, `_italic_`. Runs
- * before linkify so a bracketed link's URL is consumed here and not linked
- * twice; only http(s) hrefs are honoured, anything else stays literal.
+ * Sentence punctuation right after a bare URL belongs to the sentence. A
+ * closing paren is only trimmed when it doesn't balance one inside the URL,
+ * so `https://…/Foo_(bar)` survives intact.
  */
-function inlineMarkup(escaped: string): string {
+function trimUrl(match: string): string {
+	let url = match;
+	for (;;) {
+		const last = url.at(-1) ?? '';
+		if (last === ')') {
+			const open = url.split('(').length - 1;
+			const close = url.split(')').length - 1;
+			if (close <= open) break;
+		} else if (!'.,;:!?'.includes(last)) {
+			break;
+		}
+		url = url.slice(0, -1);
+	}
+	return url;
+}
+
+function emphasis(escaped: string): string {
 	return escaped
-		.replace(
-			/\[([^\]\n]+)\]\((https?:\/\/[^\s)]+)\)/g,
-			(_, label, url) => `<a href="${url}" style="color:${INK};text-decoration:underline;">${label}</a>`
-		)
 		.replace(/\*\*([^*\n]+)\*\*/g, `<strong style="color:${INK};">$1</strong>`)
 		.replace(/(^|[\s(])_([^_\n]+)_(?=$|[\s.,;:!?)])/g, '$1<em>$2</em>');
 }
 
-/** Bare URLs are linkified after inline markup, skipping ones already inside a href. */
-function linkifyOutsideAnchors(html: string): string {
-	return html
-		.split(/(<a [^>]*>.*?<\/a>)/)
-		.map((part, i) => (i % 2 ? part : linkify(part)))
-		.join('');
+/**
+ * Minimal inline markup for organizer-written bodies, applied to already-
+ * escaped text: `[label](https://…)` → link, bare http(s) URLs → link,
+ * `**bold**`, `_italic_`. Links are lifted out first and restored last, so
+ * emphasis markers never rewrite the inside of an href; only http(s) hrefs
+ * are honoured, anything else stays literal.
+ */
+function inlineMarkup(escaped: string): string {
+	const held: string[] = [];
+	const hold = (html: string) => `\uE000${held.push(html) - 1}\uE000`;
+	const withLinks = escaped
+		.replace(LABELED_LINK_RE, (_, label: string, url: string) => hold(anchor(url, emphasis(label))))
+		.replace(URL_RE, (match) => {
+			const url = trimUrl(match);
+			return hold(anchor(url, url)) + match.slice(url.length);
+		});
+	return emphasis(withLinks).replace(/\uE000(\d+)\uE000/g, (_, i: string) => held[Number(i)]);
 }
 
 function paragraphs(body: string): string {
@@ -103,7 +120,7 @@ function paragraphs(body: string): string {
 		.filter(Boolean)
 		.map(
 			(p) =>
-				`<p style="margin:0 0 16px;font-family:${BODY_STACK};font-size:16px;line-height:1.55;color:${INK_70};">${linkifyOutsideAnchors(inlineMarkup(escapeHtml(p))).replaceAll('\n', '<br>')}</p>`
+				`<p style="margin:0 0 16px;font-family:${BODY_STACK};font-size:16px;line-height:1.55;color:${INK_70};">${inlineMarkup(escapeHtml(p)).replaceAll('\n', '<br>')}</p>`
 		)
 		.join('\n');
 }
@@ -178,7 +195,7 @@ ${factRows(opts.facts)}
 </td></tr></table>`
 		: '';
 	const footer = opts.footer
-		? `<p style="margin:28px 0 0;padding-top:14px;border-top:${HAIRLINE};font-family:${BODY_STACK};font-size:13px;line-height:1.5;color:${INK_45};">${linkify(escapeHtml(opts.footer))}</p>`
+		? `<p style="margin:28px 0 0;padding-top:14px;border-top:${HAIRLINE};font-family:${BODY_STACK};font-size:13px;line-height:1.5;color:${INK_45};">${inlineMarkup(escapeHtml(opts.footer))}</p>`
 		: '';
 
 	return `<!doctype html>
