@@ -39,6 +39,9 @@
 	function mode(r: RegistrationView): string {
 		return r.travelMode ? (travelModes.find((m) => m.id === r.travelMode)?.label ?? r.travelMode) : '—';
 	}
+	function editHref(r: RegistrationView): string {
+		return `/organizer/registrations/${encodeURIComponent(r.did)}`;
+	}
 	function when(iso: string): string {
 		return new Date(iso).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
 	}
@@ -71,7 +74,7 @@
 			<div class="table-wrap">
 				<table class="reg-table">
 					<thead>
-						<tr><th class="kicker" scope="col">Who</th><th class="kicker" scope="col">Food</th><th class="kicker" scope="col">Access</th><th class="kicker" scope="col">Travel</th><th class="kicker" scope="col">Agreed</th><th class="kicker" scope="col">Updated</th></tr>
+						<tr><th class="kicker" scope="col">Who</th><th class="kicker" scope="col">Food</th><th class="kicker" scope="col">Access</th><th class="kicker" scope="col">Travel</th><th class="kicker" scope="col">Agreed</th><th class="kicker" scope="col">Updated</th><th class="kicker" scope="col"><span class="sr-only">Edit</span></th></tr>
 					</thead>
 					<tbody>
 						{#each confirmed as r (r.did)}
@@ -82,6 +85,7 @@
 								<td><span class="kicker status-{r.travel}">{r.travel}</span><br /><span class="dim">{mode(r)}{r.travelArrival ? ` · ${r.travelArrival}` : ''}{r.travelDeparture ? ` → ${r.travelDeparture}` : ''}</span></td>
 								<td>{r.registered ? `${r.waiverVersion} / ${r.cocVersion}` : '—'}</td>
 								<td class="dim">{when(r.updatedAt)}</td>
+								<td><a class="quiet" href={editHref(r)}>Edit</a></td>
 							</tr>
 						{/each}
 					</tbody>
@@ -92,7 +96,7 @@
 		{#if declined.length}
 			<details class="sub">
 				<summary class="kicker">Declined · {declined.length}</summary>
-				<ul class="plain">{#each declined as r (r.did)}<li>{r.name} <span class="dim">{r.handle ? `@${r.handle}` : ''}</span></li>{/each}</ul>
+				<ul class="plain">{#each declined as r (r.did)}<li>{r.name} <span class="dim">{r.handle ? `@${r.handle}` : ''}</span> · <a class="quiet" href={editHref(r)}>Edit</a></li>{/each}</ul>
 			</details>
 		{/if}
 
@@ -125,5 +129,6 @@
 	.status-complete { color: var(--ink); }
 	.sub { margin-top: var(--space-3); }
 	.sub summary { cursor: pointer; color: var(--ink-70); }
+	.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
 	.plain { list-style: none; margin-top: var(--space-2); display: grid; gap: 0.35rem; font-size: 0.9375rem; }
 </style>

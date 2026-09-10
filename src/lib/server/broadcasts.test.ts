@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from 'vitest';
-import { dedupeRecipients, runBroadcast } from './broadcasts';
+import { audienceCounts, audienceRecipients, dedupeRecipients, isAudience, runBroadcast } from './broadcasts';
 import type { BroadcastRecipient } from './broadcasts';
 import type { SendResult } from './email';
 
@@ -24,6 +24,54 @@ describe('dedupeRecipients', () => {
 		expect(dedupeRecipients([{ did: 'did:plc:a', email: '  pad@example.com ' }])).toEqual([
 			{ did: 'did:plc:a', email: 'pad@example.com' }
 		]);
+	});
+});
+
+const RESPONSES = [
+	{ did: 'did:plc:y1', email: 'y1@example.com', interest: 'yes' },
+	{ did: 'did:plc:y2', email: 'Y1@example.com', interest: 'yes' },
+	{ did: 'did:plc:m1', email: 'm1@example.com', interest: 'maybe' },
+	{ did: 'did:plc:n1', email: 'n1@example.com', interest: 'no' },
+	{ did: 'did:plc:n2', email: '', interest: 'no' }
+];
+const WAITLIST = [
+	{ did: 'did:plc:w1', email: 'w1@example.com', promotedAt: null },
+	{ did: 'did:plc:w2', email: 'w2@example.com', promotedAt: '2026-08-11T17:30:00Z' }
+];
+
+describe('audienceRecipients', () => {
+	it("'all' is every respondent, deduped by email", () => {
+		expect(audienceRecipients('all', RESPONSES, WAITLIST).map((r) => r.did)).toEqual([
+			'did:plc:y1',
+			'did:plc:m1',
+			'did:plc:n1'
+		]);
+	});
+
+	it('survey audiences filter on the interest answer', () => {
+		expect(audienceRecipients('yes', RESPONSES, WAITLIST).map((r) => r.did)).toEqual(['did:plc:y1']);
+		expect(audienceRecipients('maybe', RESPONSES, WAITLIST).map((r) => r.did)).toEqual(['did:plc:m1']);
+		expect(audienceRecipients('no', RESPONSES, WAITLIST).map((r) => r.did)).toEqual(['did:plc:n1']);
+	});
+
+	it("'waitlist' takes only entries not yet promoted", () => {
+		expect(audienceRecipients('waitlist', RESPONSES, WAITLIST)).toEqual([{ did: 'did:plc:w1', email: 'w1@example.com' }]);
+	});
+
+	it('counts every audience in selector order', () => {
+		expect(audienceCounts(RESPONSES, WAITLIST)).toEqual([
+			{ id: 'all', label: 'Everyone', count: 3 },
+			{ id: 'yes', label: 'Yes', count: 1 },
+			{ id: 'maybe', label: 'Maybe', count: 1 },
+			{ id: 'no', label: 'No', count: 1 },
+			{ id: 'waitlist', label: 'Waitlist', count: 1 }
+		]);
+	});
+
+	it('isAudience rejects anything a form could invent', () => {
+		expect(isAudience('yes')).toBe(true);
+		expect(isAudience('registered')).toBe(false);
+		expect(isAudience('')).toBe(false);
 	});
 });
 

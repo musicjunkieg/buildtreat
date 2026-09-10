@@ -205,6 +205,49 @@ export async function setDeclined(
 		.run();
 }
 
+/**
+ * Organizer edit of an existing row: the form fields only. Status, the
+ * agreement versions/timestamp, handle, and created_at are the attendee's
+ * own and stay untouched — the organizer fixes a phone number or a flight,
+ * never agrees to anything on someone's behalf. Returns false when the DID
+ * has no row.
+ */
+export async function updateRegistrationFields(
+	db: D1Database,
+	did: string,
+	input: Omit<RegistrationInput, 'agreeWaiver' | 'agreeCoc'>
+): Promise<boolean> {
+	const now = new Date().toISOString();
+	const result = await db
+		.prepare(
+			`UPDATE registrations SET
+			   name = ?1, email = ?2, phone = ?3, emergency_name = ?4, emergency_phone = ?5,
+			   dietary = ?6, dietary_other = ?7, accessibility = ?8, notes = ?9,
+			   travel_arrival = ?10, travel_departure = ?11, travel_mode = ?12, travel_details = ?13,
+			   updated_at = ?14
+			 WHERE did = ?15`
+		)
+		.bind(
+			input.name,
+			input.email,
+			input.phone || null,
+			input.emergencyName,
+			input.emergencyPhone,
+			JSON.stringify(input.dietary),
+			input.dietaryOther || null,
+			input.accessibility || null,
+			input.notes || null,
+			input.travelArrival || null,
+			input.travelDeparture || null,
+			input.travelMode,
+			input.travelDetails || null,
+			now,
+			did
+		)
+		.run();
+	return (result.meta.changes ?? 0) > 0;
+}
+
 /** Organizer roster, most recently updated first. */
 export async function listRegistrations(db: D1Database): Promise<Registration[]> {
 	const rows = await db.prepare(`SELECT ${COLUMNS} FROM registrations ORDER BY updated_at DESC`).all<RegistrationRow>();

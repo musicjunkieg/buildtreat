@@ -83,6 +83,12 @@ describe('validateRegistration', () => {
 		);
 	});
 
+	it('skips the agreement rule when the organizer edits fields on behalf', () => {
+		const input = { ...complete(), agreeWaiver: false, agreeCoc: false };
+		expect(validateRegistration(input).ok).toBe(false);
+		expect(validateRegistration(input, { agreements: false })).toEqual({ ok: true, value: input });
+	});
+
 	it('rejects unknown dietary ids and travel modes', () => {
 		const res = validateRegistration({
 			...complete(),

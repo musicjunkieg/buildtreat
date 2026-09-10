@@ -108,9 +108,14 @@ export function canConfirm(closed: boolean, existing: { status: 'confirmed' | 'd
 	return !closed || existing?.status === 'confirmed';
 }
 
-/** Rules for a CONFIRMED registration. Declines skip this entirely. */
+/**
+ * Rules for a CONFIRMED registration. Declines skip this entirely. The
+ * organizer's edit of someone else's row passes `agreements: false`: the
+ * attendee's own agreement stays on the row, and nobody agrees for them.
+ */
 export function validateRegistration(
-	input: RegistrationInput
+	input: RegistrationInput,
+	{ agreements = true }: { agreements?: boolean } = {}
 ): { ok: true; value: RegistrationInput } | { ok: false; errors: RegistrationErrors } {
 	const errors: RegistrationErrors = {};
 	const e = registration.errors;
@@ -118,8 +123,8 @@ export function validateRegistration(
 	if (!EMAIL_RE.test(input.email)) errors.email = e.email;
 	if (!input.emergencyName) errors.emergencyName = e.emergencyName;
 	if (!input.emergencyPhone) errors.emergencyPhone = e.emergencyPhone;
-	if (!input.agreeWaiver) errors.agreeWaiver = e.agreeWaiver;
-	if (!input.agreeCoc) errors.agreeCoc = e.agreeCoc;
+	if (agreements && !input.agreeWaiver) errors.agreeWaiver = e.agreeWaiver;
+	if (agreements && !input.agreeCoc) errors.agreeCoc = e.agreeCoc;
 	if (input.dietary.some((id) => !isDietaryId(id))) errors.dietary = e.dietary;
 	if (input.travelMode !== null && !isTravelMode(input.travelMode)) errors.travelMode = e.travelMode;
 	return Object.keys(errors).length ? { ok: false, errors } : { ok: true, value: input };

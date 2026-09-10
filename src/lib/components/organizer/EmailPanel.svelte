@@ -1,20 +1,25 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
 	import { SvelteSet } from 'svelte/reactivity';
-	import type { BroadcastView } from '$lib/server/broadcasts';
+	import type { Audience, AudienceCount, BroadcastView } from '$lib/server/broadcasts';
 
 	let {
 		configured,
 		broadcasts,
-		respondentCount
+		audiences
 	}: {
 		configured: boolean;
 		broadcasts: BroadcastView[];
-		respondentCount: number;
+		/** Recipient count per audience, in display order; the first is the default. */
+		audiences: AudienceCount[];
 	} = $props();
 
 	let subject = $state('');
 	let body = $state('');
+	let audience = $state<Audience>('all');
+	const picked = $derived(audiences.find((a) => a.id === audience) ?? audiences[0]);
+	const recipientCount = $derived(picked?.count ?? 0);
+	const labelFor = (id: Audience) => audiences.find((a) => a.id === id)?.label ?? id;
 	// Two-step arm/confirm instead of a browser confirm() dialog, so the
 	// recipient count is visible at the moment of commitment.
 	let armed = $state(false);
@@ -24,6 +29,7 @@
 	let retrying = new SvelteSet<number>();
 
 	const draftReady = $derived(subject.trim().length > 0 && body.trim().length > 0);
+	const canSend = $derived(draftReady && recipientCount > 0);
 
 	function counts(b: BroadcastView): { sent: number; failed: number; pending: number } {
 		let sent = 0,
@@ -80,15 +86,28 @@
 				<button class="btn-ghost" formaction="?/emailTest" disabled={!draftReady || sending}>Send test</button>
 			</div>
 
+			<fieldset class="audience">
+				<legend class="kicker">Send to</legend>
+				<div class="chips">
+					{#each audiences as a (a.id)}
+						<label class="chip" class:empty={a.count === 0}>
+							<input type="radio" name="audience" value={a.id} bind:group={audience} onchange={() => (armed = false)} />
+							<span>{a.label}</span>
+							<span class="chip-n">{a.count}</span>
+						</label>
+					{/each}
+				</div>
+			</fieldset>
+
 			<div class="send-row">
 				{#if armed}
-					<button class="pill confirm-pill" formaction="?/emailBroadcast" disabled={!draftReady || sending}>
-						Really send to {respondentCount} {respondentCount === 1 ? 'person' : 'people'}
+					<button class="pill confirm-pill" formaction="?/emailBroadcast" disabled={!canSend || sending}>
+						Really send to {recipientCount} {recipientCount === 1 ? 'person' : 'people'} · {picked?.label ?? ''}
 					</button>
 					<button class="btn-ghost" type="button" onclick={() => (armed = false)}>Cancel</button>
 				{:else}
-					<button class="btn-ghost arm-btn" type="button" disabled={!draftReady || sending} onclick={() => (armed = true)}>
-						Send to {respondentCount} respondent{respondentCount === 1 ? '' : 's'}…
+					<button class="btn-ghost arm-btn" type="button" disabled={!canSend || sending} onclick={() => (armed = true)}>
+						Send to {recipientCount} {recipientCount === 1 ? 'person' : 'people'}…
 					</button>
 				{/if}
 			</div>
@@ -106,7 +125,7 @@
 							<summary>
 								<span class="hist-subject">{b.subject}</span>
 								<span class="section-sub hist-meta">
-									{shortDate(b.createdAt)} · {c.sent} sent{c.failed ? ` · ${c.failed} failed` : ''}{c.pending
+									{shortDate(b.createdAt)} · {labelFor(b.audience)} · {c.sent} sent{c.failed ? ` · ${c.failed} failed` : ''}{c.pending
 										? ` · ${c.pending} pending`
 										: ''}
 								</span>
@@ -218,6 +237,79 @@
 	.compose textarea:focus {
 		outline: none;
 		border-bottom-color: var(--ink);
+	}
+
+	/* Audience selector: the survey's chip language at organizer density.
+	   A count rides in each chip so the choice and its reach read together. */
+	.audience {
+		border: 0;
+		padding: 0;
+		margin: 0;
+		display: flex;
+		flex-direction: column;
+		gap: 0.5rem;
+	}
+
+	.audience legend {
+		color: var(--ink-70);
+		padding: 0;
+		margin-bottom: 0.5rem;
+	}
+
+	.chips {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.5rem;
+	}
+
+	.chip {
+		position: relative;
+		display: inline-flex;
+		align-items: baseline;
+		gap: 0.45rem;
+		border: 1px solid var(--ink-45);
+		border-radius: 999px;
+		padding: 0.4rem 0.85rem;
+		font-size: 0.8125rem;
+		color: var(--ink-70);
+		cursor: pointer;
+		transition:
+			background 0.15s var(--ease-out),
+			color 0.15s var(--ease-out);
+	}
+
+	.chip input {
+		position: absolute;
+		width: 1px;
+		height: 1px;
+		overflow: hidden;
+		clip-path: inset(50%);
+	}
+
+	.chip-n {
+		font-variant-numeric: tabular-nums;
+		color: var(--ink-45);
+	}
+
+	.chip.empty {
+		color: var(--ink-45);
+	}
+
+	.chip:has(input:checked) {
+		background: var(--ink);
+		color: var(--on-pill);
+		border-color: var(--ink);
+		font-weight: 600;
+	}
+
+	.chip:has(input:checked) .chip-n {
+		color: var(--on-pill);
+		opacity: 0.7;
+	}
+
+	.chip:has(input:focus-visible) {
+		outline: 2px solid var(--ink);
+		outline-offset: 3px;
 	}
 
 	.send-row {

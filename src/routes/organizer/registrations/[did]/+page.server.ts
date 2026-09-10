@@ -1,0 +1,47 @@
+import { error, fail, redirect } from '@sveltejs/kit';
+import type { Actions, PageServerLoad } from './$types';
+import { isOrganizer } from '$lib/server/organizer';
+import { getRegistration, updateRegistrationFields, type Registration } from '$lib/server/registration';
+import { parseRegistrationForm, validateRegistration } from '$lib/registration';
+
+/**
+ * /organizer/registrations/[did] — the organizer edits one attendee's
+ * registration. Same access policy as /organizer (signed out → back to the
+ * gate, non-organizer → 404). Only the form fields are editable: status and
+ * the agreement record stay the attendee's own (see updateRegistrationFields).
+ */
+
+function requireOrganizer(locals: App.Locals, platform: App.Platform | undefined): void {
+	if (!locals.did) redirect(303, '/organizer');
+	if (!isOrganizer(platform?.env?.ORGANIZER_DIDS, locals.did)) error(404, { message: 'Not found' });
+}
+
+export const load: PageServerLoad = async ({ locals, platform, params }): Promise<{ registration: Registration }> => {
+	requireOrganizer(locals, platform);
+	const db = platform?.env?.DB;
+	if (!db) error(503, { message: 'Storage is not available right now' });
+	const registration = await getRegistration(db, params.did);
+	if (!registration) error(404, { message: 'No registration for that account' });
+	return { registration };
+};
+
+export const actions: Actions = {
+	save: async ({ locals, platform, params, request }) => {
+		requireOrganizer(locals, platform);
+		const db = platform?.env?.DB;
+		if (!db) return fail(503, { message: 'Storage is not available right now' });
+
+		const input = parseRegistrationForm(await request.formData());
+		const checked = validateRegistration(input, { agreements: false });
+		if (!checked.ok) return fail(400, { errors: checked.errors, values: input });
+
+		try {
+			const updated = await updateRegistrationFields(db, params.did, checked.value);
+			if (!updated) return fail(404, { message: 'That registration no longer exists' });
+		} catch (e) {
+			console.error('organizer registration edit failed', e);
+			return fail(500, { message: 'Could not save — try again' });
+		}
+		return { message: 'Saved', values: checked.value };
+	}
+};
