@@ -83,6 +83,25 @@ describe('validateRegistration', () => {
 		);
 	});
 
+	it('skips the agreement rule when the organizer edits fields on behalf', () => {
+		const input = { ...complete(), agreeWaiver: false, agreeCoc: false };
+		expect(validateRegistration(input).ok).toBe(false);
+		expect(validateRegistration(input, { agreements: false })).toEqual({ ok: true, value: input });
+	});
+
+	it('relaxes the confirmation-only fields for a declined row, but still checks a typed email', () => {
+		const declined = { ...emptyRegistration(), name: 'Sam' };
+		expect(validateRegistration(declined).ok).toBe(false);
+		expect(validateRegistration(declined, { agreements: false, confirmation: false })).toEqual({
+			ok: true,
+			value: declined
+		});
+		const typo = { ...declined, email: 'nope' };
+		const res = validateRegistration(typo, { agreements: false, confirmation: false });
+		expect(res.ok).toBe(false);
+		if (!res.ok) expect(Object.keys(res.errors)).toEqual(['email']);
+	});
+
 	it('rejects unknown dietary ids and travel modes', () => {
 		const res = validateRegistration({
 			...complete(),

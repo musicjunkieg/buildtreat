@@ -5,12 +5,68 @@ import type { SendResult } from './email';
  * D1 access + orchestration for organizer email broadcasts. Recipients are
  * snapshotted per broadcast; each row's status is the source of truth for
  * what has actually been handed to comail. All queries are parameterized.
- * Schema: migrations/0005_broadcasts.sql.
+ * Schema: migrations/0005_broadcasts.sql (+ 0007 audience column).
  */
 
 export interface RecipientInput {
 	did: string;
 	email: string;
+}
+
+/**
+ * Who a broadcast goes to. 'all' / 'yes' / 'maybe' / 'no' select survey
+ * respondents (by their interest answer); 'waitlist' selects entries still
+ * waiting for a promotion. Stored on the broadcast row so the history says
+ * which list each message went to.
+ */
+export const AUDIENCES = ['all', 'yes', 'maybe', 'no', 'waitlist'] as const;
+export type Audience = (typeof AUDIENCES)[number];
+
+export const audienceLabels: Record<Audience, string> = {
+	all: 'Everyone',
+	yes: 'Yes',
+	maybe: 'Maybe',
+	no: 'No',
+	waitlist: 'Waitlist'
+};
+
+export function isAudience(value: string): value is Audience {
+	return (AUDIENCES as readonly string[]).includes(value);
+}
+
+export interface AudienceCount {
+	id: Audience;
+	label: string;
+	count: number;
+}
+
+/**
+ * Resolve an audience to its deduped recipient list. Survey audiences read
+ * the interest column; the waitlist audience takes entries not yet promoted
+ * (a promoted person is on the allowlist and reachable through the survey).
+ */
+export function audienceRecipients(
+	audience: Audience,
+	responses: Array<{ did: string; email: string; interest: string }>,
+	waitlist: Array<{ did: string; email: string; promotedAt: string | null }>
+): RecipientInput[] {
+	if (audience === 'waitlist') {
+		return dedupeRecipients(waitlist.filter((w) => w.promotedAt === null).map((w) => ({ did: w.did, email: w.email })));
+	}
+	const picked = audience === 'all' ? responses : responses.filter((r) => r.interest === audience);
+	return dedupeRecipients(picked.map((r) => ({ did: r.did, email: r.email })));
+}
+
+/** Recipient counts for every audience — what the compose form's selector shows. */
+export function audienceCounts(
+	responses: Array<{ did: string; email: string; interest: string }>,
+	waitlist: Array<{ did: string; email: string; promotedAt: string | null }>
+): AudienceCount[] {
+	return AUDIENCES.map((id) => ({
+		id,
+		label: audienceLabels[id],
+		count: audienceRecipients(id, responses, waitlist).length
+	}));
 }
 
 export interface BroadcastRecipient {
@@ -25,6 +81,7 @@ export interface BroadcastView {
 	id: number;
 	subject: string;
 	body: string;
+	audience: Audience;
 	sentBy: string;
 	createdAt: string;
 	recipients: BroadcastRecipient[];
@@ -47,12 +104,14 @@ export function dedupeRecipients(rows: RecipientInput[]): RecipientInput[] {
 /** Insert the broadcast plus one pending row per recipient; returns its id. */
 export async function createBroadcast(
 	db: D1Database,
-	input: { subject: string; body: string; sentBy: string; recipients: RecipientInput[] }
+	input: { subject: string; body: string; audience: Audience; sentBy: string; recipients: RecipientInput[] }
 ): Promise<number> {
 	const now = new Date().toISOString();
 	const row = await db
-		.prepare(`INSERT INTO broadcasts (subject, body, sent_by, created_at) VALUES (?1, ?2, ?3, ?4) RETURNING id`)
-		.bind(input.subject, input.body, input.sentBy, now)
+		.prepare(
+			`INSERT INTO broadcasts (subject, body, audience, sent_by, created_at) VALUES (?1, ?2, ?3, ?4, ?5) RETURNING id`
+		)
+		.bind(input.subject, input.body, input.audience, input.sentBy, now)
 		.first<{ id: number }>();
 	if (!row) throw new Error('broadcast insert returned no id');
 	if (input.recipients.length) {
@@ -73,14 +132,31 @@ export async function createBroadcast(
 /** All broadcasts, newest first, with their full recipient rows. */
 export async function listBroadcasts(db: D1Database): Promise<BroadcastView[]> {
 	const [broadcasts, recipients] = await db.batch([
-		db.prepare(`SELECT id, subject, body, sent_by, created_at FROM broadcasts ORDER BY id DESC`),
+		db.prepare(`SELECT id, subject, body, audience, sent_by, created_at FROM broadcasts ORDER BY id DESC`),
 		db.prepare(
 			`SELECT broadcast_id, did, email, status, error_code, message_id FROM broadcast_recipients ORDER BY email`
 		)
 	]);
 	const byId = new Map<number, BroadcastView>();
-	for (const b of broadcasts.results as Array<{ id: number; subject: string; body: string; sent_by: string; created_at: string }>) {
-		byId.set(b.id, { id: b.id, subject: b.subject, body: b.body, sentBy: b.sent_by, createdAt: b.created_at, recipients: [] });
+	for (const b of broadcasts.results as Array<{
+		id: number;
+		subject: string;
+		body: string;
+		audience: string;
+		sent_by: string;
+		created_at: string;
+	}>) {
+		byId.set(b.id, {
+			id: b.id,
+			subject: b.subject,
+			body: b.body,
+			// Rows older than migration 0007 carry the column default; anything
+			// unexpected reads as 'all' rather than breaking the history render.
+			audience: isAudience(b.audience) ? b.audience : 'all',
+			sentBy: b.sent_by,
+			createdAt: b.created_at,
+			recipients: []
+		});
 	}
 	for (const r of recipients.results as Array<{
 		broadcast_id: number;

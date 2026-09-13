@@ -626,7 +626,7 @@ finish review, the verdict, and DESIGN.md.
 			<EmailPanel
 				configured={data.emailConfigured}
 				broadcasts={data.broadcasts}
-				respondentCount={new Set(data.responses.map((r) => r.email.trim().toLowerCase()).filter(Boolean)).size}
+				audiences={data.audiences}
 			/>
 		</div>
 	</main>

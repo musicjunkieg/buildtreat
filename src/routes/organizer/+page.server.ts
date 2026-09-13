@@ -35,13 +35,16 @@ import {
 import { emailConfigured, sendEmail } from '$lib/server/email';
 import { broadcastHtml } from '$lib/server/email-template';
 import {
+	audienceCounts,
+	audienceRecipients,
 	createBroadcast,
-	dedupeRecipients,
 	getBroadcast,
+	isAudience,
 	listBroadcasts,
 	markRecipient,
 	runBroadcast,
 	unsentRecipients,
+	type AudienceCount,
 	type BroadcastView
 } from '$lib/server/broadcasts';
 import { EMAIL_RE } from '$lib/server/db';
@@ -88,6 +91,8 @@ export interface OrganizerPageData {
 	/** False until COMAIL_API_KEY + vars are set — renders setup hints. */
 	emailConfigured: boolean;
 	broadcasts: BroadcastView[];
+	/** Recipient count per broadcast audience, for the compose selector. */
+	audiences: AudienceCount[];
 	registrations: RegistrationView[];
 	regDeadlineDisplay: string | null;
 	regClosed: boolean;
@@ -110,6 +115,7 @@ const EMPTY: Omit<OrganizerPageData, 'authState'> = {
 	registrationsUnavailable: false,
 	emailConfigured: false,
 	broadcasts: [],
+	audiences: [],
 	registrations: [],
 	regDeadlineDisplay: null,
 	regClosed: false,
@@ -200,6 +206,7 @@ export const load: PageServerLoad = async ({ locals, platform, url }): Promise<O
 		registrationsUnavailable,
 		emailConfigured: emailConfigured(platform?.env ?? {}),
 		broadcasts,
+		audiences: audienceCounts(responses, waitlist),
 		registrations: registrations.map(toRegistrationView),
 		regDeadlineDisplay: reg.display,
 		regClosed: reg.closed,
@@ -336,14 +343,16 @@ export const actions: Actions = {
 		const form = await request.formData();
 		const subject = String(form.get('subject') ?? '').trim();
 		const body = String(form.get('body') ?? '').trim();
+		const audience = String(form.get('audience') ?? 'all');
 		if (!subject || !body) return fail(400, { message: 'Subject and body are both required' });
+		if (!isAudience(audience)) return fail(400, { message: 'Pick who this goes to' });
 		if (!emailConfigured(platform?.env ?? {})) return fail(503, { message: 'Email is not configured yet' });
 
-		const responses = await getAllResponses(db);
-		const recipients = dedupeRecipients(responses.map((r) => ({ did: r.did, email: r.email })));
-		if (!recipients.length) return fail(400, { message: 'No respondents with emails to send to' });
+		const [responses, waitlist] = await Promise.all([getAllResponses(db), listWaitlist(db)]);
+		const recipients = audienceRecipients(audience, responses, waitlist);
+		if (!recipients.length) return fail(400, { message: 'Nobody with an email in that audience' });
 
-		const id = await createBroadcast(db, { subject, body, sentBy: locals.did!, recipients });
+		const id = await createBroadcast(db, { subject, body, audience, sentBy: locals.did!, recipients });
 		const worklist = await unsentRecipients(db, id);
 		const run = await runBroadcast(
 			worklist,
@@ -532,22 +541,25 @@ function previewData(): Omit<OrganizerPageData, 'authState' | 'preview' | 'deadl
 		}
 	];
 
+	const previewWaitlist: WaitlistEntry[] = [
+		{ did: 'did:plc:wl0', handle: 'juno.bsky.social', email: 'juno@example.com', createdAt: '2026-08-10T15:22:00Z', promotedAt: null },
+		{ did: 'did:plc:wl1', handle: 'rafi.dev', email: 'rafi@example.com', createdAt: '2026-08-10T18:40:00Z', promotedAt: null },
+		{ did: 'did:plc:wl2', handle: 'm.harbor.social', email: 'harbor@example.com', createdAt: '2026-08-11T09:05:00Z', promotedAt: null },
+		{ did: 'did:plc:wl3', handle: 'okoye.bsky.social', email: 'okoye@example.com', createdAt: '2026-08-09T12:00:00Z', promotedAt: '2026-08-11T17:30:00Z' }
+	];
+
 	return {
 		responses,
 		allowlist: previewAllowlist,
 		latePasses: [{ handle: 'waverly.bsky.social', did: null, grantedAt: '2026-08-06T21:04:00Z' }],
-		waitlist: [
-			{ did: 'did:plc:wl0', handle: 'juno.bsky.social', email: 'juno@example.com', createdAt: '2026-08-10T15:22:00Z', promotedAt: null },
-			{ did: 'did:plc:wl1', handle: 'rafi.dev', email: 'rafi@example.com', createdAt: '2026-08-10T18:40:00Z', promotedAt: null },
-			{ did: 'did:plc:wl2', handle: 'm.harbor.social', email: 'harbor@example.com', createdAt: '2026-08-11T09:05:00Z', promotedAt: null },
-			{ did: 'did:plc:wl3', handle: 'okoye.bsky.social', email: 'okoye@example.com', createdAt: '2026-08-09T12:00:00Z', promotedAt: '2026-08-11T17:30:00Z' }
-		],
+		waitlist: previewWaitlist,
 		reopened: false,
 		deadlinePassed: false,
 		anchors: ['did:plc:preview2', 'did:plc:preview5'],
 		anchorsUnavailable: false,
 		registrationsUnavailable: false,
 		emailConfigured: true,
+		audiences: audienceCounts(responses, previewWaitlist),
 		regDeadlineDisplay: 'September 7',
 		regClosed: false,
 		registrations: previewRegistrations.map(toRegistrationView),
@@ -558,6 +570,7 @@ function previewData(): Omit<OrganizerPageData, 'authState' | 'preview' | 'deadl
 				id: 1,
 				subject: 'October dates are locked',
 				body: 'Hi builders — we picked the window. Details on the site.',
+				audience: 'all',
 				sentBy: 'did:plc:h3wpawnrlptr4534chevddo6',
 				createdAt: '2026-08-14T20:11:00Z',
 				recipients: [
