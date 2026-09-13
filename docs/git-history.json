@@ -1,21 +1,5 @@
 [
   {
-    "hash": "5ce0e1cb8623963f1e1e3210e7a0da3395e66445",
-    "short_hash": "5ce0e1c",
-    "author": "Bryan Guffey",
-    "date": "2026-09-10T13:38:50-07:00",
-    "message": "feat: organizer edits any registration + broadcast audience selector\n\nTwo organizer-console additions:\n\n- Edit any registration. New route /organizer/registrations/[did]\n  (organizer-only, 404 for anyone else) with a fields-only editor:\n  contact, dietary, emergency, accessibility, notes, travel. Status and\n  the attendee's own waiver/CoC agreement record are never touched —\n  nobody agrees on someone else's behalf. validateRegistration gains an\n  `agreements: false` option for this path; updateRegistrationFields\n  writes the field columns only. Edit links from the registrations\n  table and the declined list.\n\n- Broadcast audience. Email panel gets a \"Send to\" chip row: Everyone /\n  Yes / Maybe / No (survey interest) / Waitlist (entries not yet\n  promoted), each with a live recipient count. The choice is persisted\n  on broadcasts.audience (migration 0007, additive, default 'all') and\n  shown in the history meta. Server re-derives the recipient list from\n  the audience at send time, so a stale count can't widen delivery.\n\nTests cover audienceRecipients/audienceCounts/isAudience and the\nagreements:false validation path.\n\nCo-Authored-By: Claude Fable 5 <noreply@anthropic.com>\nClaude-Session: https://claude.ai/code/session_01YS7dro4fFpSEXJ9WtXmaBX",
-    "files_changed": 15
-  },
-  {
-    "hash": "351f967b5bca51e78bf0745d3baca7e0848870a8",
-    "short_hash": "351f967",
-    "author": "Bryan Guffey",
-    "date": "2026-09-08T18:36:07-07:00",
-    "message": "fix(email): lift links out before emphasis; keep balanced parens in urls\n\nAddresses CodeRabbit on #28: labeled and bare links are held as placeholders\nwhile **bold**/_italic_ run, so markers inside an href can't break the\nanchor; a trailing \")\" is only trimmed from a bare URL when it doesn't\nbalance one inside it, and labeled-link destinations accept one level of\nparentheses. The #104 follow-up note now uses src/lib/… paths.\n\nCo-Authored-By: Claude Fable 5 <noreply@anthropic.com>\nClaude-Session: https://claude.ai/code/session_01YS7dro4fFpSEXJ9WtXmaBX",
-    "files_changed": 5
-  },
-  {
     "hash": "210f834614d7af1866273ebe7671278de634e5bb",
     "short_hash": "210f834",
     "author": "Bryan Guffey",
