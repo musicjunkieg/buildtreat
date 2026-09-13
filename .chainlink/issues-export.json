@@ -1,10 +1,10 @@
 {
   "version": 1,
-  "exported_at": "2026-09-04T16:15:31.469926+00:00",
+  "exported_at": "2026-09-09T01:36:07.844521+00:00",
   "issues": [
     {
-      "id": 102,
-      "title": "Branded HTML email template for broadcasts",
+      "id": 105,
+      "title": "Waiver row → complete-waivers checkbox (v2); email body bold/italic/links",
       "description": null,
       "status": "open",
       "priority": "high",
@@ -13,9 +13,64 @@
         "feature"
       ],
       "comments": [],
-      "created_at": "2026-09-02T22:43:44.688238+00:00",
-      "updated_at": "2026-09-02T22:43:44.688238+00:00",
+      "created_at": "2026-09-08T20:58:44.964713+00:00",
+      "updated_at": "2026-09-08T20:58:44.964713+00:00",
       "closed_at": null
+    },
+    {
+      "id": 104,
+      "title": "Follow-up: 8 pre-existing findings CodeRabbit raised on PR #27 (structure-only)",
+      "description": null,
+      "status": "open",
+      "priority": "medium",
+      "parent_id": null,
+      "labels": [
+        "tech-debt"
+      ],
+      "comments": [
+        {
+          "content": "All pre-existing on main (verified against origin/main line-for-line); deferred so PR #27 stays behavior-identical.\n1. src/lib/auth/HandleTypeahead.svelte:56 — clear results/highlight + close dropdown immediately on query change, before the debounce.\n2. src/lib/auth/HandleTypeahead.svelte:45-48 — track an AbortController and abort in invalidateSearch (keep the 3s timeout).\n3. src/lib/server/email/broadcasts.ts:109 — unsentRecipients should select status = 'pending', not != 'sent' (don't resend REJECTED).\n4. src/lib/server/email/email.ts:81 — guard that decoded body is a non-null object before reading accepted/rejected.\n5. src/lib/server/email/email.ts:73 — non-JSON branch: retryable only for 429/5xx, not 401/403.\n6. src/lib/server/organizer/admin.ts:199 — hasLatePass handle match should require did IS NULL (mirror checkAllowlist pinning).\n7. src/lib/survey/dates/DatesItem.svelte:234 — onpointercancel should clear drag state without commitRange.\n8. src/lib/ui/Dots.svelte + src/lib/ui/NextChip.svelte — add prefers-reduced-motion overrides.",
+          "created_at": "2026-09-06T20:32:16.193953+00:00",
+          "kind": "note"
+        }
+      ],
+      "created_at": "2026-09-06T20:32:16.160246+00:00",
+      "updated_at": "2026-09-06T20:32:16.160246+00:00",
+      "closed_at": null
+    },
+    {
+      "id": 103,
+      "title": "Refactor: modular layout (≤500-line files, coherent folders, AGENTS.md)",
+      "description": null,
+      "status": "closed",
+      "priority": "medium",
+      "parent_id": null,
+      "labels": [],
+      "comments": [],
+      "created_at": "2026-09-06T19:28:31.386575+00:00",
+      "updated_at": "2026-09-06T19:58:16.672544+00:00",
+      "closed_at": "2026-09-06T19:58:16.672544+00:00"
+    },
+    {
+      "id": 102,
+      "title": "Branded HTML email template for broadcasts",
+      "description": null,
+      "status": "closed",
+      "priority": "high",
+      "parent_id": null,
+      "labels": [
+        "feature"
+      ],
+      "comments": [
+        {
+          "content": "Shipped: PR #26 merged (a710ce0 base → merge). brandedEmail() renderer with hero photo treatment, contender location photos, retreat facts ledger, pill CTA; wired into broadcasts, test sends, and registration confirmation. CodeRabbit findings (PII in export, fixed-width image row) fixed and threads resolved.",
+          "created_at": "2026-09-04T17:11:25.006167+00:00",
+          "kind": "note"
+        }
+      ],
+      "created_at": "2026-09-02T22:43:44.688238+00:00",
+      "updated_at": "2026-09-04T17:11:25.015710+00:00",
+      "closed_at": "2026-09-04T17:11:25.015710+00:00"
     },
     {
       "id": 101,

@@ -2,16 +2,17 @@
 	let {
 		name,
 		label,
-		title,
-		body,
+		title = '',
+		body = '',
 		version,
 		checked = false,
 		error = null
 	}: {
 		name: 'agreeWaiver' | 'agreeCoc';
 		label: string;
-		title: string;
-		body: string;
+		/** Expandable text behind "read it"; omit both for a bare commitment row. */
+		title?: string;
+		body?: string;
 		version: string;
 		checked?: boolean;
 		error?: string | null;
@@ -20,6 +21,7 @@
 	let on = $state(false);
 	let open = $state(false);
 	const id = $derived(`${name}-text`);
+	const readable = $derived(body.trim().length > 0);
 
 	$effect(() => {
 		on = checked;
@@ -29,20 +31,24 @@
 <li class="row" class:on>
 	<div class="check-row">
 		<label class="check">
-			<input type="checkbox" {name} bind:checked={on} required aria-describedby={id} aria-invalid={error ? 'true' : undefined} />
+			<input type="checkbox" {name} bind:checked={on} required aria-describedby={readable ? id : undefined} aria-invalid={error ? 'true' : undefined} />
 			<span class="ring" aria-hidden="true"></span>
 			<span class="text">{label}</span>
 		</label>
-		<button type="button" class="read" aria-expanded={open} aria-controls={id} onclick={() => (open = !open)}>read it</button>
+		{#if readable}
+			<button type="button" class="read" aria-expanded={open} aria-controls={id} onclick={() => (open = !open)}>read it</button>
+		{/if}
 		<span class="ver">{version}</span>
 	</div>
 	{#if error}<p class="error" role="alert">{error}</p>{/if}
-	<div class="body" {id} hidden={!open}>
-		<p class="body-title">{title}</p>
-		{#each body.split('\n\n') as para (para)}
-			<p>{para}</p>
-		{/each}
-	</div>
+	{#if readable}
+		<div class="body" {id} hidden={!open}>
+			<p class="body-title">{title}</p>
+			{#each body.split('\n\n') as para (para)}
+				<p>{para}</p>
+			{/each}
+		</div>
+	{/if}
 </li>
 
 <style>

@@ -178,22 +178,14 @@ export const travelModes = [
 export type TravelMode = (typeof travelModes)[number]['id'];
 
 /**
- * DRAFT agreement texts written by Claude, not a lawyer. Bryan may swap the
- * bodies at will; bump `version` when the substance changes so each
+ * Agreement texts. Bump `version` when the substance changes so each
  * registration records which text it agreed to.
  */
 export const waiver = {
-	version: 'v1',
-	title: 'Liability waiver',
-	body: `I'm choosing to attend the Atmospheric Builders' Retreat (December 4–7, 2026, in the Palm Springs / Coachella Valley area) voluntarily.
-
-I understand the retreat involves travel, shared lodging, group meals, and informal activities, and that these carry ordinary risks — including illness, injury, and loss of or damage to my belongings. I accept those risks for myself.
-
-To the fullest extent the law allows, I release the organizers — Bryan Guffey, Bluesky Social, PBC, and anyone helping them run the retreat — from claims for injury, illness, loss, or damage arising from my participation, except where caused by their gross negligence or willful misconduct.
-
-If I'm hurt or become ill, I consent to reasonable first aid and emergency care, and I understand I'm responsible for the cost of my own medical treatment. I confirm I have, or will arrange, any travel or health coverage I want for this trip.
-
-I'll take reasonable care of the house and the people in it, and I'll cover damage I cause.`
+	version: 'v2',
+	title: 'Waivers'
+	// v1 carried a draft liability waiver inline. v2 is a commitment to sign
+	// the real waivers when they're sent, so there's no body to read here.
 } as const;
 
 export const codeOfConduct = {
@@ -237,7 +229,12 @@ export const registration = {
 		accessibility: { head: 'Accessibility', hint: 'Optional', label: 'Anything we should plan for', placeholder: 'Mobility, sensory, sleep, medical — whatever helps us set the house up right' },
 		notes: { head: 'Anything else', hint: 'Optional', placeholder: 'Notes for the organizers' },
 		travel: { head: 'Travel', hint: 'Optional now · update anytime', arriving: 'Arriving', arrivingHint: 'Fri afternoon, PSP', leaving: 'Leaving', leavingHint: 'Mon morning', details: 'Details', detailsHint: 'Flight numbers, rideshare offers' },
-		agreements: { head: 'Agreements', waiver: 'I’ve read the liability waiver', coc: 'I’ll follow the code of conduct', read: 'read it' }
+		agreements: {
+			head: 'Agreements',
+			waiver: 'I agree to complete the waivers provided to me in a timely manner to attend the Builders’ Retreat',
+			coc: 'I’ll follow the code of conduct',
+			read: 'read it'
+		}
 	},
 	submit: 'Register',
 	submitHint: 'You can change everything later.',
@@ -253,7 +250,7 @@ export const registration = {
 		email: 'Enter a valid email',
 		emergencyName: 'Who should we call?',
 		emergencyPhone: 'A phone number for them',
-		agreeWaiver: 'Please read and agree to the waiver',
+		agreeWaiver: 'Please agree to complete the waivers',
 		agreeCoc: 'Please agree to the code of conduct',
 		dietary: 'Unknown food option',
 		travelMode: 'Unknown travel mode'

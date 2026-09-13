@@ -46,6 +46,45 @@ describe('brandedEmail', () => {
 		expect(html).toContain('<a href="https://buildersretre.at"');
 	});
 
+	it('renders bold, italic, and bracketed links in body text', () => {
+		const html = brandedEmail({
+			heading: 'H',
+			body: 'Please **read this** and _reply_ via [the site](https://buildersretre.at/?x=1&y=2) or https://example.com.'
+		});
+		expect(html).toContain('<strong style="color:#ffffff;">read this</strong>');
+		expect(html).toContain('<em>reply</em>');
+		expect(html).toContain('<a href="https://buildersretre.at/?x=1&amp;y=2" style="color:#ffffff;text-decoration:underline;">the site</a>');
+		expect(html).toContain('<a href="https://example.com"');
+		// The bracketed URL must not be linkified a second time inside its own anchor.
+		expect(html.match(/<a /g)).toHaveLength(2);
+	});
+
+	it('leaves non-http links, snake_case words, and stray asterisks literal', () => {
+		const html = brandedEmail({ heading: 'H', body: '[bad](javascript:alert(1)) my_var_name 5 * 3 ** 2' });
+		expect(html).not.toContain('<a ');
+		expect(html).toContain('my_var_name');
+		expect(html).not.toContain('<strong');
+		expect(html).not.toContain('<em>');
+	});
+
+	it('keeps balanced parentheses inside urls and emphasis markers out of hrefs', () => {
+		const html = brandedEmail({
+			heading: 'H',
+			body: 'See https://en.wikipedia.org/wiki/Foo_(bar). Or [wiki](https://en.wikipedia.org/wiki/Foo_(bar)) and [docs](https://example.test/**v2**/_x_) or https://example.test/**v3**.'
+		});
+		expect(html).toContain('<a href="https://en.wikipedia.org/wiki/Foo_(bar)" style="color:#ffffff;text-decoration:underline;">https://en.wikipedia.org/wiki/Foo_(bar)</a>.');
+		expect(html).toContain('>wiki</a>');
+		expect(html).toContain('<a href="https://example.test/**v2**/_x_"');
+		expect(html).toContain('<a href="https://example.test/**v3**"');
+		expect(html).not.toContain('<strong');
+		expect(html).not.toContain('<em>');
+	});
+
+	it('still trims an unbalanced trailing paren after a bare url', () => {
+		const html = brandedEmail({ heading: 'H', body: '(see https://example.test/a)' });
+		expect(html).toContain('<a href="https://example.test/a" style="color:#ffffff;text-decoration:underline;">https://example.test/a</a>)');
+	});
+
 	it('puts the opening body text in the hidden preheader', () => {
 		const html = brandedEmail({ heading: 'H', body: 'This is the preview line.\n\nMore below.' });
 		expect(html).toContain('This is the preview line.');
