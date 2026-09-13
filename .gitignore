@@ -69,8 +69,9 @@ logs/
 
 # ── SQLite databases (blanket) ─────────────────────────────────────
 # Local state only — authoritative copies of chainlink/deciduous DBs
-# live in Tigris backups. Blanket pattern also catches any future
-# app-level sqlite files without needing to touch this list.
+# live in the R2 backups the pre-commit hook uploads (ADR 0002). Blanket
+# pattern also catches any future app-level sqlite files without needing
+# to touch this list.
 *.db
 *.db-shm
 *.db-wal
@@ -87,10 +88,9 @@ logs/
 !.deciduous/.gitkeep
 
 # ── Chainlink local state ──────────────────────────────────────────
-# (issues.db is covered by *.db above)
-# (issues-export.json is force-added by the pre-commit hook)
+# issues.db is covered by *.db above. issues-export.json is the JSON the
+# pre-commit hook regenerates from it on every commit; it is NOT committed
+# (ADR 0005) — the hook checks this rule with `git check-ignore` and skips
+# staging when it matches. The DB backup in R2 is the off-machine copy.
 .chainlink/.cache/
 .chainlink/issues-export.json
-
-# Deciduous database (local)
-.deciduous/
