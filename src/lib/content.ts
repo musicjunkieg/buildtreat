@@ -15,8 +15,11 @@ export const retreat = {
 		{ label: 'Your Costs', value: 'Travel only. Lodging & food all taken care of' }
 	],
 	signIn: 'Sign in with Atmosphere',
-	organizerLine: 'Organized by Bluesky, in partnership with',
+	// Attribution reads: "Organized by Bryan Guffey (@chaosgreml.in) in partnership with Bluesky PBC"
+	// — the handle is a link, so the sentence is split around it.
+	organizerLead: 'Organized by Bryan Guffey',
 	organizerHandle: 'chaosgreml.in',
+	organizerTail: 'in partnership with Bluesky PBC',
 	/**
 	 * aturi.to universal link: opens the organizer's profile in whatever
 	 * Atmosphere client the visitor uses (there's no cross-client DM deep

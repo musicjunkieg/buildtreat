@@ -1594,6 +1594,72 @@
       "created_at": "2026-09-12T20:09:43.123721-07:00",
       "updated_at": "2026-09-12T20:09:43.123721-07:00",
       "metadata_json": "{\"branch\":\"refactor/modular-layout\",\"commit\":\"edc5a8a\",\"confidence\":95}"
+    },
+    {
+      "id": 146,
+      "change_id": "24310bb1-ab3e-4e5b-a590-0ed473414fc4",
+      "node_type": "goal",
+      "title": "Reopen registration through Sep 20",
+      "description": null,
+      "status": "pending",
+      "created_at": "2026-09-13T16:08:07.873725-07:00",
+      "updated_at": "2026-09-13T16:08:07.873725-07:00",
+      "metadata_json": "{\"branch\":\"chore/reg-deadline-sep-20\",\"confidence\":95,\"prompt\":\"Ahhh reopen registration and run it until the 20th / Yeah change that specific date until 9/20\"}"
+    },
+    {
+      "id": 147,
+      "change_id": "6e655ab1-d08d-4d97-aca7-89927b83b1d5",
+      "node_type": "option",
+      "title": "Bump REG_DEADLINE wrangler var (copy derives from it)",
+      "description": null,
+      "status": "pending",
+      "created_at": "2026-09-13T16:08:07.887204-07:00",
+      "updated_at": "2026-09-13T16:08:07.887204-07:00",
+      "metadata_json": "{\"branch\":\"chore/reg-deadline-sep-20\",\"confidence\":95}"
+    },
+    {
+      "id": 148,
+      "change_id": "713b6d12-a980-4517-b565-f95687eab008",
+      "node_type": "option",
+      "title": "Add an override flag to bypass the deadline",
+      "description": null,
+      "status": "pending",
+      "created_at": "2026-09-13T16:08:07.898531-07:00",
+      "updated_at": "2026-09-13T16:08:07.898531-07:00",
+      "metadata_json": "{\"branch\":\"chore/reg-deadline-sep-20\",\"confidence\":30}"
+    },
+    {
+      "id": 149,
+      "change_id": "550bc499-ff16-450c-b344-d3805db66554",
+      "node_type": "decision",
+      "title": "Bump REG_DEADLINE to 2026-09-21T06:59:59Z (Sep 20 EOD Pacific)",
+      "description": null,
+      "status": "pending",
+      "created_at": "2026-09-13T16:08:07.909461-07:00",
+      "updated_at": "2026-09-13T16:08:07.909461-07:00",
+      "metadata_json": "{\"branch\":\"chore/reg-deadline-sep-20\",\"confidence\":95}"
+    },
+    {
+      "id": 150,
+      "change_id": "76cea692-05c8-4fe0-a423-ebd4b250141a",
+      "node_type": "action",
+      "title": "PR #32: chore: reopen registration through Sep 20",
+      "description": null,
+      "status": "pending",
+      "created_at": "2026-09-13T16:08:07.919800-07:00",
+      "updated_at": "2026-09-13T16:08:07.919800-07:00",
+      "metadata_json": "{\"branch\":\"chore/reg-deadline-sep-20\",\"commit\":\"7381c07\",\"confidence\":95,\"files\":[\"wrangler.jsonc\"]}"
+    },
+    {
+      "id": 151,
+      "change_id": "5c3b39b4-0159-405a-898e-edf9506077f4",
+      "node_type": "outcome",
+      "title": "Merged + deployed (build 4199e8f8); site shows 'Register by September 20'",
+      "description": null,
+      "status": "pending",
+      "created_at": "2026-09-13T16:08:07.930336-07:00",
+      "updated_at": "2026-09-13T16:08:07.930336-07:00",
+      "metadata_json": "{\"branch\":\"chore/reg-deadline-sep-20\",\"confidence\":95}"
     }
   ],
   "edges": [
@@ -3202,6 +3268,72 @@
       "weight": 1.0,
       "rationale": "PR merged and deployed",
       "created_at": "2026-09-12T20:09:48.448228-07:00"
+    },
+    {
+      "id": 149,
+      "from_node_id": 147,
+      "to_node_id": 149,
+      "from_change_id": "6e655ab1-d08d-4d97-aca7-89927b83b1d5",
+      "to_change_id": "550bc499-ff16-450c-b344-d3805db66554",
+      "edge_type": "leads_to",
+      "weight": 1.0,
+      "rationale": "chosen: deadlineStatus already derives display",
+      "created_at": "2026-09-13T16:08:07.948166-07:00"
+    },
+    {
+      "id": 150,
+      "from_node_id": 148,
+      "to_node_id": 149,
+      "from_change_id": "713b6d12-a980-4517-b565-f95687eab008",
+      "to_change_id": "550bc499-ff16-450c-b344-d3805db66554",
+      "edge_type": "leads_to",
+      "weight": 1.0,
+      "rationale": "rejected",
+      "created_at": "2026-09-13T16:08:07.954828-07:00"
+    },
+    {
+      "id": 151,
+      "from_node_id": 149,
+      "to_node_id": 150,
+      "from_change_id": "550bc499-ff16-450c-b344-d3805db66554",
+      "to_change_id": "76cea692-05c8-4fe0-a423-ebd4b250141a",
+      "edge_type": "leads_to",
+      "weight": 1.0,
+      "rationale": "implementation",
+      "created_at": "2026-09-13T16:08:07.960519-07:00"
+    },
+    {
+      "id": 152,
+      "from_node_id": 150,
+      "to_node_id": 151,
+      "from_change_id": "76cea692-05c8-4fe0-a423-ebd4b250141a",
+      "to_change_id": "5c3b39b4-0159-405a-898e-edf9506077f4",
+      "edge_type": "leads_to",
+      "weight": 1.0,
+      "rationale": "result",
+      "created_at": "2026-09-13T16:08:07.966202-07:00"
+    },
+    {
+      "id": 153,
+      "from_node_id": 146,
+      "to_node_id": 147,
+      "from_change_id": "24310bb1-ab3e-4e5b-a590-0ed473414fc4",
+      "to_change_id": "6e655ab1-d08d-4d97-aca7-89927b83b1d5",
+      "edge_type": "leads_to",
+      "weight": 1.0,
+      "rationale": "one-line config change",
+      "created_at": "2026-09-13T16:08:21.657195-07:00"
+    },
+    {
+      "id": 154,
+      "from_node_id": 146,
+      "to_node_id": 148,
+      "from_change_id": "24310bb1-ab3e-4e5b-a590-0ed473414fc4",
+      "to_change_id": "713b6d12-a980-4517-b565-f95687eab008",
+      "edge_type": "leads_to",
+      "weight": 1.0,
+      "rationale": "more machinery than needed",
+      "created_at": "2026-09-13T16:08:21.666191-07:00"
     }
   ]
 }
