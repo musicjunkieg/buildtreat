@@ -94,8 +94,9 @@
 	<p class="author">
 		<span class="avatar" style:background-image={organizerAvatar ? `url(${organizerAvatar})` : undefined}></span>
 		<span class="author-text"
-			>{retreat.organizerLine}
-			<a class="handle" href={retreat.organizerLink} target="_blank" rel="noopener">@{retreat.organizerHandle}</a>
+			>{retreat.organizerLead}
+			(<a class="handle" href={retreat.organizerLink} target="_blank" rel="noopener">@{retreat.organizerHandle}</a>)
+			{retreat.organizerTail}
 			{#if surveyHref}
 				<a class="survey-link" href={surveyHref}>{surveyLabel}</a>
 			{/if}</span

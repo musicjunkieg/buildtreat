@@ -150,8 +150,9 @@
 			{/if}
 		</span>
 		<span class="author-text">
-			{retreat.organizerLine}
-			<a class="handle" href={retreat.organizerLink} target="_blank" rel="noopener">@{retreat.organizerHandle}</a>
+			{retreat.organizerLead}
+			(<a class="handle" href={retreat.organizerLink} target="_blank" rel="noopener">@{retreat.organizerHandle}</a>)
+			{retreat.organizerTail}
 		</span>
 	</p>
 </div>

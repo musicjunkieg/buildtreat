@@ -1,5 +1,13 @@
 [
   {
+    "hash": "7381c07049f19d04cdd0f6d8251f61a96adadcf5",
+    "short_hash": "7381c07",
+    "author": "Bryan Guffey",
+    "date": "2026-09-13T16:05:10-07:00",
+    "message": "chore: reopen registration through Sep 20 (#32)",
+    "files_changed": 3
+  },
+  {
     "hash": "edc5a8a2a6e445209b0616c39276abeb3be6dbbb",
     "short_hash": "edc5a8a",
     "author": "Bryan Guffey",

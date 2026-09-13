@@ -125,7 +125,7 @@
 
 		<p class="author">
 			<span class="avatar" style:background-image={organizerAvatar ? `url(${organizerAvatar})` : undefined}></span>
-			<span>{retreat.organizerLine} <a class="handle" href={retreat.organizerLink} target="_blank" rel="noopener">@{retreat.organizerHandle}</a></span>
+			<span>{retreat.organizerLead} (<a class="handle" href={retreat.organizerLink} target="_blank" rel="noopener">@{retreat.organizerHandle}</a>) {retreat.organizerTail}</span>
 		</p>
 	</div>
 </div>
