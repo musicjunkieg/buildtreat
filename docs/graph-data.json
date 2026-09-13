@@ -1484,6 +1484,116 @@
       "created_at": "2026-09-08T14:01:25.091424-07:00",
       "updated_at": "2026-09-08T14:01:25.091424-07:00",
       "metadata_json": "{\"branch\":\"refactor/modular-layout\",\"commit\":\"210f834\",\"confidence\":90}"
+    },
+    {
+      "id": 136,
+      "change_id": "30499e89-3bbc-4ea2-b853-717c4f83426b",
+      "node_type": "outcome",
+      "title": "PR #28 CodeRabbit round 1: 3 findings fixed in 351f967 (held links, balanced parens, src/ paths); 53 tests",
+      "description": null,
+      "status": "pending",
+      "created_at": "2026-09-08T18:36:41.495984-07:00",
+      "updated_at": "2026-09-08T18:36:41.495984-07:00",
+      "metadata_json": "{\"branch\":\"refactor/modular-layout\",\"commit\":\"351f967\",\"confidence\":90}"
+    },
+    {
+      "id": 137,
+      "change_id": "b9203fa2-af1b-4ef7-b75c-eda0ae17041e",
+      "node_type": "goal",
+      "title": "Organizer can edit any registration; broadcast audience selector",
+      "description": null,
+      "status": "pending",
+      "created_at": "2026-09-10T13:32:14.590966-07:00",
+      "updated_at": "2026-09-10T13:32:14.590966-07:00",
+      "metadata_json": "{\"branch\":\"feat/organizer-edit-and-audiences\",\"confidence\":90,\"prompt\":\"Can you do a branch off main and change the ensure that a) I can edit anyone's existing registration and b) I can send to everyone, maybes, yeses, or no's?  Also to waitlisted folks\"}"
+    },
+    {
+      "id": 138,
+      "change_id": "ef6eb7b0-acb2-4890-ad2a-46516d28e28b",
+      "node_type": "option",
+      "title": "Edit: dedicated organizer route /organizer/registrations/[did] with compact editor; fields-only UPDATE (status + agreements untouched)",
+      "description": null,
+      "status": "pending",
+      "created_at": "2026-09-10T13:32:24.105024-07:00",
+      "updated_at": "2026-09-10T13:32:24.105024-07:00",
+      "metadata_json": "{\"branch\":\"feat/organizer-edit-and-audiences\",\"confidence\":85}"
+    },
+    {
+      "id": 139,
+      "change_id": "180b8115-50e1-4677-bf83-415afb8706d1",
+      "node_type": "option",
+      "title": "Edit: reuse RegistrationForm.svelte via prop refactor (conflicts with PR #28, drags hero band into Operate surface)",
+      "description": null,
+      "status": "pending",
+      "created_at": "2026-09-10T13:32:24.118125-07:00",
+      "updated_at": "2026-09-10T13:32:24.118125-07:00",
+      "metadata_json": "{\"branch\":\"feat/organizer-edit-and-audiences\",\"confidence\":40}"
+    },
+    {
+      "id": 140,
+      "change_id": "9444a646-89ee-4b73-aaf2-08cbe4a4dca7",
+      "node_type": "option",
+      "title": "Audience: form field + pure audienceRecipients(); persist on broadcasts.audience via migration 0007 (additive, default 'all')",
+      "description": null,
+      "status": "pending",
+      "created_at": "2026-09-10T13:32:24.129667-07:00",
+      "updated_at": "2026-09-10T13:32:24.129667-07:00",
+      "metadata_json": "{\"branch\":\"feat/organizer-edit-and-audiences\",\"confidence\":85}"
+    },
+    {
+      "id": 141,
+      "change_id": "119813c1-741f-4d89-a998-d3d7364e6702",
+      "node_type": "option",
+      "title": "Audience: no schema change, audience not recorded in history",
+      "description": null,
+      "status": "pending",
+      "created_at": "2026-09-10T13:32:24.139760-07:00",
+      "updated_at": "2026-09-10T13:32:24.139760-07:00",
+      "metadata_json": "{\"branch\":\"feat/organizer-edit-and-audiences\",\"confidence\":40}"
+    },
+    {
+      "id": 142,
+      "change_id": "db1c2c6e-90c9-404e-accd-590a86f191fc",
+      "node_type": "decision",
+      "title": "Dedicated editor route + persisted audience column",
+      "description": null,
+      "status": "pending",
+      "created_at": "2026-09-10T13:32:24.149792-07:00",
+      "updated_at": "2026-09-10T13:32:24.149792-07:00",
+      "metadata_json": "{\"branch\":\"feat/organizer-edit-and-audiences\",\"confidence\":85}"
+    },
+    {
+      "id": 143,
+      "change_id": "d89b181c-b945-4b75-94d3-b952e2ae0761",
+      "node_type": "action",
+      "title": "Implement editor route, audience selector, migration 0007, tests",
+      "description": null,
+      "status": "pending",
+      "created_at": "2026-09-10T13:32:24.159199-07:00",
+      "updated_at": "2026-09-10T13:32:24.159199-07:00",
+      "metadata_json": "{\"branch\":\"feat/organizer-edit-and-audiences\",\"confidence\":85}"
+    },
+    {
+      "id": 144,
+      "change_id": "ff0fea35-3f9c-441b-a6fa-a87d99ca5afc",
+      "node_type": "outcome",
+      "title": "PR #29 opened: editor route + audience selector, check/test/build green, migration 0007 pending prod apply",
+      "description": null,
+      "status": "pending",
+      "created_at": "2026-09-10T13:39:38.997194-07:00",
+      "updated_at": "2026-09-10T13:39:38.997194-07:00",
+      "metadata_json": "{\"branch\":\"feat/organizer-edit-and-audiences\",\"commit\":\"5ce0e1c\",\"confidence\":90}"
+    },
+    {
+      "id": 145,
+      "change_id": "94f68bcf-544a-472c-bebc-0f854948321a",
+      "node_type": "outcome",
+      "title": "PR #29 merged to main (edc5a8a); migration 0007 live in prod D1",
+      "description": null,
+      "status": "pending",
+      "created_at": "2026-09-12T20:09:43.123721-07:00",
+      "updated_at": "2026-09-12T20:09:43.123721-07:00",
+      "metadata_json": "{\"branch\":\"refactor/modular-layout\",\"commit\":\"edc5a8a\",\"confidence\":95}"
     }
   ],
   "edges": [
@@ -2960,6 +3070,138 @@
       "weight": 1.0,
       "rationale": "result",
       "created_at": "2026-09-08T14:01:25.102224-07:00"
+    },
+    {
+      "id": 135,
+      "from_node_id": 134,
+      "to_node_id": 136,
+      "from_change_id": "d62e94fa-b689-4469-90b1-542520186722",
+      "to_change_id": "30499e89-3bbc-4ea2-b853-717c4f83426b",
+      "edge_type": "leads_to",
+      "weight": 1.0,
+      "rationale": "review fix",
+      "created_at": "2026-09-08T18:36:41.506685-07:00"
+    },
+    {
+      "id": 136,
+      "from_node_id": 137,
+      "to_node_id": 138,
+      "from_change_id": "b9203fa2-af1b-4ef7-b75c-eda0ae17041e",
+      "to_change_id": "ef6eb7b0-acb2-4890-ad2a-46516d28e28b",
+      "edge_type": "leads_to",
+      "weight": 1.0,
+      "rationale": "approach",
+      "created_at": "2026-09-10T13:32:31.240927-07:00"
+    },
+    {
+      "id": 137,
+      "from_node_id": 138,
+      "to_node_id": 142,
+      "from_change_id": "ef6eb7b0-acb2-4890-ad2a-46516d28e28b",
+      "to_change_id": "db1c2c6e-90c9-404e-accd-590a86f191fc",
+      "edge_type": "leads_to",
+      "weight": 1.0,
+      "rationale": "considered",
+      "created_at": "2026-09-10T13:32:31.253945-07:00"
+    },
+    {
+      "id": 138,
+      "from_node_id": 137,
+      "to_node_id": 139,
+      "from_change_id": "b9203fa2-af1b-4ef7-b75c-eda0ae17041e",
+      "to_change_id": "180b8115-50e1-4677-bf83-415afb8706d1",
+      "edge_type": "leads_to",
+      "weight": 1.0,
+      "rationale": "approach",
+      "created_at": "2026-09-10T13:32:31.262459-07:00"
+    },
+    {
+      "id": 139,
+      "from_node_id": 139,
+      "to_node_id": 142,
+      "from_change_id": "180b8115-50e1-4677-bf83-415afb8706d1",
+      "to_change_id": "db1c2c6e-90c9-404e-accd-590a86f191fc",
+      "edge_type": "leads_to",
+      "weight": 1.0,
+      "rationale": "considered",
+      "created_at": "2026-09-10T13:32:31.269509-07:00"
+    },
+    {
+      "id": 140,
+      "from_node_id": 137,
+      "to_node_id": 140,
+      "from_change_id": "b9203fa2-af1b-4ef7-b75c-eda0ae17041e",
+      "to_change_id": "9444a646-89ee-4b73-aaf2-08cbe4a4dca7",
+      "edge_type": "leads_to",
+      "weight": 1.0,
+      "rationale": "approach",
+      "created_at": "2026-09-10T13:32:31.276162-07:00"
+    },
+    {
+      "id": 141,
+      "from_node_id": 140,
+      "to_node_id": 142,
+      "from_change_id": "9444a646-89ee-4b73-aaf2-08cbe4a4dca7",
+      "to_change_id": "db1c2c6e-90c9-404e-accd-590a86f191fc",
+      "edge_type": "leads_to",
+      "weight": 1.0,
+      "rationale": "considered",
+      "created_at": "2026-09-10T13:32:31.282012-07:00"
+    },
+    {
+      "id": 142,
+      "from_node_id": 137,
+      "to_node_id": 141,
+      "from_change_id": "b9203fa2-af1b-4ef7-b75c-eda0ae17041e",
+      "to_change_id": "119813c1-741f-4d89-a998-d3d7364e6702",
+      "edge_type": "leads_to",
+      "weight": 1.0,
+      "rationale": "approach",
+      "created_at": "2026-09-10T13:32:31.287614-07:00"
+    },
+    {
+      "id": 143,
+      "from_node_id": 141,
+      "to_node_id": 142,
+      "from_change_id": "119813c1-741f-4d89-a998-d3d7364e6702",
+      "to_change_id": "db1c2c6e-90c9-404e-accd-590a86f191fc",
+      "edge_type": "leads_to",
+      "weight": 1.0,
+      "rationale": "considered",
+      "created_at": "2026-09-10T13:32:31.293504-07:00"
+    },
+    {
+      "id": 144,
+      "from_node_id": 142,
+      "to_node_id": 143,
+      "from_change_id": "db1c2c6e-90c9-404e-accd-590a86f191fc",
+      "to_change_id": "d89b181c-b945-4b75-94d3-b952e2ae0761",
+      "edge_type": "leads_to",
+      "weight": 1.0,
+      "rationale": "implementation",
+      "created_at": "2026-09-10T13:32:31.299629-07:00"
+    },
+    {
+      "id": 145,
+      "from_node_id": 143,
+      "to_node_id": 144,
+      "from_change_id": "d89b181c-b945-4b75-94d3-b952e2ae0761",
+      "to_change_id": "ff0fea35-3f9c-441b-a6fa-a87d99ca5afc",
+      "edge_type": "leads_to",
+      "weight": 1.0,
+      "rationale": "Implementation shipped as PR #29",
+      "created_at": "2026-09-10T13:39:46.782955-07:00"
+    },
+    {
+      "id": 146,
+      "from_node_id": 144,
+      "to_node_id": 145,
+      "from_change_id": "ff0fea35-3f9c-441b-a6fa-a87d99ca5afc",
+      "to_change_id": "94f68bcf-544a-472c-bebc-0f854948321a",
+      "edge_type": "leads_to",
+      "weight": 1.0,
+      "rationale": "PR merged and deployed",
+      "created_at": "2026-09-12T20:09:48.448228-07:00"
     }
   ]
 }
