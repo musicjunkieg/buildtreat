@@ -108,21 +108,33 @@ export function canConfirm(closed: boolean, existing: { status: 'confirmed' | 'd
 	return !closed || existing?.status === 'confirmed';
 }
 
+export interface ValidateOptions {
+	/** Require both agreement boxes. The organizer's edit passes false. */
+	agreements?: boolean;
+	/**
+	 * Require the fields that only a confirmed attendee owes us — an email
+	 * and an emergency contact. A declined row never collected them, so the
+	 * organizer's edit of one passes false; a non-empty email is still
+	 * checked for shape.
+	 */
+	confirmation?: boolean;
+}
+
 /**
- * Rules for a CONFIRMED registration. Declines skip this entirely. The
- * organizer's edit of someone else's row passes `agreements: false`: the
- * attendee's own agreement stays on the row, and nobody agrees for them.
+ * Rules for a registration. The attendee's own confirm uses the defaults.
+ * The organizer's edit of someone else's row passes `agreements: false`
+ * (nobody agrees for them) and, for a declined row, `confirmation: false`.
  */
 export function validateRegistration(
 	input: RegistrationInput,
-	{ agreements = true }: { agreements?: boolean } = {}
+	{ agreements = true, confirmation = true }: ValidateOptions = {}
 ): { ok: true; value: RegistrationInput } | { ok: false; errors: RegistrationErrors } {
 	const errors: RegistrationErrors = {};
 	const e = registration.errors;
 	if (!input.name) errors.name = e.name;
-	if (!EMAIL_RE.test(input.email)) errors.email = e.email;
-	if (!input.emergencyName) errors.emergencyName = e.emergencyName;
-	if (!input.emergencyPhone) errors.emergencyPhone = e.emergencyPhone;
+	if ((confirmation || input.email) && !EMAIL_RE.test(input.email)) errors.email = e.email;
+	if (confirmation && !input.emergencyName) errors.emergencyName = e.emergencyName;
+	if (confirmation && !input.emergencyPhone) errors.emergencyPhone = e.emergencyPhone;
 	if (agreements && !input.agreeWaiver) errors.agreeWaiver = e.agreeWaiver;
 	if (agreements && !input.agreeCoc) errors.agreeCoc = e.agreeCoc;
 	if (input.dietary.some((id) => !isDietaryId(id))) errors.dietary = e.dietary;

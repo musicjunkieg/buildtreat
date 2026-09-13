@@ -7,6 +7,7 @@
 	let { data, form }: { data: PageData; form: ActionData } = $props();
 
 	const reg = $derived(data.registration);
+	const confirmed = $derived(reg.status === 'confirmed');
 	// A failed or successful save echoes what was posted; otherwise the row.
 	const initial = $derived<Omit<RegistrationInput, 'agreeWaiver' | 'agreeCoc'>>(
 		form?.values ?? {
@@ -84,7 +85,7 @@
 				</label>
 				<label class="field">
 					<span class="kicker lbl">{copy.sections.contact.email}</span>
-					<input class="input" name="email" type="email" value={initial.email} required aria-invalid={errors.email ? 'true' : undefined} />
+					<input class="input" name="email" type="email" value={initial.email} required={confirmed} aria-invalid={errors.email ? 'true' : undefined} />
 					{#if errors.email}<span class="error" role="alert">{errors.email}</span>{/if}
 				</label>
 			</div>
@@ -116,12 +117,12 @@
 			<div class="grid2">
 				<label class="field">
 					<span class="kicker lbl">{copy.sections.emergency.name}</span>
-					<input class="input" name="emergencyName" value={initial.emergencyName} required aria-invalid={errors.emergencyName ? 'true' : undefined} />
+					<input class="input" name="emergencyName" value={initial.emergencyName} required={confirmed} aria-invalid={errors.emergencyName ? 'true' : undefined} />
 					{#if errors.emergencyName}<span class="error" role="alert">{errors.emergencyName}</span>{/if}
 				</label>
 				<label class="field">
 					<span class="kicker lbl">{copy.sections.emergency.phone}</span>
-					<input class="input" name="emergencyPhone" type="tel" value={initial.emergencyPhone} required aria-invalid={errors.emergencyPhone ? 'true' : undefined} />
+					<input class="input" name="emergencyPhone" type="tel" value={initial.emergencyPhone} required={confirmed} aria-invalid={errors.emergencyPhone ? 'true' : undefined} />
 					{#if errors.emergencyPhone}<span class="error" role="alert">{errors.emergencyPhone}</span>{/if}
 				</label>
 			</div>

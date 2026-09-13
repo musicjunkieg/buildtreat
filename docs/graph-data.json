@@ -1572,6 +1572,17 @@
       "created_at": "2026-09-10T13:32:24.159199-07:00",
       "updated_at": "2026-09-10T13:32:24.159199-07:00",
       "metadata_json": "{\"branch\":\"feat/organizer-edit-and-audiences\",\"confidence\":85}"
+    },
+    {
+      "id": 144,
+      "change_id": "ff0fea35-3f9c-441b-a6fa-a87d99ca5afc",
+      "node_type": "outcome",
+      "title": "PR #29 opened: editor route + audience selector, check/test/build green, migration 0007 pending prod apply",
+      "description": null,
+      "status": "pending",
+      "created_at": "2026-09-10T13:39:38.997194-07:00",
+      "updated_at": "2026-09-10T13:39:38.997194-07:00",
+      "metadata_json": "{\"branch\":\"feat/organizer-edit-and-audiences\",\"commit\":\"5ce0e1c\",\"confidence\":90}"
     }
   ],
   "edges": [
@@ -3158,6 +3169,17 @@
       "weight": 1.0,
       "rationale": "implementation",
       "created_at": "2026-09-10T13:32:31.299629-07:00"
+    },
+    {
+      "id": 145,
+      "from_node_id": 143,
+      "to_node_id": 144,
+      "from_change_id": "d89b181c-b945-4b75-94d3-b952e2ae0761",
+      "to_change_id": "ff0fea35-3f9c-441b-a6fa-a87d99ca5afc",
+      "edge_type": "leads_to",
+      "weight": 1.0,
+      "rationale": "Implementation shipped as PR #29",
+      "created_at": "2026-09-10T13:39:46.782955-07:00"
     }
   ]
 }

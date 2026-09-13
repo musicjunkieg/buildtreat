@@ -31,8 +31,22 @@ export const actions: Actions = {
 		const db = platform?.env?.DB;
 		if (!db) return fail(503, { message: 'Storage is not available right now' });
 
+		// Read the row before validating: a declined row never collected the
+		// confirmation-only fields, so those rules would lock it out of editing.
+		let existing: Registration | null;
+		try {
+			existing = await getRegistration(db, params.did);
+		} catch (e) {
+			console.error('organizer registration read failed', e);
+			return fail(500, { message: 'Could not load — try again' });
+		}
+		if (!existing) return fail(404, { message: 'That registration no longer exists' });
+
 		const input = parseRegistrationForm(await request.formData());
-		const checked = validateRegistration(input, { agreements: false });
+		const checked = validateRegistration(input, {
+			agreements: false,
+			confirmation: existing.status === 'confirmed'
+		});
 		if (!checked.ok) return fail(400, { errors: checked.errors, values: input });
 
 		try {
