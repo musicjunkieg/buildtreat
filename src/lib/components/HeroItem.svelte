@@ -2,7 +2,7 @@
 	import { enhance } from '$app/forms';
 	import { logout } from '@svelte-atproto/oauth/client';
 	import Icon from '$lib/components/Icon.svelte';
-	import { retreat, waitlist } from '$lib/content';
+	import { registration, retreat, waitlist } from '$lib/content';
 
 	let {
 		signedIn,
@@ -13,6 +13,8 @@
 		waitlistError = null,
 		closed = false,
 		deadlineDisplay = null,
+		registrationOpen = false,
+		regDeadlineDisplay = null,
 		organizerAvatar = null,
 		onsignin,
 		oncontinue
@@ -25,6 +27,10 @@
 		waitlistError?: string | null;
 		closed?: boolean;
 		deadlineDisplay?: string | null;
+		/** Registration (not survey) window: when open, an anonymous visitor gets
+		 *  the sign-in CTA instead of the survey's closed note. */
+		registrationOpen?: boolean;
+		regDeadlineDisplay?: string | null;
 		organizerAvatar?: string | null;
 		onsignin: () => void;
 		oncontinue: () => void;
@@ -70,7 +76,12 @@
 				</span>
 			</li>
 		{/each}
-		{#if deadlineDisplay}
+		{#if registrationOpen && regDeadlineDisplay}
+			<li>
+				<span class="fact-label">{registration.registerBy}</span>
+				<span class="fact-value">{regDeadlineDisplay}, 11:59 PM Pacific</span>
+			</li>
+		{:else if !registrationOpen && deadlineDisplay}
 			<li>
 				<span class="fact-label">Respond by</span>
 				<span class="fact-value">{deadlineDisplay}, 11:59 PM Pacific</span>
@@ -125,6 +136,13 @@
 				<a class="handle" href={retreat.organizerLink} target="_blank" rel="noopener">@{retreat.organizerHandle}</a>.
 			</p>
 		</div>
+	{:else if !signedIn && registrationOpen}
+		<p class="closed-note">{registration.anonOpen}</p>
+		<button class="pill" onclick={onsignin}>
+			{retreat.signIn}
+			<Icon name="butterfly" size={19} />
+		</button>
+		<p class="two-track">{registration.anonTwoTrack}</p>
 	{:else if closed}
 		<p class="closed-note">
 			Responses closed {deadlineDisplay ?? ''} — thanks to everyone who answered. Need to change something?
