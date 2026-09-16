@@ -1,19 +1,19 @@
 [
   {
+    "hash": "a44a99a322ca8080ee43dad922a3ad03651ca3e7",
+    "short_hash": "a44a99a",
+    "author": "Bryan Guffey",
+    "date": "2026-09-13T16:17:43-07:00",
+    "message": "chore: attribution — Organized by Bryan Guffey (@chaosgreml.in) in partnership with Bluesky PBC (#33)\n\nWas \"Organized by Bluesky, in partnership with @chaosgreml.in\". The\nhandle now sits mid-sentence, so organizerLine splits into\norganizerLead / organizerTail around the linked handle. Same copy in\nall four places it renders: hero, announcement, form footer,\nregistered summary.\n\n\nClaude-Session: https://claude.ai/code/session_01YS7dro4fFpSEXJ9WtXmaBX\n\nCo-authored-by: Claude Fable 5 <noreply@anthropic.com>",
+    "files_changed": 7
+  },
+  {
     "hash": "3286df3f9fa281ace482c1c5079b7527c70110af",
     "short_hash": "3286df3",
     "author": "Bryan Guffey",
     "date": "2026-09-13T16:11:22-07:00",
     "message": "chore: attribution — Organized by Bryan Guffey (@chaosgreml.in) in partnership with Bluesky PBC\n\nWas \"Organized by Bluesky, in partnership with @chaosgreml.in\". The\nhandle now sits mid-sentence, so organizerLine splits into\norganizerLead / organizerTail around the linked handle. Same copy in\nall four places it renders: hero, announcement, form footer,\nregistered summary.\n\nCo-Authored-By: Claude Fable 5 <noreply@anthropic.com>\nClaude-Session: https://claude.ai/code/session_01YS7dro4fFpSEXJ9WtXmaBX",
     "files_changed": 7
-  },
-  {
-    "hash": "7381c07049f19d04cdd0f6d8251f61a96adadcf5",
-    "short_hash": "7381c07",
-    "author": "Bryan Guffey",
-    "date": "2026-09-13T16:05:10-07:00",
-    "message": "chore: reopen registration through Sep 20 (#32)",
-    "files_changed": 3
   },
   {
     "hash": "7381c07049f19d04cdd0f6d8251f61a96adadcf5",

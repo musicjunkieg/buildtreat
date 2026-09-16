@@ -81,7 +81,7 @@
 				<span class="fact-label">{registration.registerBy}</span>
 				<span class="fact-value">{regDeadlineDisplay}, 11:59 PM Pacific</span>
 			</li>
-		{:else if deadlineDisplay}
+		{:else if !registrationOpen && deadlineDisplay}
 			<li>
 				<span class="fact-label">Respond by</span>
 				<span class="fact-value">{deadlineDisplay}, 11:59 PM Pacific</span>
