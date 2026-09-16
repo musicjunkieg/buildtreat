@@ -186,7 +186,7 @@
 		eager
 		labelledby="hero-title"
 	>
-		<HeroItem {signedIn} {notInvited} deniedHandle={data.user?.handle ?? null} waitlistState={data.waitlistState} waitlistEmail={data.waitlistEmail} {waitlistError} {closed} {deadlineDisplay} organizerAvatar={data.organizer.avatar} onsignin={openSignIn} oncontinue={() => jump('you')} />
+		<HeroItem {signedIn} {notInvited} deniedHandle={data.user?.handle ?? null} waitlistState={data.waitlistState} waitlistEmail={data.waitlistEmail} {waitlistError} {closed} {deadlineDisplay} registrationOpen={!data.regClosed} regDeadlineDisplay={data.regDeadlineDisplay} organizerAvatar={data.organizer.avatar} onsignin={openSignIn} oncontinue={() => jump('you')} />
 	</FeedItem>
 
 	<FeedItem id="you" inert={!signedIn || closed} media="/media/item-you.png" labelledby="you-title">

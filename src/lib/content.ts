@@ -215,6 +215,12 @@ export const registration = {
 		{ label: 'Lodging & food covered', value: 'Bluesky' }
 	] as { label: string; value: string; muted?: boolean }[],
 	registerBy: 'Register by',
+	/** Anonymous hero while registration is open: the survey is long closed,
+	 *  so the landing state has to point at sign-in → register, not at
+	 *  "responses closed". */
+	anonOpen: 'Registration is open — sign in to lock your spot.',
+	anonTwoTrack:
+		'Invited builders sign in to register. Not on the list yet? Sign in to join the waitlist — we’re pulling names as space opens.',
 	confirm: 'I’m in',
 	decline: 'I can’t make it',
 	declinedLead: 'Noted — we’ll miss you.',
