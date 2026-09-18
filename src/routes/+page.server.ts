@@ -339,9 +339,15 @@ export const actions: Actions = {
 
 		// Support is required of exactly the people the form asked — same
 		// survey lookup the load used, so the rule can't drift from the UI.
-		const surveyTravel = await getResponse(db, locals.did)
-			.then((r) => r?.draft.travel ?? null)
-			.catch(() => null);
+		// A failed lookup must not pass as "never surveyed": that would demand
+		// fields the rendered form (built from a stored "yes") never showed.
+		let surveyTravel: TravelValue | null;
+		try {
+			surveyTravel = (await getResponse(db, locals.did))?.draft.travel ?? null;
+		} catch (e) {
+			console.error('survey lookup failed for', logDid(locals.did), e);
+			return fail(503, { regMessage: 'Something went wrong — please try again.' });
+		}
 		const input = parseRegistrationForm(await request.formData());
 		const checked = validateRegistration(input, { support: asksSupport(surveyTravel) });
 		if (!checked.ok) return fail(400, { regErrors: checked.errors, regValues: input });

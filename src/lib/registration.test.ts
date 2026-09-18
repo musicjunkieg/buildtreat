@@ -199,11 +199,22 @@ describe('validateRegistration', () => {
 		}
 	});
 
-	it('does not require support when not asked, but still rejects an unknown level', () => {
+	it('does not require a support level when not asked, but still rejects an unknown level', () => {
 		expect(validateRegistration(complete()).ok).toBe(true);
 		const r = validateRegistration({ ...complete(), supportNeed: 'lots' as never });
 		expect(r.ok).toBe(false);
 		if (!r.ok) expect(r.errors.supportNeed).toBeDefined();
+	});
+
+	it('requires amount and contingency for a chosen partial/full level even when not asked (organizer edit)', () => {
+		const r = validateRegistration({ ...complete(), supportNeed: 'partial' }, { agreements: false });
+		expect(r.ok).toBe(false);
+		if (!r.ok) expect(Object.keys(r.errors).sort()).toEqual(['supportAmount', 'supportContingent']);
+		const ok = validateRegistration(
+			{ ...complete(), supportNeed: 'partial', supportAmount: 300, supportContingent: true },
+			{ agreements: false }
+		);
+		expect(ok.ok).toBe(true);
 	});
 
 	it('leaves travel and optional fields free', () => {

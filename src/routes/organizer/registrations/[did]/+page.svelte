@@ -196,13 +196,13 @@
 				<div class="grid2">
 					<label class="field">
 						<span class="kicker lbl">{copy.sections.support.amount} (USD)</span>
-						<input class="input" name="supportAmount" inputmode="numeric" value={initial.supportAmount ?? ''} aria-invalid={errors.supportAmount ? 'true' : undefined} />
+						<input class="input" name="supportAmount" inputmode="numeric" required value={initial.supportAmount ?? ''} aria-invalid={errors.supportAmount ? 'true' : undefined} />
 						{#if errors.supportAmount}<span class="error" role="alert">{errors.supportAmount}</span>{/if}
 					</label>
 					<div class="field">
 						<span class="kicker lbl">{copy.sections.support.contingent}</span>
 						<div class="chips" role="radiogroup" aria-label={copy.sections.support.contingent}>
-							<label class="chip"><input type="radio" name="supportContingent" value="yes" bind:group={contingent} /><span>Yes</span></label>
+							<label class="chip"><input type="radio" name="supportContingent" value="yes" required bind:group={contingent} /><span>Yes</span></label>
 							<label class="chip"><input type="radio" name="supportContingent" value="no" bind:group={contingent} /><span>No</span></label>
 						</div>
 						{#if errors.supportContingent}<span class="error" role="alert">{errors.supportContingent}</span>{/if}

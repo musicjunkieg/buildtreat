@@ -198,9 +198,10 @@ export interface ValidateOptions {
 	 */
 	confirmation?: boolean;
 	/**
-	 * Require the travel-support answers (level, and — when the level is
-	 * partial/full — amount and contingency). The attendee's confirm passes
-	 * `asksSupport(surveyTravel)`; the organizer's edit leaves it off.
+	 * Require a travel-support level. The attendee's confirm passes
+	 * `asksSupport(surveyTravel)`; the organizer's edit leaves it off. A
+	 * chosen partial/full level always requires amount and contingency,
+	 * whoever is editing — a request without a number is no use to anyone.
 	 */
 	support?: boolean;
 }
@@ -228,8 +229,8 @@ export function validateRegistration(
 	if (need !== null && !isSupportNeed(need)) errors.supportNeed = e.supportNeed;
 	else if (support && need === null) errors.supportNeed = e.supportNeed;
 	if (needsSupport(need)) {
-		if ((support || input.supportAmount !== null) && input.supportAmount === null) errors.supportAmount = e.supportAmount;
-		if (support && input.supportContingent === null) errors.supportContingent = e.supportContingent;
+		if (input.supportAmount === null) errors.supportAmount = e.supportAmount;
+		if (input.supportContingent === null) errors.supportContingent = e.supportContingent;
 	}
 	if (Object.keys(errors).length) return { ok: false, errors };
 	// A "none" (or unasked) level carries no amount or contingency.

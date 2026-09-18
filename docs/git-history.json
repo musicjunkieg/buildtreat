@@ -1,10 +1,18 @@
 [
   {
-    "hash": "e210e3302a07209be412d7f408973d0604135bab",
-    "short_hash": "e210e33",
+    "hash": "43f3396102b9749a134994d5c9943b9bd756514a",
+    "short_hash": "43f3396",
     "author": "Bryan Guffey",
-    "date": "2026-09-15T22:13:58-07:00",
-    "message": "fix: anonymous hero offers sign-in while registration is open (#34)\n\n* fix: anonymous hero offers sign-in while registration is open\n\nSigned-out visitors were still shown the survey's state: \"Respond by\nAugust 15\" in the ledger and \"Responses closed August 15 — thanks to\neveryone who answered\" in place of the CTA. The closed branch beat the\nsign-in button, so there was no path from the landing page into\nregistration at all — an invitee read it as \"registration ended the\n15th\".\n\nHeroItem now takes registrationOpen/regDeadlineDisplay. While\nregistration is open, the ledger shows \"Register by September 20\" and\nan anonymous visitor gets the sign-in pill with registration-worded\ncopy; the survey-closed note only remains for the signed-in ?survey\nview and after registration closes.\n\nCo-Authored-By: Claude Fable 5 <noreply@anthropic.com>\nClaude-Session: https://claude.ai/code/session_01YS7dro4fFpSEXJ9WtXmaBX\n\n* fix: never fall back to the survey deadline while registration is open\n\nCo-Authored-By: Claude Fable 5 <noreply@anthropic.com>\nClaude-Session: https://claude.ai/code/session_01YS7dro4fFpSEXJ9WtXmaBX\n\n---------\n\nCo-authored-by: Claude Fable 5 <noreply@anthropic.com>",
+    "date": "2026-09-18T09:40:52-07:00",
+    "message": "feat: travel-support amount + contingency in registration (migration 0008)\n\nAnyone whose survey travel answer wasn't \"I can cover it\" now gets a\nTravel support section in registration: level (cover it / some / can't),\na whole-dollar estimate, and whether attending depends on the fund. The\nlevel is pre-seeded from the survey answer. Organizer roster gets a\nsupport rollup (people, requested $, contingent N · $, covering own),\na Support column, CSV columns, and an edit form section; confirmation\nemail echoes the request.\n\nRequires migrations/0008_travel_support.sql on prod D1 before deploy —\nthe SELECT column list includes the new columns.\n\nCo-Authored-By: Claude Fable 5 <noreply@anthropic.com>\nClaude-Session: https://claude.ai/code/session_01YS7dro4fFpSEXJ9WtXmaBX",
+    "files_changed": 19
+  },
+  {
+    "hash": "3b99d84d3456d1693c9fdc2d7517501ca53ed2ae",
+    "short_hash": "3b99d84",
+    "author": "Bryan Guffey",
+    "date": "2026-09-17T20:08:56-07:00",
+    "message": "chore: template sync — post-#35/#37 hardening (#35)",
     "files_changed": 5
   },
   {
