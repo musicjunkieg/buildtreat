@@ -21,6 +21,9 @@ declare global {
 				EMAIL_FROM?: string;
 				COMAIL_DID?: string;
 				COMAIL_API_KEY?: string;
+				BSKY_DM_HANDLE?: string;
+				BSKY_DM_APP_PASSWORD?: string;
+				BSKY_DM_PDS?: string;
 				OAUTH_SESSIONS: KVNamespace;
 				OAUTH_STATES: KVNamespace;
 				PROFILE_CACHE: KVNamespace;

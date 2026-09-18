@@ -2,15 +2,30 @@ import type { D1Database } from '@cloudflare/workers-types';
 import type { SendResult } from './email';
 
 /**
- * D1 access + orchestration for organizer email broadcasts. Recipients are
- * snapshotted per broadcast; each row's status is the source of truth for
- * what has actually been handed to comail. All queries are parameterized.
- * Schema: migrations/0005_broadcasts.sql (+ 0007 audience column).
+ * D1 access + orchestration for organizer broadcasts — email via comail or
+ * Bluesky DMs via the chat service. Recipients are snapshotted per
+ * broadcast; each row's status is the source of truth for what has actually
+ * been handed to the transport. All queries are parameterized.
+ * Schema: migrations/0005_broadcasts.sql (+ 0007 audience, 0009 channel/handle).
  */
+
+/**
+ * How a broadcast goes out. Email needs an address and dedupes on it; a DM
+ * needs only the DID, so it reaches people who never gave an email and
+ * separates two people who share one.
+ */
+export const CHANNELS = ['email', 'dm'] as const;
+export type Channel = (typeof CHANNELS)[number];
+
+export function isChannel(value: string): value is Channel {
+	return (CHANNELS as readonly string[]).includes(value);
+}
 
 export interface RecipientInput {
 	did: string;
 	email: string;
+	/** Handle at send time, kept so DM history reads as people, not DIDs. */
+	handle?: string | null;
 }
 
 /**
@@ -59,11 +74,13 @@ export function isAudience(value: string): value is Audience {
 export interface AudienceCount {
 	id: Audience;
 	label: string;
-	count: number;
+	/** Reachable people per channel — the compose form shows the one for the picked channel. */
+	counts: Record<Channel, number>;
 }
 
 export interface AudienceResponse {
 	did: string;
+	handle?: string | null;
 	email: string;
 	interest: string;
 	/** Survey travel answer; null when the respondent never reached that question. */
@@ -72,6 +89,7 @@ export interface AudienceResponse {
 
 export interface AudienceWaitlistEntry {
 	did: string;
+	handle?: string | null;
 	email: string;
 	promotedAt: string | null;
 }
@@ -79,41 +97,48 @@ export interface AudienceWaitlistEntry {
 /** The slice of a registration row the registration-aware audiences need. */
 export interface AudienceRegistration {
 	did: string;
+	handle?: string | null;
 	email: string;
 	status: 'confirmed' | 'declined';
 	supportNeed: string | null;
 }
 
 /**
- * Resolve an audience to its deduped recipient list. Survey audiences read
- * the interest column; the waitlist audience takes entries not yet promoted
- * (a promoted person is on the allowlist and reachable through the survey).
- * The travel audience is the nudge list for the support questions: survey
- * said partial/no, no answer yet, not declined — mailed at the registration
- * email when there is one, since that's the address they confirmed last.
- * The *_unregistered audiences are the "please register" nudges: interest
- * yes/maybe with no registration row of any status, so a decline counts as
- * having answered and drops them off the list. 'registered' and 'all' are
- * the only audiences that reach someone who never took the survey — a
- * confirmed registration is enough to be on those lists.
+ * Resolve an audience to the people in it, one entry per DID (first source
+ * wins). Survey audiences read the interest column; the waitlist audience
+ * takes entries not yet promoted (a promoted person is on the allowlist and
+ * reachable through the survey). The travel audience is the nudge list for
+ * the support questions: survey said partial/no, no answer yet, not
+ * declined — mailed at the registration email when there is one, since
+ * that's the address they confirmed last. The *_unregistered audiences are
+ * the "please register" nudges: interest yes/maybe with no registration
+ * row of any status, so a decline counts as having answered and drops them
+ * off the list. 'registered' and 'all' are the only audiences that reach
+ * someone who never took the survey — a confirmed registration is enough
+ * to be on those lists.
  */
-export function audienceRecipients(
+export function audienceMembers(
 	audience: Audience,
 	responses: AudienceResponse[],
 	waitlist: AudienceWaitlistEntry[],
 	registrations: AudienceRegistration[] = []
 ): RecipientInput[] {
+	const member = (r: { did: string; handle?: string | null; email: string }, email = r.email): RecipientInput => ({
+		did: r.did,
+		email,
+		handle: r.handle ?? null
+	});
 	if (audience === 'waitlist') {
-		return dedupeRecipients(waitlist.filter((w) => w.promotedAt === null).map((w) => ({ did: w.did, email: w.email })));
+		return dedupeByDid(waitlist.filter((w) => w.promotedAt === null).map((w) => member(w)));
 	}
 	const confirmed = registrations.filter((r) => r.status === 'confirmed');
 	if (audience === 'registered') {
-		return dedupeRecipients(confirmed.map((r) => ({ did: r.did, email: r.email })));
+		return dedupeByDid(confirmed.map((r) => member(r)));
 	}
 	if (audience === 'all') {
 		const surveyed = new Set(responses.map((r) => r.did));
 		const extra = confirmed.filter((r) => !surveyed.has(r.did));
-		return dedupeRecipients([...responses, ...extra].map((r) => ({ did: r.did, email: r.email })));
+		return dedupeByDid([...responses, ...extra].map((r) => member(r)));
 	}
 	if (audience === 'travel') {
 		const regByDid = new Map(registrations.map((r) => [r.did, r]));
@@ -122,19 +147,34 @@ export function audienceRecipients(
 			const reg = regByDid.get(r.did);
 			return !reg || (reg.status === 'confirmed' && reg.supportNeed === null);
 		});
-		return dedupeRecipients(picked.map((r) => ({ did: r.did, email: regByDid.get(r.did)?.email || r.email })));
+		return dedupeByDid(picked.map((r) => member(r, regByDid.get(r.did)?.email || r.email)));
 	}
 	if (audience === 'yes_unregistered' || audience === 'maybe_unregistered') {
 		const interest = audience === 'yes_unregistered' ? 'yes' : 'maybe';
 		const registered = new Set(registrations.map((r) => r.did));
 		const picked = responses.filter((r) => r.interest === interest && !registered.has(r.did));
-		return dedupeRecipients(picked.map((r) => ({ did: r.did, email: r.email })));
+		return dedupeByDid(picked.map((r) => member(r)));
 	}
-	const picked = responses.filter((r) => r.interest === audience);
-	return dedupeRecipients(picked.map((r) => ({ did: r.did, email: r.email })));
+	return dedupeByDid(responses.filter((r) => r.interest === audience).map((r) => member(r)));
 }
 
-/** Recipient counts for every audience — what the compose form's selector shows. */
+/**
+ * The recipient list a broadcast on `channel` actually snapshots: email
+ * drops people without an address and collapses shared addresses; DM keeps
+ * everyone, since the DID is the address.
+ */
+export function audienceRecipients(
+	audience: Audience,
+	responses: AudienceResponse[],
+	waitlist: AudienceWaitlistEntry[],
+	registrations: AudienceRegistration[] = [],
+	channel: Channel = 'email'
+): RecipientInput[] {
+	const members = audienceMembers(audience, responses, waitlist, registrations);
+	return channel === 'email' ? dedupeRecipients(members) : members;
+}
+
+/** Recipient counts for every audience and channel — what the compose form's selector shows. */
 export function audienceCounts(
 	responses: AudienceResponse[],
 	waitlist: AudienceWaitlistEntry[],
@@ -143,13 +183,17 @@ export function audienceCounts(
 	return AUDIENCES.map((id) => ({
 		id,
 		label: audienceLabels[id],
-		count: audienceRecipients(id, responses, waitlist, registrations).length
+		counts: {
+			email: audienceRecipients(id, responses, waitlist, registrations, 'email').length,
+			dm: audienceRecipients(id, responses, waitlist, registrations, 'dm').length
+		}
 	}));
 }
 
 export interface BroadcastRecipient {
 	did: string;
 	email: string;
+	handle: string | null;
 	status: 'pending' | 'sent' | 'failed';
 	errorCode: string | null;
 	messageId: string | null;
@@ -157,12 +201,20 @@ export interface BroadcastRecipient {
 
 export interface BroadcastView {
 	id: number;
+	channel: Channel;
+	/** Empty for DMs — the chat message has no subject line. */
 	subject: string;
 	body: string;
 	audience: Audience;
 	sentBy: string;
 	createdAt: string;
 	recipients: BroadcastRecipient[];
+}
+
+/** First occurrence wins; one entry per DID. */
+function dedupeByDid(rows: RecipientInput[]): RecipientInput[] {
+	const seen = new Set<string>();
+	return rows.filter((r) => !seen.has(r.did) && seen.add(r.did));
 }
 
 /** First occurrence wins; comparison is on the lowercased, trimmed email. */
@@ -182,14 +234,14 @@ export function dedupeRecipients(rows: RecipientInput[]): RecipientInput[] {
 /** Insert the broadcast plus one pending row per recipient; returns its id. */
 export async function createBroadcast(
 	db: D1Database,
-	input: { subject: string; body: string; audience: Audience; sentBy: string; recipients: RecipientInput[] }
+	input: { channel: Channel; subject: string; body: string; audience: Audience; sentBy: string; recipients: RecipientInput[] }
 ): Promise<number> {
 	const now = new Date().toISOString();
 	const row = await db
 		.prepare(
-			`INSERT INTO broadcasts (subject, body, audience, sent_by, created_at) VALUES (?1, ?2, ?3, ?4, ?5) RETURNING id`
+			`INSERT INTO broadcasts (channel, subject, body, audience, sent_by, created_at) VALUES (?1, ?2, ?3, ?4, ?5, ?6) RETURNING id`
 		)
-		.bind(input.subject, input.body, input.audience, input.sentBy, now)
+		.bind(input.channel, input.subject, input.body, input.audience, input.sentBy, now)
 		.first<{ id: number }>();
 	if (!row) throw new Error('broadcast insert returned no id');
 	if (input.recipients.length) {
@@ -197,10 +249,10 @@ export async function createBroadcast(
 			input.recipients.map((r) =>
 				db
 					.prepare(
-						`INSERT INTO broadcast_recipients (broadcast_id, did, email, status, updated_at)
-						 VALUES (?1, ?2, ?3, 'pending', ?4)`
+						`INSERT INTO broadcast_recipients (broadcast_id, did, email, handle, status, updated_at)
+						 VALUES (?1, ?2, ?3, ?4, 'pending', ?5)`
 					)
-					.bind(row.id, r.did, r.email, now)
+					.bind(row.id, r.did, r.email, r.handle ?? null, now)
 			)
 		);
 	}
@@ -210,14 +262,15 @@ export async function createBroadcast(
 /** All broadcasts, newest first, with their full recipient rows. */
 export async function listBroadcasts(db: D1Database): Promise<BroadcastView[]> {
 	const [broadcasts, recipients] = await db.batch([
-		db.prepare(`SELECT id, subject, body, audience, sent_by, created_at FROM broadcasts ORDER BY id DESC`),
+		db.prepare(`SELECT id, channel, subject, body, audience, sent_by, created_at FROM broadcasts ORDER BY id DESC`),
 		db.prepare(
-			`SELECT broadcast_id, did, email, status, error_code, message_id FROM broadcast_recipients ORDER BY email`
+			`SELECT broadcast_id, did, email, handle, status, error_code, message_id FROM broadcast_recipients ORDER BY email, handle`
 		)
 	]);
 	const byId = new Map<number, BroadcastView>();
 	for (const b of broadcasts.results as Array<{
 		id: number;
+		channel: string;
 		subject: string;
 		body: string;
 		audience: string;
@@ -226,6 +279,7 @@ export async function listBroadcasts(db: D1Database): Promise<BroadcastView[]> {
 	}>) {
 		byId.set(b.id, {
 			id: b.id,
+			channel: isChannel(b.channel) ? b.channel : 'email',
 			subject: b.subject,
 			body: b.body,
 			// Rows older than migration 0007 carry the column default; anything
@@ -240,6 +294,7 @@ export async function listBroadcasts(db: D1Database): Promise<BroadcastView[]> {
 		broadcast_id: number;
 		did: string;
 		email: string;
+		handle: string | null;
 		status: 'pending' | 'sent' | 'failed';
 		error_code: string | null;
 		message_id: string | null;
@@ -247,6 +302,7 @@ export async function listBroadcasts(db: D1Database): Promise<BroadcastView[]> {
 		byId.get(r.broadcast_id)?.recipients.push({
 			did: r.did,
 			email: r.email,
+			handle: r.handle,
 			status: r.status,
 			errorCode: r.error_code,
 			messageId: r.message_id
@@ -255,18 +311,26 @@ export async function listBroadcasts(db: D1Database): Promise<BroadcastView[]> {
 	return [...byId.values()];
 }
 
-/** The retry worklist: everything not yet successfully handed to comail. */
+/** The retry worklist: everything not yet successfully handed to the transport. */
 export async function unsentRecipients(db: D1Database, broadcastId: number): Promise<BroadcastRecipient[]> {
 	const rows = await db
 		.prepare(
-			`SELECT did, email, status, error_code, message_id FROM broadcast_recipients
-			 WHERE broadcast_id = ?1 AND status != 'sent' ORDER BY email`
+			`SELECT did, email, handle, status, error_code, message_id FROM broadcast_recipients
+			 WHERE broadcast_id = ?1 AND status != 'sent' ORDER BY email, handle`
 		)
 		.bind(broadcastId)
-		.all<{ did: string; email: string; status: 'pending' | 'failed'; error_code: string | null; message_id: string | null }>();
+		.all<{
+			did: string;
+			email: string;
+			handle: string | null;
+			status: 'pending' | 'failed';
+			error_code: string | null;
+			message_id: string | null;
+		}>();
 	return rows.results.map((r) => ({
 		did: r.did,
 		email: r.email,
+		handle: r.handle,
 		status: r.status,
 		errorCode: r.error_code,
 		messageId: r.message_id
@@ -300,13 +364,17 @@ export async function markRecipient(db: D1Database, broadcastId: number, did: st
 		.run();
 }
 
-/** Subject/body for a retry run. */
-export async function getBroadcast(db: D1Database, broadcastId: number): Promise<{ id: number; subject: string; body: string } | null> {
+/** Channel + subject/body for a retry run. */
+export async function getBroadcast(
+	db: D1Database,
+	broadcastId: number
+): Promise<{ id: number; channel: Channel; subject: string; body: string } | null> {
 	const row = await db
-		.prepare(`SELECT id, subject, body FROM broadcasts WHERE id = ?1`)
+		.prepare(`SELECT id, channel, subject, body FROM broadcasts WHERE id = ?1`)
 		.bind(broadcastId)
-		.first<{ id: number; subject: string; body: string }>();
-	return row ?? null;
+		.first<{ id: number; channel: string; subject: string; body: string }>();
+	if (!row) return null;
+	return { id: row.id, channel: isChannel(row.channel) ? row.channel : 'email', subject: row.subject, body: row.body };
 }
 
 export interface BroadcastRunResult {
@@ -318,19 +386,21 @@ export interface BroadcastRunResult {
 
 /**
  * Walk the worklist sequentially. Hard failures are recorded and skipped;
- * a retryable failure (rate limit, relay hiccup) is recorded, then the run
- * stops — during comail's warming period a 429 means every later send
- * would also fail, so the retry button resumes where this left off.
+ * a retryable failure (rate limit, relay hiccup, expired token) is
+ * recorded, then the run stops — during comail's warming period a 429
+ * means every later send would also fail, so the retry button resumes
+ * where this left off. `send` gets the whole row: email uses the address,
+ * DM uses the DID.
  */
 export async function runBroadcast(
 	recipients: BroadcastRecipient[],
-	send: (email: string) => Promise<SendResult>,
+	send: (recipient: BroadcastRecipient) => Promise<SendResult>,
 	mark: (did: string, result: SendResult) => Promise<void>
 ): Promise<BroadcastRunResult> {
 	let sent = 0;
 	let failed = 0;
 	for (const r of recipients) {
-		const result = await send(r.email);
+		const result = await send(r);
 		await mark(r.did, result);
 		if (result.ok) {
 			sent++;
