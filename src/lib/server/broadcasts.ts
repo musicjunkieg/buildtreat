@@ -15,11 +15,13 @@ export interface RecipientInput {
 
 /**
  * Who a broadcast goes to. 'all' / 'yes' / 'maybe' / 'no' select survey
- * respondents (by their interest answer); 'waitlist' selects entries still
- * waiting for a promotion. Stored on the broadcast row so the history says
- * which list each message went to.
+ * respondents (by their interest answer); 'travel' selects respondents who
+ * said they could cover only some or none of their travel and haven't yet
+ * answered the registration's support questions (and haven't declined);
+ * 'waitlist' selects entries still waiting for a promotion. Stored on the
+ * broadcast row so the history says which list each message went to.
  */
-export const AUDIENCES = ['all', 'yes', 'maybe', 'no', 'waitlist'] as const;
+export const AUDIENCES = ['all', 'yes', 'maybe', 'no', 'travel', 'waitlist'] as const;
 export type Audience = (typeof AUDIENCES)[number];
 
 export const audienceLabels: Record<Audience, string> = {
@@ -27,6 +29,7 @@ export const audienceLabels: Record<Audience, string> = {
 	yes: 'Yes',
 	maybe: 'Maybe',
 	no: 'No',
+	travel: 'Travel help',
 	waitlist: 'Waitlist'
 };
 
@@ -40,18 +43,53 @@ export interface AudienceCount {
 	count: number;
 }
 
+export interface AudienceResponse {
+	did: string;
+	email: string;
+	interest: string;
+	/** Survey travel answer; null when the respondent never reached that question. */
+	travel?: string | null;
+}
+
+export interface AudienceWaitlistEntry {
+	did: string;
+	email: string;
+	promotedAt: string | null;
+}
+
+/** The slice of a registration row the 'travel' audience needs. */
+export interface AudienceRegistration {
+	did: string;
+	email: string;
+	status: 'confirmed' | 'declined';
+	supportNeed: string | null;
+}
+
 /**
  * Resolve an audience to its deduped recipient list. Survey audiences read
  * the interest column; the waitlist audience takes entries not yet promoted
  * (a promoted person is on the allowlist and reachable through the survey).
+ * The travel audience is the nudge list for the support questions: survey
+ * said partial/no, no answer yet, not declined — mailed at the registration
+ * email when there is one, since that's the address they confirmed last.
  */
 export function audienceRecipients(
 	audience: Audience,
-	responses: Array<{ did: string; email: string; interest: string }>,
-	waitlist: Array<{ did: string; email: string; promotedAt: string | null }>
+	responses: AudienceResponse[],
+	waitlist: AudienceWaitlistEntry[],
+	registrations: AudienceRegistration[] = []
 ): RecipientInput[] {
 	if (audience === 'waitlist') {
 		return dedupeRecipients(waitlist.filter((w) => w.promotedAt === null).map((w) => ({ did: w.did, email: w.email })));
+	}
+	if (audience === 'travel') {
+		const regByDid = new Map(registrations.map((r) => [r.did, r]));
+		const picked = responses.filter((r) => {
+			if (r.travel !== 'partial' && r.travel !== 'no') return false;
+			const reg = regByDid.get(r.did);
+			return !reg || (reg.status === 'confirmed' && reg.supportNeed === null);
+		});
+		return dedupeRecipients(picked.map((r) => ({ did: r.did, email: regByDid.get(r.did)?.email || r.email })));
 	}
 	const picked = audience === 'all' ? responses : responses.filter((r) => r.interest === audience);
 	return dedupeRecipients(picked.map((r) => ({ did: r.did, email: r.email })));
@@ -59,13 +97,14 @@ export function audienceRecipients(
 
 /** Recipient counts for every audience — what the compose form's selector shows. */
 export function audienceCounts(
-	responses: Array<{ did: string; email: string; interest: string }>,
-	waitlist: Array<{ did: string; email: string; promotedAt: string | null }>
+	responses: AudienceResponse[],
+	waitlist: AudienceWaitlistEntry[],
+	registrations: AudienceRegistration[] = []
 ): AudienceCount[] {
 	return AUDIENCES.map((id) => ({
 		id,
 		label: audienceLabels[id],
-		count: audienceRecipients(id, responses, waitlist).length
+		count: audienceRecipients(id, responses, waitlist, registrations).length
 	}));
 }
 
