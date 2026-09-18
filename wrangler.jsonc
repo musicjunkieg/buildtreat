@@ -43,5 +43,7 @@
 			"migrations_dir": "migrations"
 		}
 	]
-	// Secrets (wrangler secret put): COOKIE_SECRET, CLIENT_ASSERTION_KEY, COMAIL_API_KEY
+	// Secrets (wrangler secret put): COOKIE_SECRET, CLIENT_ASSERTION_KEY, COMAIL_API_KEY,
+	// BSKY_DM_HANDLE + BSKY_DM_APP_PASSWORD (organizer DM broadcasts; optional BSKY_DM_PDS
+	// var if the sending account isn't on bsky.social)
 }
