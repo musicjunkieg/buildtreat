@@ -8,12 +8,12 @@
     "files_changed": 19
   },
   {
-    "hash": "43f3396102b9749a134994d5c9943b9bd756514a",
-    "short_hash": "43f3396",
+    "hash": "3b99d84d3456d1693c9fdc2d7517501ca53ed2ae",
+    "short_hash": "3b99d84",
     "author": "Bryan Guffey",
-    "date": "2026-09-18T09:40:52-07:00",
-    "message": "feat: travel-support amount + contingency in registration (migration 0008)\n\nAnyone whose survey travel answer wasn't \"I can cover it\" now gets a\nTravel support section in registration: level (cover it / some / can't),\na whole-dollar estimate, and whether attending depends on the fund. The\nlevel is pre-seeded from the survey answer. Organizer roster gets a\nsupport rollup (people, requested $, contingent N · $, covering own),\na Support column, CSV columns, and an edit form section; confirmation\nemail echoes the request.\n\nRequires migrations/0008_travel_support.sql on prod D1 before deploy —\nthe SELECT column list includes the new columns.\n\nCo-Authored-By: Claude Fable 5 <noreply@anthropic.com>\nClaude-Session: https://claude.ai/code/session_01YS7dro4fFpSEXJ9WtXmaBX",
-    "files_changed": 19
+    "date": "2026-09-17T20:08:56-07:00",
+    "message": "chore: template sync — post-#35/#37 hardening (#35)",
+    "files_changed": 5
   },
   {
     "hash": "e210e3302a07209be412d7f408973d0604135bab",

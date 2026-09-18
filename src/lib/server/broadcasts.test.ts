@@ -28,11 +28,11 @@ describe('dedupeRecipients', () => {
 });
 
 const RESPONSES = [
-	{ did: 'did:plc:y1', email: 'y1@example.com', interest: 'yes' },
-	{ did: 'did:plc:y2', email: 'Y1@example.com', interest: 'yes' },
-	{ did: 'did:plc:m1', email: 'm1@example.com', interest: 'maybe' },
-	{ did: 'did:plc:n1', email: 'n1@example.com', interest: 'no' },
-	{ did: 'did:plc:n2', email: '', interest: 'no' }
+	{ did: 'did:plc:y1', email: 'y1@example.com', interest: 'yes', travel: 'partial' },
+	{ did: 'did:plc:y2', email: 'Y1@example.com', interest: 'yes', travel: 'yes' },
+	{ did: 'did:plc:m1', email: 'm1@example.com', interest: 'maybe', travel: 'no' },
+	{ did: 'did:plc:n1', email: 'n1@example.com', interest: 'no', travel: null },
+	{ did: 'did:plc:n2', email: '', interest: 'no', travel: 'no' }
 ];
 const WAITLIST = [
 	{ did: 'did:plc:w1', email: 'w1@example.com', promotedAt: null },
@@ -58,12 +58,24 @@ describe('audienceRecipients', () => {
 		expect(audienceRecipients('waitlist', RESPONSES, WAITLIST)).toEqual([{ did: 'did:plc:w1', email: 'w1@example.com' }]);
 	});
 
+	it("'travel' is survey partial/no who haven't answered support and haven't declined, at their registration email", () => {
+		// No registrations at all: everyone who said partial/no with an email.
+		expect(audienceRecipients('travel', RESPONSES, WAITLIST).map((r) => r.did)).toEqual(['did:plc:y1', 'did:plc:m1']);
+		const regs = [
+			{ did: 'did:plc:y1', email: 'y1-new@example.com', status: 'confirmed' as const, supportNeed: null },
+			{ did: 'did:plc:m1', email: 'm1@example.com', status: 'confirmed' as const, supportNeed: 'partial' },
+			{ did: 'did:plc:n2', email: 'n2@example.com', status: 'declined' as const, supportNeed: null }
+		];
+		expect(audienceRecipients('travel', RESPONSES, WAITLIST, regs)).toEqual([{ did: 'did:plc:y1', email: 'y1-new@example.com' }]);
+	});
+
 	it('counts every audience in selector order', () => {
 		expect(audienceCounts(RESPONSES, WAITLIST)).toEqual([
 			{ id: 'all', label: 'Everyone', count: 3 },
 			{ id: 'yes', label: 'Yes', count: 1 },
 			{ id: 'maybe', label: 'Maybe', count: 1 },
 			{ id: 'no', label: 'No', count: 1 },
+			{ id: 'travel', label: 'Travel help', count: 2 },
 			{ id: 'waitlist', label: 'Waitlist', count: 1 }
 		]);
 	});

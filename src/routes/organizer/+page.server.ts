@@ -212,7 +212,7 @@ export const load: PageServerLoad = async ({ locals, platform, url }): Promise<O
 		registrationsUnavailable,
 		emailConfigured: emailConfigured(platform?.env ?? {}),
 		broadcasts,
-		audiences: audienceCounts(responses, waitlist),
+		audiences: audienceCounts(responses, waitlist, registrations),
 		registrations: registrations.map(toRegistrationView),
 		regDeadlineDisplay: reg.display,
 		regClosed: reg.closed,
@@ -354,8 +354,8 @@ export const actions: Actions = {
 		if (!isAudience(audience)) return fail(400, { message: 'Pick who this goes to' });
 		if (!emailConfigured(platform?.env ?? {})) return fail(503, { message: 'Email is not configured yet' });
 
-		const [responses, waitlist] = await Promise.all([getAllResponses(db), listWaitlist(db)]);
-		const recipients = audienceRecipients(audience, responses, waitlist);
+		const [responses, waitlist, registrations] = await Promise.all([getAllResponses(db), listWaitlist(db), listRegistrations(db)]);
+		const recipients = audienceRecipients(audience, responses, waitlist, registrations);
 		if (!recipients.length) return fail(400, { message: 'Nobody with an email in that audience' });
 
 		const id = await createBroadcast(db, { subject, body, audience, sentBy: locals.did!, recipients });
@@ -574,7 +574,7 @@ function previewData(): Omit<OrganizerPageData, 'authState' | 'preview' | 'deadl
 		anchorsUnavailable: false,
 		registrationsUnavailable: false,
 		emailConfigured: true,
-		audiences: audienceCounts(responses, previewWaitlist),
+		audiences: audienceCounts(responses, previewWaitlist, previewRegistrations),
 		regDeadlineDisplay: 'September 7',
 		regClosed: false,
 		registrations: previewRegistrations.map(toRegistrationView),
