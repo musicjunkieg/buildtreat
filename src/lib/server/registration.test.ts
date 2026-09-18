@@ -4,6 +4,7 @@ import {
 	noResponseHandles,
 	registrationCounts,
 	rowToRegistration,
+	supportCounts,
 	travelStatus,
 	type Registration
 } from './registration';
@@ -26,6 +27,9 @@ function reg(over: Partial<Registration> = {}): Registration {
 		travelDeparture: '',
 		travelMode: null,
 		travelDetails: '',
+		supportNeed: null,
+		supportAmount: null,
+		supportContingent: null,
 		waiverVersion: 'v1',
 		cocVersion: 'v1',
 		agreedAt: '2026-08-30T00:00:00Z',
@@ -54,6 +58,9 @@ describe('rowToRegistration', () => {
 			travel_departure: null,
 			travel_mode: null,
 			travel_details: null,
+			support_need: null,
+			support_amount: null,
+			support_contingent: null,
 			waiver_version: null,
 			coc_version: null,
 			agreed_at: null,
@@ -61,6 +68,8 @@ describe('rowToRegistration', () => {
 			updated_at: 'u'
 		});
 		expect(r.dietary).toEqual(['vegan', 'kosher']);
+		expect(r.supportNeed).toBeNull();
+		expect(r.supportContingent).toBeNull();
 		expect(r.phone).toBe('');
 		expect(r.travelMode).toBeNull();
 		expect(r.agreedAt).toBeNull();
@@ -71,10 +80,42 @@ describe('rowToRegistration', () => {
 			did: 'd', handle: null, name: 'A', email: 'a@x.com', status: 'declined', phone: null,
 			emergency_name: null, emergency_phone: null, dietary: 'not json', dietary_other: null,
 			accessibility: null, notes: null, travel_arrival: null, travel_departure: null,
-			travel_mode: null, travel_details: null, waiver_version: null, coc_version: null,
-			agreed_at: null, created_at: 'c', updated_at: 'u'
+			travel_mode: null, travel_details: null, support_need: null, support_amount: null, support_contingent: null,
+			waiver_version: null, coc_version: null, agreed_at: null, created_at: 'c', updated_at: 'u'
 		});
 		expect(r.dietary).toEqual([]);
+	});
+
+	it('maps the support columns, dropping an unknown level and a non-positive amount', () => {
+		const base = {
+			did: 'd', handle: null, name: 'A', email: 'a@x.com', status: 'confirmed', phone: null,
+			emergency_name: null, emergency_phone: null, dietary: null, dietary_other: null,
+			accessibility: null, notes: null, travel_arrival: null, travel_departure: null,
+			travel_mode: null, travel_details: null, waiver_version: null, coc_version: null,
+			agreed_at: null, created_at: 'c', updated_at: 'u'
+		};
+		const ok = rowToRegistration({ ...base, support_need: 'full', support_amount: 900, support_contingent: 1 });
+		expect(ok.supportNeed).toBe('full');
+		expect(ok.supportAmount).toBe(900);
+		expect(ok.supportContingent).toBe(true);
+		const no = rowToRegistration({ ...base, support_need: 'partial', support_amount: 0, support_contingent: 0 });
+		expect(no.supportAmount).toBeNull();
+		expect(no.supportContingent).toBe(false);
+		expect(rowToRegistration({ ...base, support_need: 'lots', support_amount: null, support_contingent: null }).supportNeed).toBeNull();
+	});
+});
+
+describe('supportCounts', () => {
+	it('sums confirmed requests, splits out the contingent share, ignores declines', () => {
+		const c = supportCounts([
+			reg({ did: '1', supportNeed: 'partial', supportAmount: 400, supportContingent: false }),
+			reg({ did: '2', supportNeed: 'full', supportAmount: 900, supportContingent: true }),
+			reg({ did: '3', supportNeed: 'full', supportAmount: null, supportContingent: true }),
+			reg({ did: '4', supportNeed: 'none' }),
+			reg({ did: '5' }),
+			reg({ did: '6', status: 'declined', supportNeed: 'full', supportAmount: 5000, supportContingent: true })
+		]);
+		expect(c).toEqual({ people: 3, contingent: 2, total: 1300, contingentTotal: 900, covered: 1 });
 	});
 });
 
@@ -101,7 +142,13 @@ describe('registrationCounts / noResponseHandles', () => {
 
 	it('counts confirmed, registered, declined, and everyone allowlisted without a row', () => {
 		const regs = [reg(), reg({ did: 'did:plc:b', handle: 'b.test', status: 'declined', agreedAt: null })];
-		expect(registrationCounts(regs, allowlist)).toEqual({ confirmed: 1, registered: 1, declined: 1, noResponse: 1 });
+		expect(registrationCounts(regs, allowlist)).toEqual({
+			confirmed: 1,
+			registered: 1,
+			declined: 1,
+			noResponse: 1,
+			support: { people: 0, contingent: 0, total: 0, contingentTotal: 0, covered: 0 }
+		});
 	});
 
 	it('matches no-response by DID or handle, case-insensitively', () => {

@@ -1,10 +1,15 @@
 import { describe, expect, it } from 'vitest';
 import {
+	asksSupport,
 	canConfirm,
 	emptyRegistration,
 	isDietaryId,
+	isSupportNeed,
 	isTravelMode,
+	needsSupport,
+	parseDollars,
 	parseRegistrationForm,
+	supportNeedFromSurvey,
 	validateRegistration,
 	type RegistrationInput
 } from './registration';
@@ -38,6 +43,9 @@ describe('parseRegistrationForm', () => {
 		fd.set('travelDeparture', 'Mon 9am');
 		fd.set('travelMode', 'driving');
 		fd.set('travelDetails', 'can carpool from LA');
+		fd.set('supportNeed', 'partial');
+		fd.set('supportAmount', '$1,200');
+		fd.set('supportContingent', 'yes');
 		fd.set('agreeWaiver', 'on');
 		// agreeCoc omitted → false
 		expect(parseRegistrationForm(fd)).toEqual({
@@ -54,9 +62,19 @@ describe('parseRegistrationForm', () => {
 			travelDeparture: 'Mon 9am',
 			travelMode: 'driving',
 			travelDetails: 'can carpool from LA',
+			supportNeed: 'partial',
+			supportAmount: 1200,
+			supportContingent: true,
 			agreeWaiver: true,
 			agreeCoc: false
 		});
+	});
+
+	it('leaves support unanswered when the section was never shown', () => {
+		const parsed = parseRegistrationForm(new FormData());
+		expect(parsed.supportNeed).toBeNull();
+		expect(parsed.supportAmount).toBeNull();
+		expect(parsed.supportContingent).toBeNull();
 	});
 
 	it('treats a missing or empty travel mode as null and caps long text', () => {
@@ -65,6 +83,45 @@ describe('parseRegistrationForm', () => {
 		const parsed = parseRegistrationForm(fd);
 		expect(parsed.travelMode).toBeNull();
 		expect(parsed.notes).toHaveLength(2000);
+	});
+});
+
+describe('parseDollars', () => {
+	it('forgives currency formatting and drops cents', () => {
+		expect(parseDollars('$1,200')).toBe(1200);
+		expect(parseDollars(' 800 ')).toBe(800);
+		expect(parseDollars('450.75')).toBe(450);
+	});
+
+	it('rejects empty, zero, negative, non-numeric, and absurd values', () => {
+		expect(parseDollars('')).toBeNull();
+		expect(parseDollars('0')).toBeNull();
+		expect(parseDollars('-50')).toBeNull();
+		expect(parseDollars('a lot')).toBeNull();
+		expect(parseDollars('1000000')).toBeNull();
+	});
+});
+
+describe('travel support helpers', () => {
+	it('asks everyone whose survey answer was not "yes"', () => {
+		expect(asksSupport('yes')).toBe(false);
+		expect(asksSupport('partial')).toBe(true);
+		expect(asksSupport('no')).toBe(true);
+		expect(asksSupport(null)).toBe(true);
+	});
+
+	it('seeds the level from the survey answer', () => {
+		expect(supportNeedFromSurvey('partial')).toBe('partial');
+		expect(supportNeedFromSurvey('no')).toBe('full');
+		expect(supportNeedFromSurvey('yes')).toBeNull();
+		expect(supportNeedFromSurvey(null)).toBeNull();
+	});
+
+	it('only partial/full carry an amount', () => {
+		expect(needsSupport('partial')).toBe(true);
+		expect(needsSupport('full')).toBe(true);
+		expect(needsSupport('none')).toBe(false);
+		expect(needsSupport(null)).toBe(false);
 	});
 });
 
@@ -114,6 +171,41 @@ describe('validateRegistration', () => {
 		expect(res.errors.travelMode).toBeDefined();
 	});
 
+	it('requires the support level, amount, and contingency when asked', () => {
+		const r = validateRegistration({ ...complete(), supportNeed: null }, { support: true });
+		expect(r.ok).toBe(false);
+		if (!r.ok) expect(Object.keys(r.errors)).toEqual(['supportNeed']);
+
+		const r2 = validateRegistration({ ...complete(), supportNeed: 'full' }, { support: true });
+		expect(r2.ok).toBe(false);
+		if (!r2.ok) expect(Object.keys(r2.errors).sort()).toEqual(['supportAmount', 'supportContingent']);
+
+		const r3 = validateRegistration(
+			{ ...complete(), supportNeed: 'partial', supportAmount: 600, supportContingent: false },
+			{ support: true }
+		);
+		expect(r3.ok).toBe(true);
+	});
+
+	it('accepts "I can cover it" without an amount and clears any stale amount', () => {
+		const r = validateRegistration(
+			{ ...complete(), supportNeed: 'none', supportAmount: 600, supportContingent: true },
+			{ support: true }
+		);
+		expect(r.ok).toBe(true);
+		if (r.ok) {
+			expect(r.value.supportAmount).toBeNull();
+			expect(r.value.supportContingent).toBeNull();
+		}
+	});
+
+	it('does not require support when not asked, but still rejects an unknown level', () => {
+		expect(validateRegistration(complete()).ok).toBe(true);
+		const r = validateRegistration({ ...complete(), supportNeed: 'lots' as never });
+		expect(r.ok).toBe(false);
+		if (!r.ok) expect(r.errors.supportNeed).toBeDefined();
+	});
+
 	it('leaves travel and optional fields free', () => {
 		const res = validateRegistration({ ...complete(), travelArrival: '', travelMode: null, accessibility: '' });
 		expect(res.ok).toBe(true);
@@ -121,6 +213,11 @@ describe('validateRegistration', () => {
 });
 
 describe('id guards', () => {
+	it('recognises support levels', () => {
+		expect(isSupportNeed('full')).toBe(true);
+		expect(isSupportNeed('yes')).toBe(false);
+	});
+
 	it('recognise content ids only', () => {
 		expect(isDietaryId('kosher')).toBe(true);
 		expect(isDietaryId('paleo')).toBe(false);

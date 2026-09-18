@@ -1,7 +1,8 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
-	import { dietaryOptions, registration as copy, travelModes } from '$lib/content';
+	import { dietaryOptions, registration as copy, supportNeeds, travelModes } from '$lib/content';
 	import type { RegistrationErrors, RegistrationInput } from '$lib/registration';
+	import { needsSupport } from '$lib/registration';
 	import type { ActionData, PageData } from './$types';
 
 	let { data, form }: { data: PageData; form: ActionData } = $props();
@@ -23,7 +24,10 @@
 			travelArrival: reg.travelArrival,
 			travelDeparture: reg.travelDeparture,
 			travelMode: reg.travelMode,
-			travelDetails: reg.travelDetails
+			travelDetails: reg.travelDetails,
+			supportNeed: reg.supportNeed,
+			supportAmount: reg.supportAmount,
+			supportContingent: reg.supportContingent
 		}
 	);
 	const errors = $derived<RegistrationErrors>(form?.errors ?? {});
@@ -31,9 +35,14 @@
 
 	let saving = $state(false);
 	let mode = $state<string | null>(null);
+	let need = $state<string | null>(null);
+	let contingent = $state<string | null>(null);
 	$effect(() => {
 		mode = initial.travelMode;
+		need = initial.supportNeed;
+		contingent = initial.supportContingent === null ? null : initial.supportContingent ? 'yes' : 'no';
 	});
+	const supportOpen = $derived(need === 'partial' || need === 'full');
 
 	function when(iso: string): string {
 		return new Date(iso).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
@@ -169,6 +178,37 @@
 				<span class="kicker lbl">{copy.sections.travel.details}</span>
 				<input class="input" name="travelDetails" value={initial.travelDetails} placeholder={copy.sections.travel.detailsHint} />
 			</label>
+		</section>
+
+		<section>
+			<div class="sec-head"><span class="kicker">{copy.sections.support.head}</span></div>
+			<div class="chips" role="radiogroup" aria-label={copy.sections.support.need}>
+				{#each supportNeeds as n (n.id)}
+					<label class="chip">
+						<input type="radio" name="supportNeed" value={n.id} bind:group={need} />
+						<span>{n.label}</span>
+					</label>
+				{/each}
+				<button type="button" class="quiet" onclick={() => (need = null)} disabled={need === null}>clear</button>
+			</div>
+			{#if errors.supportNeed}<span class="error" role="alert">{errors.supportNeed}</span>{/if}
+			{#if supportOpen}
+				<div class="grid2">
+					<label class="field">
+						<span class="kicker lbl">{copy.sections.support.amount} (USD)</span>
+						<input class="input" name="supportAmount" inputmode="numeric" value={initial.supportAmount ?? ''} aria-invalid={errors.supportAmount ? 'true' : undefined} />
+						{#if errors.supportAmount}<span class="error" role="alert">{errors.supportAmount}</span>{/if}
+					</label>
+					<div class="field">
+						<span class="kicker lbl">{copy.sections.support.contingent}</span>
+						<div class="chips" role="radiogroup" aria-label={copy.sections.support.contingent}>
+							<label class="chip"><input type="radio" name="supportContingent" value="yes" bind:group={contingent} /><span>Yes</span></label>
+							<label class="chip"><input type="radio" name="supportContingent" value="no" bind:group={contingent} /><span>No</span></label>
+						</div>
+						{#if errors.supportContingent}<span class="error" role="alert">{errors.supportContingent}</span>{/if}
+					</div>
+				</div>
+			{/if}
 		</section>
 
 		<div class="submit">

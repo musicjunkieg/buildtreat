@@ -1,11 +1,19 @@
 [
   {
-    "hash": "a44a99a322ca8080ee43dad922a3ad03651ca3e7",
-    "short_hash": "a44a99a",
+    "hash": "e210e3302a07209be412d7f408973d0604135bab",
+    "short_hash": "e210e33",
     "author": "Bryan Guffey",
-    "date": "2026-09-13T16:17:43-07:00",
-    "message": "chore: attribution — Organized by Bryan Guffey (@chaosgreml.in) in partnership with Bluesky PBC (#33)\n\nWas \"Organized by Bluesky, in partnership with @chaosgreml.in\". The\nhandle now sits mid-sentence, so organizerLine splits into\norganizerLead / organizerTail around the linked handle. Same copy in\nall four places it renders: hero, announcement, form footer,\nregistered summary.\n\n\nClaude-Session: https://claude.ai/code/session_01YS7dro4fFpSEXJ9WtXmaBX\n\nCo-authored-by: Claude Fable 5 <noreply@anthropic.com>",
-    "files_changed": 7
+    "date": "2026-09-15T22:13:58-07:00",
+    "message": "fix: anonymous hero offers sign-in while registration is open (#34)\n\n* fix: anonymous hero offers sign-in while registration is open\n\nSigned-out visitors were still shown the survey's state: \"Respond by\nAugust 15\" in the ledger and \"Responses closed August 15 — thanks to\neveryone who answered\" in place of the CTA. The closed branch beat the\nsign-in button, so there was no path from the landing page into\nregistration at all — an invitee read it as \"registration ended the\n15th\".\n\nHeroItem now takes registrationOpen/regDeadlineDisplay. While\nregistration is open, the ledger shows \"Register by September 20\" and\nan anonymous visitor gets the sign-in pill with registration-worded\ncopy; the survey-closed note only remains for the signed-in ?survey\nview and after registration closes.\n\nCo-Authored-By: Claude Fable 5 <noreply@anthropic.com>\nClaude-Session: https://claude.ai/code/session_01YS7dro4fFpSEXJ9WtXmaBX\n\n* fix: never fall back to the survey deadline while registration is open\n\nCo-Authored-By: Claude Fable 5 <noreply@anthropic.com>\nClaude-Session: https://claude.ai/code/session_01YS7dro4fFpSEXJ9WtXmaBX\n\n---------\n\nCo-authored-by: Claude Fable 5 <noreply@anthropic.com>",
+    "files_changed": 5
+  },
+  {
+    "hash": "e210e3302a07209be412d7f408973d0604135bab",
+    "short_hash": "e210e33",
+    "author": "Bryan Guffey",
+    "date": "2026-09-15T22:13:58-07:00",
+    "message": "fix: anonymous hero offers sign-in while registration is open (#34)\n\n* fix: anonymous hero offers sign-in while registration is open\n\nSigned-out visitors were still shown the survey's state: \"Respond by\nAugust 15\" in the ledger and \"Responses closed August 15 — thanks to\neveryone who answered\" in place of the CTA. The closed branch beat the\nsign-in button, so there was no path from the landing page into\nregistration at all — an invitee read it as \"registration ended the\n15th\".\n\nHeroItem now takes registrationOpen/regDeadlineDisplay. While\nregistration is open, the ledger shows \"Register by September 20\" and\nan anonymous visitor gets the sign-in pill with registration-worded\ncopy; the survey-closed note only remains for the signed-in ?survey\nview and after registration closes.\n\nCo-Authored-By: Claude Fable 5 <noreply@anthropic.com>\nClaude-Session: https://claude.ai/code/session_01YS7dro4fFpSEXJ9WtXmaBX\n\n* fix: never fall back to the survey deadline while registration is open\n\nCo-Authored-By: Claude Fable 5 <noreply@anthropic.com>\nClaude-Session: https://claude.ai/code/session_01YS7dro4fFpSEXJ9WtXmaBX\n\n---------\n\nCo-authored-by: Claude Fable 5 <noreply@anthropic.com>",
+    "files_changed": 5
   },
   {
     "hash": "3286df3f9fa281ace482c1c5079b7527c70110af",

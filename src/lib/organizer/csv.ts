@@ -71,14 +71,17 @@ export function registrationsCsv(regs: Registration[]): string {
 		[
 			'handle', 'did', 'name', 'email', 'status', 'registered', 'phone', 'emergency_name', 'emergency_phone',
 			'dietary', 'dietary_other', 'accessibility', 'notes', 'travel_mode', 'travel_arrival', 'travel_departure',
-			'travel_details', 'waiver_version', 'coc_version', 'agreed_at', 'updated_at'
+			'travel_details', 'support_need', 'support_amount', 'support_contingent', 'waiver_version', 'coc_version',
+			'agreed_at', 'updated_at'
 		]
 	];
 	for (const r of regs) {
 		rows.push([
 			r.handle, r.did, r.name, r.email, r.status, isRegistered(r) ? 'yes' : 'no', r.phone, r.emergencyName,
 			r.emergencyPhone, r.dietary.join('; '), r.dietaryOther, r.accessibility, r.notes, r.travelMode,
-			r.travelArrival, r.travelDeparture, r.travelDetails, r.waiverVersion, r.cocVersion, r.agreedAt, r.updatedAt
+			r.travelArrival, r.travelDeparture, r.travelDetails, r.supportNeed, r.supportAmount,
+			r.supportContingent === null ? null : r.supportContingent ? 'yes' : 'no', r.waiverVersion, r.cocVersion,
+			r.agreedAt, r.updatedAt
 		]);
 	}
 	return toCsv(rows);

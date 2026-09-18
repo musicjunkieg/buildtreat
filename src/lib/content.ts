@@ -181,6 +181,18 @@ export const travelModes = [
 export type TravelMode = (typeof travelModes)[number]['id'];
 
 /**
+ * Registration-time travel-support level. Mirrors the survey's travel
+ * question so a "partial"/"no" answer arrives pre-selected, but is asked
+ * again because circumstances move between August and December.
+ */
+export const supportNeeds = [
+	{ id: 'none', label: 'I can cover it' },
+	{ id: 'partial', label: 'I can cover some' },
+	{ id: 'full', label: 'I can’t cover it' }
+] as const;
+export type SupportNeed = (typeof supportNeeds)[number]['id'];
+
+/**
  * Agreement texts. Bump `version` when the substance changes so each
  * registration records which text it agreed to.
  */
@@ -230,7 +242,7 @@ export const registration = {
 	closedBody: 'We’ve locked the headcount to book the house. If you can still make it, DM',
 	formKicker: 'Registration',
 	formTitle: 'You’re in.',
-	formSub: 'December 4–7, Palm Springs or the Coachella Valley. Six short sections. Travel can wait until you know.',
+	formSub: 'December 4–7, Palm Springs or the Coachella Valley. A few short sections. Travel can wait until you know.',
 	sections: {
 		contact: { head: 'Contact', name: 'Name', email: 'Email', phone: 'Phone', phoneHint: 'For day-of texts' },
 		food: { head: 'Food', hint: 'Pick any', other: 'Anything else about food', otherHint: 'Allergies, strong dislikes, coffee opinions' },
@@ -238,6 +250,26 @@ export const registration = {
 		accessibility: { head: 'Accessibility', hint: 'Optional', label: 'Anything we should plan for', placeholder: 'Mobility, sensory, sleep, medical — whatever helps us set the house up right' },
 		notes: { head: 'Anything else', hint: 'Optional', placeholder: 'Notes for the organizers' },
 		travel: { head: 'Travel', hint: 'Optional now · update anytime', arriving: 'Arriving', arrivingHint: 'Fri afternoon, PSP', leaving: 'Leaving', leavingHint: 'Mon morning', details: 'Details', detailsHint: 'Flight numbers, rideshare offers' },
+		/** Shown to everyone whose survey travel answer wasn't "yes". */
+		support: {
+			head: 'Travel support',
+			hint: 'Sizing a fund with Bluesky',
+			lead: 'Lodging and food are covered. If getting here is the hard part, say so — we’re taking real numbers to Bluesky to size a travel fund.',
+			need: 'Getting to Palm Springs',
+			amount: 'Roughly how much would help?',
+			amountHint: 'US dollars — a best guess is fine',
+			contingent: 'Does coming depend on it?',
+			contingentYes: 'Yes — I can’t come without it',
+			contingentNo: 'No — I’ll come either way',
+			/** Summary labels. */
+			costs: 'Costs',
+			asked: 'Asking for',
+			contingentRow: 'Contingent',
+			contingentTrue: 'Yes — can’t attend without it',
+			contingentFalse: 'No — coming either way',
+			/** Registered-state nudge when the question was never answered. */
+			nudge: 'One more thing: tell us where travel costs land for you.'
+		},
 		agreements: {
 			head: 'Agreements',
 			waiver: 'I agree to complete the waivers provided to me in a timely manner to attend the Builders’ Retreat',
@@ -262,7 +294,10 @@ export const registration = {
 		agreeWaiver: 'Please agree to complete the waivers',
 		agreeCoc: 'Please agree to the code of conduct',
 		dietary: 'Unknown food option',
-		travelMode: 'Unknown travel mode'
+		travelMode: 'Unknown travel mode',
+		supportNeed: 'Let us know where travel costs land for you',
+		supportAmount: 'A rough dollar figure — whole dollars, please',
+		supportContingent: 'Tell us whether you can come without it'
 	}
 } as const;
 

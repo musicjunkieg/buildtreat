@@ -1,4 +1,5 @@
 import { retreatDates, retreatLocation, travelModes } from '../content';
+import { needsSupport } from '../registration';
 import { brandedEmail, heroImage, locationImages, retreatFacts } from './email-template';
 import type { Registration } from './registration';
 
@@ -20,6 +21,18 @@ export function confirmationEmail(reg: Registration): { subject: string; text: s
 					.filter((l) => l !== null)
 					.join('\n')
 			: 'You haven’t added travel yet — no rush. Come back to https://buildersretre.at whenever your plans firm up.';
+	// Echo a support request so the number they gave us is on the record.
+	const support = needsSupport(reg.supportNeed)
+		? [
+				`Travel support: you asked for about $${(reg.supportAmount ?? 0).toLocaleString('en-US')}` +
+					(reg.supportContingent === true
+						? ' and told us you can’t come without it.'
+						: reg.supportContingent === false
+							? ' and that you’ll come either way.'
+							: '.'),
+				'We’re taking the numbers to Bluesky and will follow up once the fund is sized.'
+			].join(' ')
+		: null;
 
 	const text = [
 		`Hi ${first},`,
@@ -30,6 +43,7 @@ export function confirmationEmail(reg: Registration): { subject: string; text: s
 		`Arrive ${retreatDates.arrive}, leave ${retreatDates.depart}. Lodging and food are covered; you cover your travel.`,
 		'',
 		travel,
+		...(support ? ['', support] : []),
 		'',
 		'Questions? Reply to this email or DM @chaosgreml.in.',
 		'',

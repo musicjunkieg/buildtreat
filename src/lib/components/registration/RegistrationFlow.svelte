@@ -4,6 +4,7 @@
 	import RegistrationForm from '$lib/components/registration/RegistrationForm.svelte';
 	import RegisteredSummary from '$lib/components/registration/RegisteredSummary.svelte';
 	import { registration as copy } from '$lib/content';
+	import { asksSupport } from '$lib/registration';
 	import type { PageData, ActionData } from '../../../routes/$types';
 
 	let { data, form }: { data: PageData; form: ActionData } = $props();
@@ -50,6 +51,7 @@
 	<RegisteredSummary
 		registration={reg!}
 		regClosed={data.regClosed}
+		askSupport={asksSupport(data.surveyTravel)}
 		organizerAvatar={data.organizer.avatar}
 		message={regMessage}
 		onedit={() => (editing = true)}

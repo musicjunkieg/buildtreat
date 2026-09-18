@@ -1,8 +1,15 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
 	import AgreementRow from '$lib/components/registration/AgreementRow.svelte';
-	import { codeOfConduct, dietaryOptions, registration as copy, retreat, travelModes, waiver } from '$lib/content';
-	import { emptyRegistration, type RegistrationErrors, type RegistrationInput } from '$lib/registration';
+	import { codeOfConduct, dietaryOptions, registration as copy, retreat, supportNeeds, travelModes, waiver, type SupportNeed } from '$lib/content';
+	import {
+		asksSupport,
+		emptyRegistration,
+		needsSupport,
+		supportNeedFromSurvey,
+		type RegistrationErrors,
+		type RegistrationInput
+	} from '$lib/registration';
 	import type { PageData, ActionData } from '../../../routes/$types';
 
 	let { data, form, oncancel }: { data: PageData; form: ActionData; oncancel: () => void } = $props();
@@ -28,20 +35,36 @@
 						travelDeparture: stored.travelDeparture,
 						travelMode: stored.travelMode,
 						travelDetails: stored.travelDetails,
+						// An older row never answered support: seed it from the survey.
+						supportNeed: stored.supportNeed ?? supportNeedFromSurvey(data.surveyTravel),
+						supportAmount: stored.supportAmount,
+						supportContingent: stored.supportContingent,
 						agreeWaiver: stored.agreedAt !== null && stored.waiverVersion === waiver.version,
 						agreeCoc: stored.agreedAt !== null && stored.cocVersion === codeOfConduct.version
 					}
-				: { ...emptyRegistration(), name: data.prefill.name, email: data.prefill.email })
+				: {
+						...emptyRegistration(),
+						name: data.prefill.name,
+						email: data.prefill.email,
+						supportNeed: supportNeedFromSurvey(data.surveyTravel)
+					})
 	);
+	// Support is asked of everyone whose survey answer wasn't "I can cover it".
+	const askSupport = $derived(asksSupport(data.surveyTravel));
 	const errors = $derived<RegistrationErrors>(form && 'regErrors' in form ? (form.regErrors as RegistrationErrors) : {});
 	const message = $derived(form && 'regMessage' in form ? (form.regMessage as string) : null);
 	const closedRefusal = $derived(form && 'regClosed' in form && form.regClosed);
 
 	let saving = $state(false);
 	let mode = $state<string | null>(null);
+	let need = $state<string | null>(null);
+	let contingent = $state<string | null>(null);
 	$effect(() => {
 		mode = initial.travelMode;
+		need = initial.supportNeed;
+		contingent = initial.supportContingent === null ? null : initial.supportContingent ? 'yes' : 'no';
 	});
+	const supportOpen = $derived(need !== null && needsSupport(need as SupportNeed));
 </script>
 
 <div class="doc">
@@ -168,6 +191,58 @@
 			</label>
 		</section>
 
+		{#if askSupport}
+			<section>
+				<div class="sec-head"><span class="kicker">{copy.sections.support.head}</span><span class="hint">{copy.sections.support.hint}</span></div>
+				<p class="lead">{copy.sections.support.lead}</p>
+				<div class="field">
+					<span class="kicker lbl" id="support-need-lbl">{copy.sections.support.need}</span>
+					<div class="chips" role="radiogroup" aria-labelledby="support-need-lbl">
+						{#each supportNeeds as n (n.id)}
+							<label class="chip">
+								<input type="radio" name="supportNeed" value={n.id} bind:group={need} />
+								<span>{n.label}</span>
+							</label>
+						{/each}
+					</div>
+					{#if errors.supportNeed}<span class="error" role="alert">{errors.supportNeed}</span>{/if}
+				</div>
+				{#if supportOpen}
+					<label class="field">
+						<span class="kicker lbl">{copy.sections.support.amount}</span>
+						<span class="money">
+							<span class="cur" aria-hidden="true">$</span>
+							<input
+								class="input"
+								name="supportAmount"
+								inputmode="numeric"
+								autocomplete="off"
+								value={initial.supportAmount ?? ''}
+								placeholder="600"
+								aria-invalid={errors.supportAmount ? 'true' : undefined}
+							/>
+						</span>
+						<span class="hint">{copy.sections.support.amountHint}</span>
+						{#if errors.supportAmount}<span class="error" role="alert">{errors.supportAmount}</span>{/if}
+					</label>
+					<div class="field">
+						<span class="kicker lbl" id="support-contingent-lbl">{copy.sections.support.contingent}</span>
+						<div class="chips" role="radiogroup" aria-labelledby="support-contingent-lbl">
+							<label class="chip">
+								<input type="radio" name="supportContingent" value="yes" bind:group={contingent} />
+								<span>{copy.sections.support.contingentYes}</span>
+							</label>
+							<label class="chip">
+								<input type="radio" name="supportContingent" value="no" bind:group={contingent} />
+								<span>{copy.sections.support.contingentNo}</span>
+							</label>
+						</div>
+						{#if errors.supportContingent}<span class="error" role="alert">{errors.supportContingent}</span>{/if}
+					</div>
+				{/if}
+			</section>
+		{/if}
+
 		<section>
 			<div class="sec-head"><span class="kicker">{copy.sections.agreements.head}</span></div>
 			<ul class="agree">
@@ -212,6 +287,11 @@
 	.input:focus { outline: none; border-bottom-color: var(--ink); }
 	.textarea { resize: none; line-height: 1.4; font-size: 1rem; }
 	.grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-3); }
+	.lead { font-size: 0.9375rem; line-height: 1.5; color: var(--ink-70); max-width: 40ch; }
+	.money { display: flex; align-items: baseline; gap: 0.35rem; border-bottom: 1px solid var(--ink-45); }
+	.money:focus-within { border-bottom-color: var(--ink); }
+	.money .cur { font-size: 1.125rem; color: var(--ink-70); }
+	.money .input { border-bottom: 0; }
 	.chips { display: flex; flex-wrap: wrap; gap: 0.5rem; }
 	.chip { position: relative; border: 1px solid var(--ink-45); border-radius: 999px; padding: 0.45rem 0.85rem; font-size: 0.8125rem; color: var(--ink-70); cursor: pointer; transition: background 0.2s var(--ease-out), color 0.2s var(--ease-out); }
 	.chip input { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
