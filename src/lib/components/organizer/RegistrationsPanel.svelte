@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { dietaryOptions, travelModes } from '$lib/content';
+	import { needsSupport } from '$lib/registration';
 	// Type-only: $lib/server/registration is a server module, and SvelteKit's
 	// illegal-import guard blocks any RUNTIME import from it reaching the
 	// browser bundle — `import type` is erased entirely by the compiler, so
@@ -39,6 +40,9 @@
 	function mode(r: RegistrationView): string {
 		return r.travelMode ? (travelModes.find((m) => m.id === r.travelMode)?.label ?? r.travelMode) : '—';
 	}
+	function dollars(n: number): string {
+		return `$${n.toLocaleString('en-US')}`;
+	}
 	function editHref(r: RegistrationView): string {
 		return `/organizer/registrations/${encodeURIComponent(r.did)}`;
 	}
@@ -67,6 +71,13 @@
 			<li><span class="kicker">Declined</span><span class="n">{counts.declined}</span></li>
 			<li><span class="kicker">No response yet</span><span class="n">{counts.noResponse}</span></li>
 		</ul>
+		<!-- Travel-support rollup: confirmed rows only. The numbers Bryan takes to Bluesky. -->
+		<ul class="ledger counts support">
+			<li><span class="kicker">Need travel support</span><span class="n">{counts.support.people}</span></li>
+			<li><span class="kicker">Requested</span><span class="n">{dollars(counts.support.total)}</span></li>
+			<li><span class="kicker">Can’t come without it</span><span class="n">{counts.support.contingent}<span class="sub"> · {dollars(counts.support.contingentTotal)}</span></span></li>
+			<li><span class="kicker">Covering their own</span><span class="n">{counts.support.covered}</span></li>
+		</ul>
 
 		{#if confirmed.length === 0}
 			<p class="section-empty">No one has registered yet.</p>
@@ -74,7 +85,7 @@
 			<div class="table-wrap">
 				<table class="reg-table">
 					<thead>
-						<tr><th class="kicker" scope="col">Who</th><th class="kicker" scope="col">Food</th><th class="kicker" scope="col">Access</th><th class="kicker" scope="col">Travel</th><th class="kicker" scope="col">Agreed</th><th class="kicker" scope="col">Updated</th><th class="kicker" scope="col"><span class="sr-only">Edit</span></th></tr>
+						<tr><th class="kicker" scope="col">Who</th><th class="kicker" scope="col">Food</th><th class="kicker" scope="col">Access</th><th class="kicker" scope="col">Travel</th><th class="kicker" scope="col">Support</th><th class="kicker" scope="col">Agreed</th><th class="kicker" scope="col">Updated</th><th class="kicker" scope="col"><span class="sr-only">Edit</span></th></tr>
 					</thead>
 					<tbody>
 						{#each confirmed as r (r.did)}
@@ -83,6 +94,7 @@
 								<td>{diet(r)}</td>
 								<td class:dim={!r.accessibility}>{r.accessibility || '—'}</td>
 								<td><span class="kicker status-{r.travel}">{r.travel}</span><br /><span class="dim">{mode(r)}{r.travelArrival ? ` · ${r.travelArrival}` : ''}{r.travelDeparture ? ` → ${r.travelDeparture}` : ''}</span></td>
+							<td>{#if r.supportNeed === null}<span class="dim">—</span>{:else if needsSupport(r.supportNeed)}<span class="kicker status-{r.supportContingent ? 'complete' : 'partial'}">{r.supportNeed}</span><br /><span class="dim">{r.supportAmount === null ? '—' : dollars(r.supportAmount)}{r.supportContingent === null ? '' : r.supportContingent ? ' · contingent' : ' · either way'}</span>{:else}<span class="dim">covers own</span>{/if}</td>
 								<td>{r.registered ? `${r.waiverVersion} / ${r.cocVersion}` : '—'}</td>
 								<td class="dim">{when(r.updatedAt)}</td>
 								<td><a class="quiet" href={editHref(r)}>Edit</a></td>
@@ -118,6 +130,8 @@
 	.quiet:hover { color: var(--ink); }
 	.counts { margin: var(--space-3) 0; }
 	.counts .kicker { color: var(--ink-70); }
+	.counts.support { margin-top: 0; padding-top: var(--space-2); border-top: var(--hairline); }
+	.counts .sub { font-family: inherit; font-weight: 400; font-size: 0.8125rem; color: var(--ink-70); }
 	.counts .n { font-family: var(--font-display); font-weight: 650; font-size: clamp(1.35rem, 4.2vw, 1.9rem); line-height: 0.92; font-variant-numeric: tabular-nums; }
 	.table-wrap { overflow-x: auto; }
 	.reg-table { width: 100%; border-collapse: collapse; font-size: 0.9375rem; }

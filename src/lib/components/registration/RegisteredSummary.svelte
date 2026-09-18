@@ -1,17 +1,21 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
-	import { dietaryOptions, registration as copy, retreat, retreatDates, retreatLocation, travelModes } from '$lib/content';
+	import { dietaryOptions, registration as copy, retreat, retreatDates, retreatLocation, supportNeeds, travelModes } from '$lib/content';
+	import { needsSupport } from '$lib/registration';
 	import type { Registration } from '$lib/server/registration';
 
 	let {
 		registration: reg,
 		regClosed,
+		askSupport = false,
 		organizerAvatar = null,
 		message = null,
 		onedit
 	}: {
 		registration: Registration;
 		regClosed: boolean;
+		/** Whether this person is asked about travel support (survey ≠ "yes"). */
+		askSupport?: boolean;
 		organizerAvatar?: string | null;
 		message?: string | null;
 		onedit: () => void;
@@ -21,6 +25,10 @@
 		reg.dietary.map((id) => dietaryOptions.find((o) => o.id === id)?.label ?? id).join(', ')
 	);
 	const modeLabel = $derived(reg.travelMode ? (travelModes.find((m) => m.id === reg.travelMode)?.label ?? '') : '');
+	const needLabel = $derived(reg.supportNeed ? (supportNeeds.find((n) => n.id === reg.supportNeed)?.label ?? '') : '');
+	const asking = $derived(needsSupport(reg.supportNeed));
+	const showSupport = $derived(askSupport || reg.supportNeed !== null);
+	const dollars = (n: number) => `$${n.toLocaleString('en-US')}`;
 	const dash = '—';
 
 	let declining = $state(false);
@@ -56,6 +64,20 @@
 			</ul>
 			<button class="pill ghost" onclick={onedit}>{copy.edit}</button>
 		</section>
+
+		{#if showSupport}
+			<section>
+				<div class="sec-head"><span class="kicker">{copy.sections.support.head}</span>{#if reg.supportNeed === null}<span class="hint nudge">{copy.sections.support.nudge}</span>{/if}</div>
+				<ul class="rows">
+					<li><span class="k">{copy.sections.support.costs}</span><span class="v" class:empty={!needLabel}>{needLabel || dash}</span></li>
+					{#if asking}
+						<li><span class="k">{copy.sections.support.asked}</span><span class="v" class:empty={reg.supportAmount === null}>{reg.supportAmount === null ? dash : dollars(reg.supportAmount)}</span></li>
+						<li><span class="k">{copy.sections.support.contingentRow}</span><span class="v" class:empty={reg.supportContingent === null}>{reg.supportContingent === null ? dash : reg.supportContingent ? copy.sections.support.contingentTrue : copy.sections.support.contingentFalse}</span></li>
+					{/if}
+				</ul>
+				<button class="pill ghost" onclick={onedit}>{copy.edit}</button>
+			</section>
+		{/if}
 
 		<section>
 			<div class="sec-head"><span class="kicker">{copy.sections.contact.head}</span></div>

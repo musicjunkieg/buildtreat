@@ -1,13 +1,13 @@
 import type { D1Database } from '@cloudflare/workers-types';
-import type { TravelMode } from '../content';
+import type { SupportNeed, TravelMode } from '../content';
 import type { RegistrationInput } from '../registration';
-import { isTravelMode } from '../registration';
+import { isSupportNeed, isTravelMode, needsSupport } from '../registration';
 import type { AllowlistEntry } from './organizer';
 
 /**
  * D1 access for registrations — one upserted row per DID. Mirrors the
  * waitlist module's conventions: parameterized SQL, typed rows, JSDoc.
- * Schema: migrations/0006_registrations.sql.
+ * Schema: migrations/0006_registrations.sql (+ 0008 travel support).
  */
 
 export interface Registration {
@@ -27,6 +27,9 @@ export interface Registration {
 	travelDeparture: string;
 	travelMode: TravelMode | null;
 	travelDetails: string;
+	supportNeed: SupportNeed | null;
+	supportAmount: number | null;
+	supportContingent: boolean | null;
 	waiverVersion: string | null;
 	cocVersion: string | null;
 	agreedAt: string | null;
@@ -51,6 +54,9 @@ export interface RegistrationRow {
 	travel_departure: string | null;
 	travel_mode: string | null;
 	travel_details: string | null;
+	support_need: string | null;
+	support_amount: number | null;
+	support_contingent: number | null;
 	waiver_version: string | null;
 	coc_version: string | null;
 	agreed_at: string | null;
@@ -60,6 +66,7 @@ export interface RegistrationRow {
 
 const COLUMNS = `did, handle, name, email, status, phone, emergency_name, emergency_phone, dietary, dietary_other,
 	accessibility, notes, travel_arrival, travel_departure, travel_mode, travel_details,
+	support_need, support_amount, support_contingent,
 	waiver_version, coc_version, agreed_at, created_at, updated_at`;
 
 function parseDietary(raw: string | null): string[] {
@@ -91,6 +98,9 @@ export function rowToRegistration(r: RegistrationRow): Registration {
 		travelDeparture: r.travel_departure ?? '',
 		travelMode: r.travel_mode && isTravelMode(r.travel_mode) ? r.travel_mode : null,
 		travelDetails: r.travel_details ?? '',
+		supportNeed: r.support_need && isSupportNeed(r.support_need) ? r.support_need : null,
+		supportAmount: typeof r.support_amount === 'number' && r.support_amount > 0 ? r.support_amount : null,
+		supportContingent: r.support_contingent === null ? null : r.support_contingent === 1,
 		waiverVersion: r.waiver_version,
 		cocVersion: r.coc_version,
 		agreedAt: r.agreed_at,
@@ -112,11 +122,40 @@ export function travelStatus(r: Registration): TravelStatus {
 	return filled === 3 ? 'complete' : 'partial';
 }
 
+export interface SupportCounts {
+	/** Confirmed attendees who said they need some or all of their travel covered. */
+	people: number;
+	/** …of whom can't attend without it. */
+	contingent: number;
+	/** Sum of their estimates, whole US dollars. */
+	total: number;
+	/** The contingent subset's share of that total. */
+	contingentTotal: number;
+	/** Confirmed attendees who said they can cover it themselves. */
+	covered: number;
+}
+
 export interface RegistrationCounts {
 	confirmed: number;
 	registered: number;
 	declined: number;
 	noResponse: number;
+	support: SupportCounts;
+}
+
+/** Travel-support rollup over confirmed rows only — a decline leaves the fund. */
+export function supportCounts(regs: Registration[]): SupportCounts {
+	const confirmed = regs.filter((r) => r.status === 'confirmed');
+	const asking = confirmed.filter((r) => needsSupport(r.supportNeed));
+	const contingent = asking.filter((r) => r.supportContingent === true);
+	const sum = (rows: Registration[]) => rows.reduce((n, r) => n + (r.supportAmount ?? 0), 0);
+	return {
+		people: asking.length,
+		contingent: contingent.length,
+		total: sum(asking),
+		contingentTotal: sum(contingent),
+		covered: confirmed.filter((r) => r.supportNeed === 'none').length
+	};
 }
 
 /** Allowlisted people with no registration row, matched by DID or handle. */
@@ -131,8 +170,14 @@ export function registrationCounts(regs: Registration[], allowlist: AllowlistEnt
 		confirmed: regs.filter((r) => r.status === 'confirmed').length,
 		registered: regs.filter(isRegistered).length,
 		declined: regs.filter((r) => r.status === 'declined').length,
-		noResponse: noResponseHandles(regs, allowlist).length
+		noResponse: noResponseHandles(regs, allowlist).length,
+		support: supportCounts(regs)
 	};
+}
+
+/** D1 has no boolean: null stays null, otherwise 0/1. */
+function contingentFlag(v: boolean | null): number | null {
+	return v === null ? null : v ? 1 : 0;
 }
 
 export async function getRegistration(db: D1Database, did: string): Promise<Registration | null> {
@@ -155,13 +200,15 @@ export async function upsertConfirmed(
 	await db
 		.prepare(
 			`INSERT INTO registrations (${COLUMNS})
-			 VALUES (?1, ?2, ?3, ?4, 'confirmed', ?5, ?6, ?7, ?8, ?9, ?10, ?11, ?12, ?13, ?14, ?15, ?16, ?17, ?18, ?18, ?18)
+			 VALUES (?1, ?2, ?3, ?4, 'confirmed', ?5, ?6, ?7, ?8, ?9, ?10, ?11, ?12, ?13, ?14, ?15, ?16, ?17, ?18, ?19, ?20, ?21, ?21, ?21)
 			 ON CONFLICT(did) DO UPDATE SET
 			   handle = excluded.handle, name = excluded.name, email = excluded.email, status = 'confirmed',
 			   phone = excluded.phone, emergency_name = excluded.emergency_name, emergency_phone = excluded.emergency_phone,
 			   dietary = excluded.dietary, dietary_other = excluded.dietary_other, accessibility = excluded.accessibility,
 			   notes = excluded.notes, travel_arrival = excluded.travel_arrival, travel_departure = excluded.travel_departure,
 			   travel_mode = excluded.travel_mode, travel_details = excluded.travel_details,
+			   support_need = excluded.support_need, support_amount = excluded.support_amount,
+			   support_contingent = excluded.support_contingent,
 			   waiver_version = excluded.waiver_version, coc_version = excluded.coc_version,
 			   agreed_at = COALESCE(registrations.agreed_at, excluded.agreed_at),
 			   updated_at = excluded.updated_at`
@@ -182,6 +229,9 @@ export async function upsertConfirmed(
 			input.travelDeparture || null,
 			input.travelMode,
 			input.travelDetails || null,
+			input.supportNeed,
+			input.supportAmount,
+			contingentFlag(input.supportContingent),
 			versions.waiver,
 			versions.coc,
 			now
@@ -224,8 +274,9 @@ export async function updateRegistrationFields(
 			   name = ?1, email = ?2, phone = ?3, emergency_name = ?4, emergency_phone = ?5,
 			   dietary = ?6, dietary_other = ?7, accessibility = ?8, notes = ?9,
 			   travel_arrival = ?10, travel_departure = ?11, travel_mode = ?12, travel_details = ?13,
-			   updated_at = ?14
-			 WHERE did = ?15`
+			   support_need = ?14, support_amount = ?15, support_contingent = ?16,
+			   updated_at = ?17
+			 WHERE did = ?18`
 		)
 		.bind(
 			input.name,
@@ -241,6 +292,9 @@ export async function updateRegistrationFields(
 			input.travelDeparture || null,
 			input.travelMode,
 			input.travelDetails || null,
+			input.supportNeed,
+			input.supportAmount,
+			contingentFlag(input.supportContingent),
 			now,
 			did
 		)

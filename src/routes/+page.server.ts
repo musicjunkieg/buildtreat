@@ -4,13 +4,13 @@ import { dev } from '$app/environment';
 import { loadBskyProfile } from '@svelte-atproto/oauth/bsky';
 import { actorToDid } from '@svelte-atproto/oauth/helper';
 import { cloudflareKV } from '@svelte-atproto/oauth/server/stores/cloudflare';
-import { codeOfConduct, retreat, waiver } from '$lib/content';
+import { codeOfConduct, retreat, waiver, type TravelValue } from '$lib/content';
 import { checkAllowlist, getResponse } from '$lib/server/db';
 import { deadlineStatus } from '$lib/server/deadline';
 import { sendEmail } from '$lib/server/email';
 import { getRegistration, setDeclined, upsertConfirmed, type Registration } from '$lib/server/registration';
 import { confirmationEmail } from '$lib/server/registration-email';
-import { canConfirm, parseRegistrationForm, validateRegistration } from '$lib/registration';
+import { asksSupport, canConfirm, parseRegistrationForm, validateRegistration } from '$lib/registration';
 import {
 	backfillWaitlistHandle,
 	getWaitlistEntry,
@@ -123,6 +123,9 @@ export const load: PageServerLoad = async ({ locals, platform, url, cookies }) =
 						travelDeparture: '',
 						travelMode: 'flying',
 						travelDetails: '',
+						supportNeed: variant === 'declined' ? null : 'partial',
+						supportAmount: variant === 'declined' ? null : 450,
+						supportContingent: variant === 'declined' ? null : false,
 						waiverVersion: variant === 'declined' ? null : 'v1',
 						cocVersion: variant === 'declined' ? null : 'v1',
 						agreedAt: variant === 'declined' ? null : '2026-08-30T18:00:00Z',
@@ -150,7 +153,9 @@ export const load: PageServerLoad = async ({ locals, platform, url, cookies }) =
 			...regBase,
 			registrationMode: regVariant,
 			registration: previewReg,
-			prefill: { name: 'Preview Builder', email: 'preview@example.com' }
+			prefill: { name: 'Preview Builder', email: 'preview@example.com' },
+			// `?preview=register&travel=partial` previews the support section.
+			surveyTravel: (['yes', 'partial', 'no'] as const).find((v) => v === url.searchParams.get('travel')) ?? null
 		};
 	}
 
@@ -170,7 +175,8 @@ export const load: PageServerLoad = async ({ locals, platform, url, cookies }) =
 			...regBase,
 			registrationMode: false,
 			registration: null as Registration | null,
-			prefill: { name: '', email: '' }
+			prefill: { name: '', email: '' },
+			surveyTravel: null as TravelValue | null
 		};
 	}
 
@@ -286,7 +292,9 @@ export const load: PageServerLoad = async ({ locals, platform, url, cookies }) =
 		prefill: {
 			name: stored?.draft.name ?? user.displayName ?? '',
 			email: stored?.draft.email ?? ''
-		}
+		},
+		/** Survey travel answer — decides whether registration asks about support. */
+		surveyTravel: stored?.draft.travel ?? null
 	};
 };
 
@@ -329,8 +337,19 @@ export const actions: Actions = {
 		const db = platform?.env?.DB;
 		if (!db) return fail(503, { regMessage: 'Storage is not available right now — try again shortly.' });
 
+		// Support is required of exactly the people the form asked — same
+		// survey lookup the load used, so the rule can't drift from the UI.
+		// A failed lookup must not pass as "never surveyed": that would demand
+		// fields the rendered form (built from a stored "yes") never showed.
+		let surveyTravel: TravelValue | null;
+		try {
+			surveyTravel = (await getResponse(db, locals.did))?.draft.travel ?? null;
+		} catch (e) {
+			console.error('survey lookup failed for', logDid(locals.did), e);
+			return fail(503, { regMessage: 'Something went wrong — please try again.' });
+		}
 		const input = parseRegistrationForm(await request.formData());
-		const checked = validateRegistration(input);
+		const checked = validateRegistration(input, { support: asksSupport(surveyTravel) });
 		if (!checked.ok) return fail(400, { regErrors: checked.errors, regValues: input });
 
 		const profileCache = platform?.env?.PROFILE_CACHE

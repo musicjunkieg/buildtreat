@@ -119,7 +119,13 @@ const EMPTY: Omit<OrganizerPageData, 'authState'> = {
 	registrations: [],
 	regDeadlineDisplay: null,
 	regClosed: false,
-	regCounts: { confirmed: 0, registered: 0, declined: 0, noResponse: 0 },
+	regCounts: {
+		confirmed: 0,
+		registered: 0,
+		declined: 0,
+		noResponse: 0,
+		support: { people: 0, contingent: 0, total: 0, contingentTotal: 0, covered: 0 }
+	},
 	regMissing: []
 };
 
@@ -487,6 +493,9 @@ function previewData(): Omit<OrganizerPageData, 'authState' | 'preview' | 'deadl
 			travelDeparture: 'Mon 9am',
 			travelMode: 'flying',
 			travelDetails: 'AS 1234',
+			supportNeed: 'partial',
+			supportAmount: 450,
+			supportContingent: false,
 			waiverVersion: 'v1',
 			cocVersion: 'v1',
 			agreedAt: '2026-08-30T18:00:00Z',
@@ -510,6 +519,9 @@ function previewData(): Omit<OrganizerPageData, 'authState' | 'preview' | 'deadl
 			travelDeparture: '',
 			travelMode: 'driving',
 			travelDetails: '',
+			supportNeed: 'full',
+			supportAmount: 900,
+			supportContingent: true,
 			waiverVersion: 'v1',
 			cocVersion: 'v1',
 			agreedAt: '2026-08-30T19:00:00Z',
@@ -533,6 +545,9 @@ function previewData(): Omit<OrganizerPageData, 'authState' | 'preview' | 'deadl
 			travelDeparture: '',
 			travelMode: null,
 			travelDetails: '',
+			supportNeed: null,
+			supportAmount: null,
+			supportContingent: null,
 			waiverVersion: null,
 			cocVersion: null,
 			agreedAt: null,
