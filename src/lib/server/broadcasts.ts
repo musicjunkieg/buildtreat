@@ -14,20 +14,39 @@ export interface RecipientInput {
 }
 
 /**
- * Who a broadcast goes to. 'all' / 'yes' / 'maybe' / 'no' select survey
- * respondents (by their interest answer); 'travel' selects respondents who
- * said they could cover only some or none of their travel and haven't yet
- * answered the registration's support questions (and haven't declined);
- * 'waitlist' selects entries still waiting for a promotion. Stored on the
- * broadcast row so the history says which list each message went to.
+ * Who a broadcast goes to. 'all' is every survey respondent plus anyone
+ * with a confirmed registration who skipped the survey (a late invite who
+ * went straight to registering); 'registered' is confirmed registrations
+ * alone; 'yes' / 'maybe' / 'no' select survey respondents (by their
+ * interest answer); 'yes_unregistered' and
+ * 'maybe_unregistered' narrow those to respondents with no registration
+ * row at all — neither confirmed nor declined — for the "you said you're
+ * in, now register" nudges; 'travel' selects respondents who said they
+ * could cover only some or none of their travel and haven't yet answered
+ * the registration's support questions (and haven't declined); 'waitlist'
+ * selects entries still waiting for a promotion. Stored on the broadcast
+ * row so the history says which list each message went to.
  */
-export const AUDIENCES = ['all', 'yes', 'maybe', 'no', 'travel', 'waitlist'] as const;
+export const AUDIENCES = [
+	'all',
+	'registered',
+	'yes',
+	'yes_unregistered',
+	'maybe',
+	'maybe_unregistered',
+	'no',
+	'travel',
+	'waitlist'
+] as const;
 export type Audience = (typeof AUDIENCES)[number];
 
 export const audienceLabels: Record<Audience, string> = {
 	all: 'Everyone',
+	registered: 'Registered',
 	yes: 'Yes',
+	yes_unregistered: 'Yes, not registered',
 	maybe: 'Maybe',
+	maybe_unregistered: 'Maybe, not registered',
 	no: 'No',
 	travel: 'Travel help',
 	waitlist: 'Waitlist'
@@ -57,7 +76,7 @@ export interface AudienceWaitlistEntry {
 	promotedAt: string | null;
 }
 
-/** The slice of a registration row the 'travel' audience needs. */
+/** The slice of a registration row the registration-aware audiences need. */
 export interface AudienceRegistration {
 	did: string;
 	email: string;
@@ -72,6 +91,11 @@ export interface AudienceRegistration {
  * The travel audience is the nudge list for the support questions: survey
  * said partial/no, no answer yet, not declined — mailed at the registration
  * email when there is one, since that's the address they confirmed last.
+ * The *_unregistered audiences are the "please register" nudges: interest
+ * yes/maybe with no registration row of any status, so a decline counts as
+ * having answered and drops them off the list. 'registered' and 'all' are
+ * the only audiences that reach someone who never took the survey — a
+ * confirmed registration is enough to be on those lists.
  */
 export function audienceRecipients(
 	audience: Audience,
@@ -82,6 +106,15 @@ export function audienceRecipients(
 	if (audience === 'waitlist') {
 		return dedupeRecipients(waitlist.filter((w) => w.promotedAt === null).map((w) => ({ did: w.did, email: w.email })));
 	}
+	const confirmed = registrations.filter((r) => r.status === 'confirmed');
+	if (audience === 'registered') {
+		return dedupeRecipients(confirmed.map((r) => ({ did: r.did, email: r.email })));
+	}
+	if (audience === 'all') {
+		const surveyed = new Set(responses.map((r) => r.did));
+		const extra = confirmed.filter((r) => !surveyed.has(r.did));
+		return dedupeRecipients([...responses, ...extra].map((r) => ({ did: r.did, email: r.email })));
+	}
 	if (audience === 'travel') {
 		const regByDid = new Map(registrations.map((r) => [r.did, r]));
 		const picked = responses.filter((r) => {
@@ -91,7 +124,13 @@ export function audienceRecipients(
 		});
 		return dedupeRecipients(picked.map((r) => ({ did: r.did, email: regByDid.get(r.did)?.email || r.email })));
 	}
-	const picked = audience === 'all' ? responses : responses.filter((r) => r.interest === audience);
+	if (audience === 'yes_unregistered' || audience === 'maybe_unregistered') {
+		const interest = audience === 'yes_unregistered' ? 'yes' : 'maybe';
+		const registered = new Set(registrations.map((r) => r.did));
+		const picked = responses.filter((r) => r.interest === interest && !registered.has(r.did));
+		return dedupeRecipients(picked.map((r) => ({ did: r.did, email: r.email })));
+	}
+	const picked = responses.filter((r) => r.interest === audience);
 	return dedupeRecipients(picked.map((r) => ({ did: r.did, email: r.email })));
 }
 

@@ -69,11 +69,46 @@ describe('audienceRecipients', () => {
 		expect(audienceRecipients('travel', RESPONSES, WAITLIST, regs)).toEqual([{ did: 'did:plc:y1', email: 'y1-new@example.com' }]);
 	});
 
+	it("'registered' is confirmed rows at their registration email; 'all' picks up registrants who skipped the survey", () => {
+		const regs = [
+			{ did: 'did:plc:y1', email: 'y1-new@example.com', status: 'confirmed' as const, supportNeed: null },
+			{ did: 'did:plc:s1', email: 's1@example.com', status: 'confirmed' as const, supportNeed: null },
+			{ did: 'did:plc:m1', email: 'm1@example.com', status: 'declined' as const, supportNeed: null }
+		];
+		expect(audienceRecipients('registered', RESPONSES, WAITLIST, regs)).toEqual([
+			{ did: 'did:plc:y1', email: 'y1-new@example.com' },
+			{ did: 'did:plc:s1', email: 's1@example.com' }
+		]);
+		// s1 never took the survey but is confirmed — Everyone still reaches them.
+		expect(audienceRecipients('all', RESPONSES, WAITLIST, regs).map((r) => r.did)).toEqual([
+			'did:plc:y1',
+			'did:plc:m1',
+			'did:plc:n1',
+			'did:plc:s1'
+		]);
+		expect(audienceRecipients('registered', RESPONSES, WAITLIST)).toEqual([]);
+	});
+
+	it("'yes_unregistered' / 'maybe_unregistered' drop anyone with a registration row, declined included", () => {
+		expect(audienceRecipients('yes_unregistered', RESPONSES, WAITLIST).map((r) => r.did)).toEqual(['did:plc:y1']);
+		expect(audienceRecipients('maybe_unregistered', RESPONSES, WAITLIST).map((r) => r.did)).toEqual(['did:plc:m1']);
+		const regs = [
+			{ did: 'did:plc:y1', email: 'y1@example.com', status: 'confirmed' as const, supportNeed: null },
+			{ did: 'did:plc:m1', email: 'm1@example.com', status: 'declined' as const, supportNeed: null }
+		];
+		// y1 registered, so the dupe-email y2 (same address) now surfaces.
+		expect(audienceRecipients('yes_unregistered', RESPONSES, WAITLIST, regs).map((r) => r.did)).toEqual(['did:plc:y2']);
+		expect(audienceRecipients('maybe_unregistered', RESPONSES, WAITLIST, regs)).toEqual([]);
+	});
+
 	it('counts every audience in selector order', () => {
 		expect(audienceCounts(RESPONSES, WAITLIST)).toEqual([
 			{ id: 'all', label: 'Everyone', count: 3 },
+			{ id: 'registered', label: 'Registered', count: 0 },
 			{ id: 'yes', label: 'Yes', count: 1 },
+			{ id: 'yes_unregistered', label: 'Yes, not registered', count: 1 },
 			{ id: 'maybe', label: 'Maybe', count: 1 },
+			{ id: 'maybe_unregistered', label: 'Maybe, not registered', count: 1 },
 			{ id: 'no', label: 'No', count: 1 },
 			{ id: 'travel', label: 'Travel help', count: 2 },
 			{ id: 'waitlist', label: 'Waitlist', count: 1 }
@@ -82,7 +117,7 @@ describe('audienceRecipients', () => {
 
 	it('isAudience rejects anything a form could invent', () => {
 		expect(isAudience('yes')).toBe(true);
-		expect(isAudience('registered')).toBe(false);
+		expect(isAudience('declined')).toBe(false);
 		expect(isAudience('')).toBe(false);
 	});
 });
