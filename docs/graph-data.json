@@ -1876,10 +1876,43 @@
       "node_type": "action",
       "title": "Implement 'travel' audience + draft copy",
       "description": null,
-      "status": "pending",
+      "status": "done",
       "created_at": "2026-09-18T10:17:09.149937-07:00",
-      "updated_at": "2026-09-18T10:17:09.149937-07:00",
+      "updated_at": "2026-09-18T10:46:29.215455-07:00",
       "metadata_json": "{\"branch\":\"feat/travel-support\",\"confidence\":85}"
+    },
+    {
+      "id": 172,
+      "change_id": "40632bf3-025b-4af9-84f1-fc6a78d5e839",
+      "node_type": "outcome",
+      "title": "Travel-help audience implemented; PR opened",
+      "description": null,
+      "status": "done",
+      "created_at": "2026-09-18T10:19:11.613963-07:00",
+      "updated_at": "2026-09-18T10:46:29.223018-07:00",
+      "metadata_json": "{\"branch\":\"feat/travel-nudge-audience\",\"commit\":\"20069e3\",\"confidence\":90}"
+    },
+    {
+      "id": 173,
+      "change_id": "9538346f-f02a-47f1-a93b-a53cbce8f24e",
+      "node_type": "outcome",
+      "title": "PR #37 merged (0825f0e) — 'Travel help' audience live once Workers Build finishes; copy in docs/broadcasts/2026-09-18-travel-help.md",
+      "description": null,
+      "status": "done",
+      "created_at": "2026-09-18T10:46:29.195921-07:00",
+      "updated_at": "2026-09-18T10:46:29.229377-07:00",
+      "metadata_json": "{\"branch\":\"feat/travel-nudge-audience\",\"commit\":\"0825f0e\",\"confidence\":95}"
+    },
+    {
+      "id": 174,
+      "change_id": "11f0ea7b-d5a1-4a3b-a06c-c8f1bcf76a26",
+      "node_type": "action",
+      "title": "Add 'yes_unregistered' / 'maybe_unregistered' broadcast audiences (interest ∧ no registration row)",
+      "description": null,
+      "status": "pending",
+      "created_at": "2026-09-18T11:23:01.173815-07:00",
+      "updated_at": "2026-09-18T11:23:01.173815-07:00",
+      "metadata_json": "{\"branch\":\"feat/travel-nudge-audience\",\"confidence\":90,\"prompt\":\"okay, i need another email option for the folks who said they're in but haven't registered yet, and also one for those who said maybe but haven't registered.\"}"
     }
   ],
   "edges": [
@@ -3763,6 +3796,39 @@
       "weight": 1.0,
       "rationale": "implement",
       "created_at": "2026-09-18T10:17:23.202139-07:00"
+    },
+    {
+      "id": 174,
+      "from_node_id": 171,
+      "to_node_id": 172,
+      "from_change_id": "078af194-c79a-4259-8f7f-4f9766c38ca7",
+      "to_change_id": "40632bf3-025b-4af9-84f1-fc6a78d5e839",
+      "edge_type": "leads_to",
+      "weight": 1.0,
+      "rationale": "shipped to PR #37",
+      "created_at": "2026-09-18T10:19:19.438438-07:00"
+    },
+    {
+      "id": 175,
+      "from_node_id": 172,
+      "to_node_id": 173,
+      "from_change_id": "40632bf3-025b-4af9-84f1-fc6a78d5e839",
+      "to_change_id": "9538346f-f02a-47f1-a93b-a53cbce8f24e",
+      "edge_type": "leads_to",
+      "weight": 1.0,
+      "rationale": "Merged by Bryan",
+      "created_at": "2026-09-18T10:46:29.206824-07:00"
+    },
+    {
+      "id": 176,
+      "from_node_id": 170,
+      "to_node_id": 174,
+      "from_change_id": "3aa6cf77-7dec-4a57-bed0-b66fc9a11ad1",
+      "to_change_id": "11f0ea7b-d5a1-4a3b-a06c-c8f1bcf76a26",
+      "edge_type": "leads_to",
+      "weight": 1.0,
+      "rationale": "Same filtered-audience pattern, two more slices",
+      "created_at": "2026-09-18T11:23:01.183291-07:00"
     }
   ]
 }
