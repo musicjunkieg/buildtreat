@@ -34,6 +34,7 @@ import {
 } from '$lib/server/registration';
 import { emailConfigured, sendEmail } from '$lib/server/email';
 import { broadcastHtml } from '$lib/server/email-template';
+import { DM_MAX_GRAPHEMES, createDmSession, dmConfigured, graphemeCount, resolveHandle, sendDm } from '$lib/server/bsky-dm';
 import {
 	audienceCounts,
 	audienceRecipients,
@@ -90,6 +91,8 @@ export interface OrganizerPageData {
 	registrationsUnavailable: boolean;
 	/** False until COMAIL_API_KEY + vars are set — renders setup hints. */
 	emailConfigured: boolean;
+	/** False until the BSKY_DM_* secrets are set — renders setup hints. */
+	dmConfigured: boolean;
 	broadcasts: BroadcastView[];
 	/** Recipient count per broadcast audience, for the compose selector. */
 	audiences: AudienceCount[];
@@ -114,6 +117,7 @@ const EMPTY: Omit<OrganizerPageData, 'authState'> = {
 	anchorsUnavailable: false,
 	registrationsUnavailable: false,
 	emailConfigured: false,
+	dmConfigured: false,
 	broadcasts: [],
 	audiences: [],
 	registrations: [],
@@ -211,6 +215,7 @@ export const load: PageServerLoad = async ({ locals, platform, url }): Promise<O
 		anchorsUnavailable,
 		registrationsUnavailable,
 		emailConfigured: emailConfigured(platform?.env ?? {}),
+		dmConfigured: dmConfigured(platform?.env ?? {}),
 		broadcasts,
 		audiences: audienceCounts(responses, waitlist, registrations),
 		registrations: registrations.map(toRegistrationView),
@@ -355,20 +360,70 @@ export const actions: Actions = {
 		if (!emailConfigured(platform?.env ?? {})) return fail(503, { message: 'Email is not configured yet' });
 
 		const [responses, waitlist, registrations] = await Promise.all([getAllResponses(db), listWaitlist(db), listRegistrations(db)]);
-		const recipients = audienceRecipients(audience, responses, waitlist, registrations);
+		const recipients = audienceRecipients(audience, responses, waitlist, registrations, 'email');
 		if (!recipients.length) return fail(400, { message: 'Nobody with an email in that audience' });
 
-		const id = await createBroadcast(db, { subject, body, audience, sentBy: locals.did!, recipients });
+		const id = await createBroadcast(db, { channel: 'email', subject, body, audience, sentBy: locals.did!, recipients });
 		const worklist = await unsentRecipients(db, id);
 		const run = await runBroadcast(
 			worklist,
-			(to) => sendEmail(platform!.env, { to, subject, text: body, html: broadcastHtml(subject, body), category: 'broadcast' }),
+			(r) => sendEmail(platform!.env, { to: r.email, subject, text: body, html: broadcastHtml(subject, body), category: 'broadcast' }),
 			(did, result) => markRecipient(db, id, did, result)
 		);
 		return { message: broadcastMessage(run) };
 	},
 
-	emailRetry: async ({ request, locals, platform }) => {
+	dmTest: async ({ request, locals, platform }) => {
+		requireOrganizer(locals, platform);
+		const form = await request.formData();
+		const to = String(form.get('to') ?? '').trim();
+		const body = String(form.get('body') ?? '').trim();
+		if (!to) return fail(400, { message: 'Enter a handle to test with' });
+		const tooLong = dmTooLong(body);
+		if (tooLong) return fail(400, tooLong);
+		const session = await createDmSession(platform?.env ?? {});
+		if (!session.ok) return fail(502, { message: dmSessionMessage(session) });
+		const did = await resolveHandle(session.session, to);
+		if (!did) return fail(400, { message: `Couldn’t resolve ${to} to an account` });
+		const result = await sendDm(session.session, did, body);
+		if (!result.ok) {
+			return fail(502, { message: `Test DM failed (${result.code})${result.detail ? ` — ${result.detail}` : ''}` });
+		}
+		return { message: `Test DM sent to ${to}` };
+	},
+
+	dmBroadcast: async ({ request, locals, platform }) => {
+		requireOrganizer(locals, platform);
+		const db = platform?.env?.DB;
+		if (!db) return fail(503, { message: 'Storage is not available right now' });
+		const form = await request.formData();
+		const body = String(form.get('body') ?? '').trim();
+		const audience = String(form.get('audience') ?? 'all');
+		const tooLong = dmTooLong(body);
+		if (tooLong) return fail(400, tooLong);
+		if (!isAudience(audience)) return fail(400, { message: 'Pick who this goes to' });
+		if (!dmConfigured(platform?.env ?? {})) return fail(503, { message: 'Bluesky DMs are not configured yet' });
+
+		const [responses, waitlist, registrations] = await Promise.all([getAllResponses(db), listWaitlist(db), listRegistrations(db)]);
+		const recipients = audienceRecipients(audience, responses, waitlist, registrations, 'dm');
+		if (!recipients.length) return fail(400, { message: 'Nobody in that audience' });
+
+		// Sign in before snapshotting so a bad app password doesn't leave a
+		// broadcast with every row pending and nothing to retry against.
+		const session = await createDmSession(platform!.env);
+		if (!session.ok) return fail(502, { message: dmSessionMessage(session) });
+
+		const id = await createBroadcast(db, { channel: 'dm', subject: '', body, audience, sentBy: locals.did!, recipients });
+		const worklist = await unsentRecipients(db, id);
+		const run = await runBroadcast(
+			worklist,
+			(r) => sendDm(session.session, r.did, body),
+			(did, result) => markRecipient(db, id, did, result)
+		);
+		return { message: broadcastMessage(run) };
+	},
+
+	retryBroadcast: async ({ request, locals, platform }) => {
 		requireOrganizer(locals, platform);
 		const db = platform?.env?.DB;
 		if (!db) return fail(503, { message: 'Storage is not available right now' });
@@ -376,15 +431,28 @@ export const actions: Actions = {
 		if (!Number.isInteger(id)) return fail(400, { message: 'Missing broadcast' });
 		const broadcast = await getBroadcast(db, id);
 		if (!broadcast) return fail(400, { message: 'Unknown broadcast' });
-		if (!emailConfigured(platform?.env ?? {})) return fail(503, { message: 'Email is not configured yet' });
 
 		const worklist = await unsentRecipients(db, id);
 		if (!worklist.length) return fail(400, { message: 'Nothing left to retry for that broadcast' });
+
+		if (broadcast.channel === 'dm') {
+			if (!dmConfigured(platform?.env ?? {})) return fail(503, { message: 'Bluesky DMs are not configured yet' });
+			const session = await createDmSession(platform!.env);
+			if (!session.ok) return fail(502, { message: dmSessionMessage(session) });
+			const run = await runBroadcast(
+				worklist,
+				(r) => sendDm(session.session, r.did, broadcast.body),
+				(did, result) => markRecipient(db, id, did, result)
+			);
+			return { message: broadcastMessage(run) };
+		}
+
+		if (!emailConfigured(platform?.env ?? {})) return fail(503, { message: 'Email is not configured yet' });
 		const run = await runBroadcast(
 			worklist,
-			(to) =>
+			(r) =>
 				sendEmail(platform!.env, {
-					to,
+					to: r.email,
 					subject: broadcast.subject,
 					text: broadcast.body,
 					html: broadcastHtml(broadcast.subject, broadcast.body),
@@ -395,6 +463,19 @@ export const actions: Actions = {
 		return { message: broadcastMessage(run) };
 	}
 };
+
+/** Validation shared by the DM test and broadcast actions; null when the body is fine. */
+function dmTooLong(body: string): { message: string } | null {
+	if (!body) return { message: 'Write the message first' };
+	const n = graphemeCount(body);
+	if (n > DM_MAX_GRAPHEMES) return { message: `DMs max out at ${DM_MAX_GRAPHEMES} characters — this one is ${n}` };
+	return null;
+}
+
+function dmSessionMessage(res: { ok: false; code: string; detail?: string }): string {
+	if (res.code === 'NOT_CONFIGURED') return 'Bluesky DMs are not configured yet';
+	return `Couldn’t sign in to the DM account (${res.code})${res.detail ? ` — ${res.detail}` : ''}`;
+}
 
 /* ── dev preview fixtures ─────────────────────────────────────────────── */
 
@@ -574,6 +655,7 @@ function previewData(): Omit<OrganizerPageData, 'authState' | 'preview' | 'deadl
 		anchorsUnavailable: false,
 		registrationsUnavailable: false,
 		emailConfigured: true,
+		dmConfigured: true,
 		audiences: audienceCounts(responses, previewWaitlist, previewRegistrations),
 		regDeadlineDisplay: 'September 7',
 		regClosed: false,
@@ -582,17 +664,31 @@ function previewData(): Omit<OrganizerPageData, 'authState' | 'preview' | 'deadl
 		regMissing: noResponseHandles(previewRegistrations, previewAllowlist),
 		broadcasts: [
 			{
+				id: 2,
+				channel: 'dm',
+				subject: '',
+				body: 'Hey — you said you were in for December. Registration closes Sunday: buildersretre.at/register',
+				audience: 'yes_unregistered',
+				sentBy: 'did:plc:h3wpawnrlptr4534chevddo6',
+				createdAt: '2026-09-18T19:02:00Z',
+				recipients: [
+					{ did: 'did:plc:preview4', email: '', handle: 'ana.example', status: 'sent', errorCode: null, messageId: '3lz2a' },
+					{ did: 'did:plc:preview6', email: '', handle: 'ren.bsky.social', status: 'failed', errorCode: 'MessagesDisabled', messageId: null }
+				]
+			},
+			{
 				id: 1,
+				channel: 'email',
 				subject: 'October dates are locked',
 				body: 'Hi builders — we picked the window. Details on the site.',
 				audience: 'all',
 				sentBy: 'did:plc:h3wpawnrlptr4534chevddo6',
 				createdAt: '2026-08-14T20:11:00Z',
 				recipients: [
-					{ did: 'did:plc:preview0', email: 'maren0@example.com', status: 'sent', errorCode: null, messageId: '101' },
-					{ did: 'did:plc:preview1', email: 'chris1@example.com', status: 'sent', errorCode: null, messageId: '102' },
-					{ did: 'did:plc:preview2', email: 'koko2@example.com', status: 'failed', errorCode: 'INVALID_RECIPIENT_DOMAIN', messageId: null },
-					{ did: 'did:plc:preview3', email: 'evan3@example.com', status: 'pending', errorCode: 'RATE_LIMITED', messageId: null }
+					{ did: 'did:plc:preview0', email: 'maren0@example.com', handle: null, status: 'sent', errorCode: null, messageId: '101' },
+					{ did: 'did:plc:preview1', email: 'chris1@example.com', handle: null, status: 'sent', errorCode: null, messageId: '102' },
+					{ did: 'did:plc:preview2', email: 'koko2@example.com', handle: null, status: 'failed', errorCode: 'INVALID_RECIPIENT_DOMAIN', messageId: null },
+					{ did: 'did:plc:preview3', email: 'evan3@example.com', handle: null, status: 'pending', errorCode: 'RATE_LIMITED', messageId: null }
 				]
 			}
 		]

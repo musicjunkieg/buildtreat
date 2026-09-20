@@ -1,5 +1,29 @@
 [
   {
+    "hash": "931b8b6379c22bc8eaf97e9d03cbca46dc821b9d",
+    "short_hash": "931b8b6",
+    "author": "Bryan Guffey",
+    "date": "2026-09-18T11:32:07-07:00",
+    "message": "feat: 'Registered' + 'not registered' broadcast audiences; Everyone reaches survey-less registrants (#38)\n\nThree new audiences for the compose selector:\n\n- 'Yes, not registered' / 'Maybe, not registered': survey interest with\n  no registration row of any status — the \"you said you're in, please\n  register\" nudges. A decline counts as answered and drops them.\n- 'Registered': confirmed registrations at their registration email.\n\n'Everyone' now also includes confirmed registrants who never took the\nsurvey (currently one person, invited late and sent straight to the\nform). Previously every audience was derived from survey rows, so such\na person was unreachable from the panel entirely.\n\nClaude-Session: https://claude.ai/code/session_01YS7dro4fFpSEXJ9WtXmaBX\n\nCo-authored-by: Claude Fable 5 <noreply@anthropic.com>",
+    "files_changed": 4
+  },
+  {
+    "hash": "65d79bc9ff27fde515b0d74d7059a1ed57f2c5f0",
+    "short_hash": "65d79bc",
+    "author": "Bryan Guffey",
+    "date": "2026-09-18T11:26:08-07:00",
+    "message": "feat: 'Registered' + 'not registered' broadcast audiences; Everyone reaches survey-less registrants\n\nThree new audiences for the compose selector:\n\n- 'Yes, not registered' / 'Maybe, not registered': survey interest with\n  no registration row of any status — the \"you said you're in, please\n  register\" nudges. A decline counts as answered and drops them.\n- 'Registered': confirmed registrations at their registration email.\n\n'Everyone' now also includes confirmed registrants who never took the\nsurvey (currently one person, invited late and sent straight to the\nform). Previously every audience was derived from survey rows, so such\na person was unreachable from the panel entirely.\n\nClaude-Session: https://claude.ai/code/session_01YS7dro4fFpSEXJ9WtXmaBX\nCo-Authored-By: Claude Fable 5 <noreply@anthropic.com>",
+    "files_changed": 4
+  },
+  {
+    "hash": "0825f0e941299238a3cd404d9179af49263ec53c",
+    "short_hash": "0825f0e",
+    "author": "Bryan Guffey",
+    "date": "2026-09-18T10:38:00-07:00",
+    "message": "feat: 'Travel help' broadcast audience for the support-questions nudge (#37)\n\nSurvey respondents who said they could cover only some or none of their\ntravel, minus anyone who has already answered the registration's support\nquestions or declined. Mailed at the registration email when there is\none. Counts show in the compose selector like the other audiences.\n\n\nClaude-Session: https://claude.ai/code/session_01YS7dro4fFpSEXJ9WtXmaBX\n\nCo-authored-by: Claude Fable 5 <noreply@anthropic.com>",
+    "files_changed": 5
+  },
+  {
     "hash": "0825f0e941299238a3cd404d9179af49263ec53c",
     "short_hash": "0825f0e",
     "author": "Bryan Guffey",
@@ -14,14 +38,6 @@
     "date": "2026-09-18T10:18:55-07:00",
     "message": "feat: 'Travel help' broadcast audience for the support-questions nudge\n\nSurvey respondents who said they could cover only some or none of their\ntravel, minus anyone who has already answered the registration's support\nquestions or declined. Mailed at the registration email when there is\none. Counts show in the compose selector like the other audiences.\n\nCo-Authored-By: Claude Fable 5 <noreply@anthropic.com>\nClaude-Session: https://claude.ai/code/session_01YS7dro4fFpSEXJ9WtXmaBX",
     "files_changed": 5
-  },
-  {
-    "hash": "be53b57dc5205893c407720f6e5e6a6e8fac71c1",
-    "short_hash": "be53b57",
-    "author": "Bryan Guffey",
-    "date": "2026-09-18T10:06:58-07:00",
-    "message": "feat: travel-support amount + contingency in registration (#36)\n\n* feat: travel-support amount + contingency in registration (migration 0008)\n\nAnyone whose survey travel answer wasn't \"I can cover it\" now gets a\nTravel support section in registration: level (cover it / some / can't),\na whole-dollar estimate, and whether attending depends on the fund. The\nlevel is pre-seeded from the survey answer. Organizer roster gets a\nsupport rollup (people, requested $, contingent N · $, covering own),\na Support column, CSV columns, and an edit form section; confirmation\nemail echoes the request.\n\nRequires migrations/0008_travel_support.sql on prod D1 before deploy —\nthe SELECT column list includes the new columns.\n\nCo-Authored-By: Claude Fable 5 <noreply@anthropic.com>\nClaude-Session: https://claude.ai/code/session_01YS7dro4fFpSEXJ9WtXmaBX\n\n* fix: always require amount + contingency for a chosen support level; 503 on survey lookup failure\n\n- A partial/full support level now requires the dollar estimate and the\n  contingency answer whoever is editing — the organizer form marks them\n  required too. `support` only governs whether a level must be chosen.\n- The register action no longer treats a failed survey lookup as \"never\n  surveyed\" (which would demand fields a form built from a stored \"yes\"\n  never rendered); it returns 503 and logs instead.\n\nAddresses CodeRabbit review on #36.\n\nCo-Authored-By: Claude Fable 5 <noreply@anthropic.com>\nClaude-Session: https://claude.ai/code/session_01YS7dro4fFpSEXJ9WtXmaBX\n\n* chore: scope vitest to src/ so eval worktrees don't fail the pre-push suite\n\nCo-Authored-By: Claude Fable 5 <noreply@anthropic.com>\nClaude-Session: https://claude.ai/code/session_01YS7dro4fFpSEXJ9WtXmaBX\n\n---------\n\nCo-authored-by: Claude Fable 5 <noreply@anthropic.com>",
-    "files_changed": 20
   },
   {
     "hash": "43f3396102b9749a134994d5c9943b9bd756514a",

@@ -624,7 +624,8 @@ finish review, the verdict, and DESIGN.md.
 			/>
 
 			<EmailPanel
-				configured={data.emailConfigured}
+				emailConfigured={data.emailConfigured}
+				dmConfigured={data.dmConfigured}
 				broadcasts={data.broadcasts}
 				audiences={data.audiences}
 			/>
