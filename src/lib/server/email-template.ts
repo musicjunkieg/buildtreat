@@ -315,14 +315,15 @@ export function heroImage(): { src: string } {
 /**
  * Where we're staying. One full-width shot of the east valley — Bermuda Dunes itself has no usable
  * open-licensed photography, so this is the La Quinta Resort a few miles down Highway 111, same
- * Santa Rosa mountains, same light. Email audiences only; the public site stays at "Palm Springs".
+ * Santa Rosa mountains, same light — and the caption says so, so nobody mistakes it for the house.
+ * Email audiences only; the public site stays at "Palm Springs".
  */
 export function locationImages(): EmailImage[] {
 	return [
 		{
 			src: 'https://buildersretre.at/media/email-loc-bermuda-dunes.jpg',
 			alt: 'Spanish-style villas, palms and a pool at sunrise below the Santa Rosa Mountains in the east Coachella Valley',
-			label: 'Bermuda Dunes'
+			label: 'La Quinta, a few miles from the house'
 		}
 	];
 }

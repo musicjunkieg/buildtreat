@@ -132,7 +132,7 @@ describe('images', () => {
 		expect(html).not.toContain('email-loc-palm-springs');
 		expect(html).not.toContain('email-loc-coachella-valley');
 		expect(html).toMatch(/<img[^>]*alt="[^"]*Santa Rosa Mountains[^"]*"/);
-		expect(html).toContain('>Bermuda Dunes</div>');
+		expect(html).toContain('>La Quinta, a few miles from the house</div>');
 		expect(html).toContain('width="100.00%"');
 		expect(html).toContain('max-width:600px');
 	});
