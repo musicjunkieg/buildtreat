@@ -39,7 +39,7 @@ export function confirmationEmail(reg: Registration): { subject: string; text: s
 		'',
 		`You’re registered for the Atmospheric Builders’ Retreat, ${retreatDates.display}.`,
 		'',
-		`Where: ${retreatLocation.display}. ${retreatLocation.pending} — we’ll email the exact house and an itinerary once it’s booked.`,
+		`Where: ${retreatLocation.display}. ${retreatLocation.pending} — we’ll email the exact house and an itinerary.`,
 		`Arrive ${retreatDates.arrive}, leave ${retreatDates.depart}. Lodging and food are covered; you cover your travel.`,
 		'',
 		travel,

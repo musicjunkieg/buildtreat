@@ -166,13 +166,13 @@ describe('broadcastHtml', () => {
 		expect(html).toContain('See you in the desert');
 		expect(html).toContain('email-hero.jpg');
 		expect(html).toContain('December 4–7, 2026');
-		expect(html).toContain('Palm Springs or Coachella Valley');
+		expect(html).toContain('Palm Springs');
 		expect(html).toContain('href="https://buildersretre.at"');
 	});
 });
 
 describe('retreatFacts', () => {
-	it('carries the locked dates and honest venue line', () => {
+	it('carries the locked dates and the public venue line', () => {
 		const facts = retreatFacts();
 		expect(facts.map((f) => f.label)).toEqual(['When', 'Where']);
 		expect(facts[1].value).toContain('Palm Springs');

@@ -1,19 +1,27 @@
 [
   {
+    "hash": "8df13352cf332f9c903d6c1a724b5b2f90faeae4",
+    "short_hash": "8df1335",
+    "author": "Bryan Guffey",
+    "date": "2026-10-09T14:16:26-07:00",
+    "message": "feat: markdown headings + lists in broadcast emails; named From\n\nThe branded email body only knew paragraphs, soft breaks, bold, italic\nand links, so `## Location` and `- bullet` lines went out as literal\ntext. The body renderer now parses blocks: `#`–`###` lines become\ndisplay-voice h2 / kicker-style h3, blocks opening with `- `, `* `, `• `\nor `1. ` become ul/ol (unmarked lines continue the item as soft breaks),\neverything else stays a paragraph. `##Travel` without a space counts;\n`#1 priority` does not. Markers are stripped from the preheader. The\nplain-text alternative is still the author's text as typed.\n\nFrom header: EMAIL_FROM_NAME (\"Bryan Guffey, Atmospheric Builders'\nRetreat\") is wrapped as a quoted RFC 5322 mailbox around EMAIL_FROM,\nwith quotes/backslashes/CRLF stripped so nothing can break out of the\ndisplay name. Unset → bare address as before.\n\nCompose panel: body label drops \"(plain text)\" and gains a one-line\nmarkup hint.\n\nCo-Authored-By: Claude Fable 5 <noreply@anthropic.com>\nClaude-Session: https://claude.ai/code/session_01YS7dro4fFpSEXJ9WtXmaBX",
+    "files_changed": 9
+  },
+  {
+    "hash": "bdd5645e85e1a1f8ba4631739ca4f4f8b5334adc",
+    "short_hash": "bdd5645",
+    "author": "Bryan Guffey",
+    "date": "2026-09-19T17:02:50-07:00",
+    "message": "feat: Bluesky DM channel for organizer broadcasts (#39)\n\nThe broadcast panel can now send to an audience as Bluesky DMs as well\nas email. DMs go out from a dedicated sending account signed in with an\napp password (BSKY_DM_HANDLE + BSKY_DM_APP_PASSWORD secrets) — the\norganizer's own OAuth session is pinned to the `atproto` scope, so chat\ncan't ride on it. Each send is getConvoForMembers → sendMessage through\nthe PDS with the chat-service proxy header; URLs become link facets.\n\n- src/lib/server/bsky-dm.ts: session, handle resolution, sendDm with the\n  same SendResult shape as email so runBroadcast is channel-agnostic.\n  Recipient-side refusals (MessagesDisabled, NotFollowedBySender, blocks,\n  …) mark the row failed; 401/429/5xx/network pause the run for Retry.\n- broadcasts.ts: `channel` on broadcasts, `handle` on recipient rows\n  (migration 0009). Audience resolution is split into audienceMembers\n  (one per DID) and a per-channel recipient list — email still dedupes by\n  address; DM keeps everyone, so people with no or shared emails are\n  reachable. Counts are per channel.\n- Organizer: dmTest / dmBroadcast actions; emailRetry becomes\n  retryBroadcast and branches on the stored channel.\n- EmailPanel: Email / Bluesky DM toggle, subject hidden for DMs, live\n  1000-grapheme counter (shared src/lib/dm-text.ts), test-by-handle,\n  channel-aware counts and history.\n\n\nClaude-Session: https://claude.ai/code/session_01YS7dro4fFpSEXJ9WtXmaBX\n\nCo-authored-by: Claude Fable 5 <noreply@anthropic.com>",
+    "files_changed": 13
+  },
+  {
     "hash": "b14c725cb7dd8eb5e2799356a574a4ca748b99d3",
     "short_hash": "b14c725",
     "author": "Bryan Guffey",
     "date": "2026-09-18T11:49:33-07:00",
     "message": "feat: Bluesky DM channel for organizer broadcasts\n\nThe broadcast panel can now send to an audience as Bluesky DMs as well\nas email. DMs go out from a dedicated sending account signed in with an\napp password (BSKY_DM_HANDLE + BSKY_DM_APP_PASSWORD secrets) — the\norganizer's own OAuth session is pinned to the `atproto` scope, so chat\ncan't ride on it. Each send is getConvoForMembers → sendMessage through\nthe PDS with the chat-service proxy header; URLs become link facets.\n\n- src/lib/server/bsky-dm.ts: session, handle resolution, sendDm with the\n  same SendResult shape as email so runBroadcast is channel-agnostic.\n  Recipient-side refusals (MessagesDisabled, NotFollowedBySender, blocks,\n  …) mark the row failed; 401/429/5xx/network pause the run for Retry.\n- broadcasts.ts: `channel` on broadcasts, `handle` on recipient rows\n  (migration 0009). Audience resolution is split into audienceMembers\n  (one per DID) and a per-channel recipient list — email still dedupes by\n  address; DM keeps everyone, so people with no or shared emails are\n  reachable. Counts are per channel.\n- Organizer: dmTest / dmBroadcast actions; emailRetry becomes\n  retryBroadcast and branches on the stored channel.\n- EmailPanel: Email / Bluesky DM toggle, subject hidden for DMs, live\n  1000-grapheme counter (shared src/lib/dm-text.ts), test-by-handle,\n  channel-aware counts and history.\n\nCo-Authored-By: Claude Fable 5 <noreply@anthropic.com>\nClaude-Session: https://claude.ai/code/session_01YS7dro4fFpSEXJ9WtXmaBX",
     "files_changed": 13
-  },
-  {
-    "hash": "931b8b6379c22bc8eaf97e9d03cbca46dc821b9d",
-    "short_hash": "931b8b6",
-    "author": "Bryan Guffey",
-    "date": "2026-09-18T11:32:07-07:00",
-    "message": "feat: 'Registered' + 'not registered' broadcast audiences; Everyone reaches survey-less registrants (#38)\n\nThree new audiences for the compose selector:\n\n- 'Yes, not registered' / 'Maybe, not registered': survey interest with\n  no registration row of any status — the \"you said you're in, please\n  register\" nudges. A decline counts as answered and drops them.\n- 'Registered': confirmed registrations at their registration email.\n\n'Everyone' now also includes confirmed registrants who never took the\nsurvey (currently one person, invited late and sent straight to the\nform). Previously every audience was derived from survey rows, so such\na person was unreachable from the panel entirely.\n\nClaude-Session: https://claude.ai/code/session_01YS7dro4fFpSEXJ9WtXmaBX\n\nCo-authored-by: Claude Fable 5 <noreply@anthropic.com>",
-    "files_changed": 4
   },
   {
     "hash": "931b8b6379c22bc8eaf97e9d03cbca46dc821b9d",
