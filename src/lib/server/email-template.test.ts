@@ -126,17 +126,26 @@ describe('brandedEmail', () => {
 });
 
 describe('images', () => {
-	it('renders a labeled side-by-side photo row with alt text', () => {
+	it('renders the single full-width venue photo with label and alt text', () => {
 		const html = brandedEmail({ heading: 'H', body: 'B', images: locationImages() });
-		expect(html).toContain('https://buildersretre.at/media/email-loc-palm-springs.jpg');
-		expect(html).toContain('https://buildersretre.at/media/email-loc-coachella-valley.jpg');
-		expect(html).toContain('alt="Palm Springs city lights at dusk from the Aerial Tramway"');
-		expect(html).toContain('>Palm Springs</div>');
-		expect(html).toContain('>Coachella Valley</div>');
+		expect(html).toContain('https://buildersretre.at/media/email-loc-bermuda-dunes.jpg');
+		expect(html).not.toContain('email-loc-palm-springs');
+		expect(html).not.toContain('email-loc-coachella-valley');
+		expect(html).toMatch(/<img[^>]*alt="[^"]*Santa Rosa Mountains[^"]*"/);
+		expect(html).toContain('>Bermuda Dunes</div>');
+		expect(html).toContain('width="100.00%"');
+		expect(html).toContain('max-width:600px');
 	});
 
-	it('uses fluid percentage cells so narrow clients shrink the row', () => {
-		const html = brandedEmail({ heading: 'H', body: 'B', images: locationImages() });
+	it('uses fluid percentage cells so narrow clients shrink a multi-photo row', () => {
+		const html = brandedEmail({
+			heading: 'H',
+			body: 'B',
+			images: [
+				{ src: 'https://x/a.jpg', alt: 'A', label: 'A' },
+				{ src: 'https://x/b.jpg', alt: 'B', label: 'B' }
+			]
+		});
 		expect(html).toContain('width="50.00%"');
 		expect(html).toContain('width:50.00%');
 		expect(html).toContain('max-width:294px');
