@@ -190,6 +190,63 @@ export function audienceCounts(
 	}));
 }
 
+/**
+ * One pickable person for the compose form's "also include" list: everyone
+ * the organizer panel knows about — survey respondents, registrants of
+ * either status, waitlisters promoted or not — plus the audiences that
+ * would already reach them, so the picker can hide people the chosen
+ * audience covers and the count can stay honest.
+ */
+export interface BroadcastPerson {
+	did: string;
+	handle: string | null;
+	/** Registration email when there is one, else survey, else waitlist. */
+	email: string;
+	audiences: Audience[];
+}
+
+/**
+ * Every known person once, in source order (survey, registration,
+ * waitlist), tagged with the audiences they fall into. A declined
+ * registrant or a promoted waitlister belongs to no audience at all —
+ * exactly who the picker exists for.
+ */
+export function broadcastPeople(
+	responses: AudienceResponse[],
+	waitlist: AudienceWaitlistEntry[],
+	registrations: AudienceRegistration[] = []
+): BroadcastPerson[] {
+	const regByDid = new Map(registrations.map((r) => [r.did, r]));
+	const seen = new Set<string>();
+	const people: BroadcastPerson[] = [];
+	for (const row of [...responses, ...registrations, ...waitlist]) {
+		if (seen.has(row.did)) continue;
+		seen.add(row.did);
+		const reg = regByDid.get(row.did);
+		people.push({
+			did: row.did,
+			handle: row.handle ?? reg?.handle ?? null,
+			email: (reg?.email || row.email).trim(),
+			audiences: []
+		});
+	}
+	for (const audience of AUDIENCES) {
+		const members = new Set(audienceMembers(audience, responses, waitlist, registrations).map((m) => m.did));
+		for (const p of people) if (members.has(p.did)) p.audiences.push(audience);
+	}
+	return people;
+}
+
+/**
+ * Audience recipients plus hand-picked extras, under the channel's rules:
+ * the audience row wins when a DID appears in both, then email drops
+ * blank and shared addresses while DM keeps every DID.
+ */
+export function mergeRecipients(base: RecipientInput[], extras: BroadcastPerson[], channel: Channel): RecipientInput[] {
+	const merged = dedupeByDid([...base, ...extras.map((p) => ({ did: p.did, email: p.email, handle: p.handle }))]);
+	return channel === 'email' ? dedupeRecipients(merged) : merged;
+}
+
 export interface BroadcastRecipient {
 	did: string;
 	email: string;

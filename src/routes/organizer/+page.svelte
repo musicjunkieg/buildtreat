@@ -628,6 +628,7 @@ finish review, the verdict, and DESIGN.md.
 				dmConfigured={data.dmConfigured}
 				broadcasts={data.broadcasts}
 				audiences={data.audiences}
+				people={data.people}
 			/>
 		</div>
 	</main>

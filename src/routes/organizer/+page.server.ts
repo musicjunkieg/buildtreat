@@ -38,14 +38,17 @@ import { DM_MAX_GRAPHEMES, createDmSession, dmConfigured, graphemeCount, resolve
 import {
 	audienceCounts,
 	audienceRecipients,
+	broadcastPeople,
 	createBroadcast,
 	getBroadcast,
 	isAudience,
+	mergeRecipients,
 	listBroadcasts,
 	markRecipient,
 	runBroadcast,
 	unsentRecipients,
 	type AudienceCount,
+	type BroadcastPerson,
 	type BroadcastView
 } from '$lib/server/broadcasts';
 import { EMAIL_RE } from '$lib/server/db';
@@ -96,6 +99,8 @@ export interface OrganizerPageData {
 	broadcasts: BroadcastView[];
 	/** Recipient count per broadcast audience, for the compose selector. */
 	audiences: AudienceCount[];
+	/** Everyone the compose form can add one at a time, beyond the picked audience. */
+	people: BroadcastPerson[];
 	registrations: RegistrationView[];
 	regDeadlineDisplay: string | null;
 	regClosed: boolean;
@@ -120,6 +125,7 @@ const EMPTY: Omit<OrganizerPageData, 'authState'> = {
 	dmConfigured: false,
 	broadcasts: [],
 	audiences: [],
+	people: [],
 	registrations: [],
 	regDeadlineDisplay: null,
 	regClosed: false,
@@ -218,6 +224,7 @@ export const load: PageServerLoad = async ({ locals, platform, url }): Promise<O
 		dmConfigured: dmConfigured(platform?.env ?? {}),
 		broadcasts,
 		audiences: audienceCounts(responses, waitlist, registrations),
+		people: broadcastPeople(responses, waitlist, registrations),
 		registrations: registrations.map(toRegistrationView),
 		regDeadlineDisplay: reg.display,
 		regClosed: reg.closed,
@@ -225,6 +232,27 @@ export const load: PageServerLoad = async ({ locals, platform, url }): Promise<O
 		regMissing: noResponseHandles(registrations, allowlist)
 	};
 };
+
+/**
+ * The hand-picked extras posted as repeated `extra` fields, resolved against
+ * the people the panel actually knows. An unknown DID means a stale form
+ * (someone dropped out between page load and send) or a tampered one;
+ * either way the organizer should reload rather than mail a guess.
+ */
+function pickExtras(
+	form: FormData,
+	people: BroadcastPerson[]
+): { ok: true; people: BroadcastPerson[] } | { ok: false; message: string } {
+	const wanted = [...new Set(form.getAll('extra').map(String).filter(Boolean))];
+	const byDid = new Map(people.map((p) => [p.did, p]));
+	const picked: BroadcastPerson[] = [];
+	for (const did of wanted) {
+		const person = byDid.get(did);
+		if (!person) return { ok: false, message: 'One of the added people is no longer on the list — reload and try again' };
+		picked.push(person);
+	}
+	return { ok: true, people: picked };
+}
 
 export const actions: Actions = {
 	addHandles: async ({ request, locals, platform }) => {
@@ -360,8 +388,14 @@ export const actions: Actions = {
 		if (!emailConfigured(platform?.env ?? {})) return fail(503, { message: 'Email is not configured yet' });
 
 		const [responses, waitlist, registrations] = await Promise.all([getAllResponses(db), listWaitlist(db), listRegistrations(db)]);
-		const recipients = audienceRecipients(audience, responses, waitlist, registrations, 'email');
-		if (!recipients.length) return fail(400, { message: 'Nobody with an email in that audience' });
+		const extras = pickExtras(form, broadcastPeople(responses, waitlist, registrations));
+		if (!extras.ok) return fail(400, { message: extras.message });
+		const recipients = mergeRecipients(
+			audienceRecipients(audience, responses, waitlist, registrations, 'email'),
+			extras.people,
+			'email'
+		);
+		if (!recipients.length) return fail(400, { message: 'Nobody with an email to send to' });
 
 		const id = await createBroadcast(db, { channel: 'email', subject, body, audience, sentBy: locals.did!, recipients });
 		const worklist = await unsentRecipients(db, id);
@@ -405,8 +439,14 @@ export const actions: Actions = {
 		if (!dmConfigured(platform?.env ?? {})) return fail(503, { message: 'Bluesky DMs are not configured yet' });
 
 		const [responses, waitlist, registrations] = await Promise.all([getAllResponses(db), listWaitlist(db), listRegistrations(db)]);
-		const recipients = audienceRecipients(audience, responses, waitlist, registrations, 'dm');
-		if (!recipients.length) return fail(400, { message: 'Nobody in that audience' });
+		const extras = pickExtras(form, broadcastPeople(responses, waitlist, registrations));
+		if (!extras.ok) return fail(400, { message: extras.message });
+		const recipients = mergeRecipients(
+			audienceRecipients(audience, responses, waitlist, registrations, 'dm'),
+			extras.people,
+			'dm'
+		);
+		if (!recipients.length) return fail(400, { message: 'Nobody to send to' });
 
 		// Sign in before snapshotting so a bad app password doesn't leave a
 		// broadcast with every row pending and nothing to retry against.
@@ -657,6 +697,7 @@ function previewData(): Omit<OrganizerPageData, 'authState' | 'preview' | 'deadl
 		emailConfigured: true,
 		dmConfigured: true,
 		audiences: audienceCounts(responses, previewWaitlist, previewRegistrations),
+		people: broadcastPeople(responses, previewWaitlist, previewRegistrations),
 		regDeadlineDisplay: 'September 7',
 		regClosed: false,
 		registrations: previewRegistrations.map(toRegistrationView),

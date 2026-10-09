@@ -1,11 +1,11 @@
 [
   {
-    "hash": "daf946287834366b404c1d243eb2a934451e6073",
-    "short_hash": "daf9462",
+    "hash": "b5ba4750f49a7fc3c0d25196803b78a91b9edc27",
+    "short_hash": "b5ba475",
     "author": "Bryan Guffey",
-    "date": "2026-10-09T15:11:10-07:00",
-    "message": "fix: caption names La Quinta so the photo isn't mistaken for the house\n\nCo-Authored-By: Claude Fable 5 <noreply@anthropic.com>\nClaude-Session: https://claude.ai/code/session_01YS7dro4fFpSEXJ9WtXmaBX",
-    "files_changed": 4
+    "date": "2026-10-09T15:09:57-07:00",
+    "message": "fix: registration honors late passes after REG_DEADLINE (#43)\n\nRegistration closed on Sep 20 with a hard deadline check — an invited\nbuilder who missed it (Chris Shank) had no way in, even though the\norganizer panel already grants per-person late passes for the survey.\nregistrationGate() applies the same pass to sign-ups: the page load\nre-asks the gate for the signed-in user and the register action enforces\nit. The survey's global reopen switch is intentionally not consulted.\n\n\nClaude-Session: https://claude.ai/code/session_01YS7dro4fFpSEXJ9WtXmaBX\n\nCo-authored-by: Claude Fable 5 <noreply@anthropic.com>",
+    "files_changed": 6
   },
   {
     "hash": "d354cd4480c937ef8399256fdc8a8c0c5bd9fe4d",

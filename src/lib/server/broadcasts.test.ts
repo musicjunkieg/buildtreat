@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from 'vitest';
-import { audienceCounts, audienceRecipients, dedupeRecipients, isAudience, runBroadcast } from './broadcasts';
+import { audienceCounts, audienceRecipients, broadcastPeople, dedupeRecipients, isAudience, mergeRecipients, runBroadcast } from './broadcasts';
 import type { BroadcastRecipient } from './broadcasts';
 import type { SendResult } from './email';
 
@@ -141,6 +141,62 @@ describe('audienceRecipients', () => {
 		expect(isAudience('yes')).toBe(true);
 		expect(isAudience('declined')).toBe(false);
 		expect(isAudience('')).toBe(false);
+	});
+});
+
+describe('broadcastPeople', () => {
+	it('lists every known person once, with the audiences they belong to', () => {
+		const regs = [
+			{ did: 'did:plc:y1', handle: 'y1.test', email: 'y1-new@example.com', status: 'confirmed' as const, supportNeed: null },
+			{ did: 'did:plc:s1', handle: 's1.test', email: 's1@example.com', status: 'confirmed' as const, supportNeed: null },
+			{ did: 'did:plc:d1', handle: null, email: 'd1@example.com', status: 'declined' as const, supportNeed: null }
+		];
+		const people = broadcastPeople(RESPONSES, WAITLIST, regs);
+		expect(people.map((p) => p.did)).toEqual([
+			'did:plc:y1',
+			'did:plc:y2',
+			'did:plc:m1',
+			'did:plc:n1',
+			'did:plc:n2',
+			'did:plc:s1',
+			'did:plc:d1',
+			'did:plc:w1',
+			'did:plc:w2'
+		]);
+		const y1 = people.find((p) => p.did === 'did:plc:y1')!;
+		// Registration email wins over the survey one — it's the address they confirmed last.
+		expect(y1).toEqual({
+			did: 'did:plc:y1',
+			handle: 'y1.test',
+			email: 'y1-new@example.com',
+			audiences: ['all', 'registered', 'yes', 'travel']
+		});
+		// A declined registrant is reachable one-by-one even though no audience lists them.
+		expect(people.find((p) => p.did === 'did:plc:d1')!.audiences).toEqual([]);
+		// A promoted waitlister likewise falls out of every audience but stays pickable.
+		expect(people.find((p) => p.did === 'did:plc:w2')!.audiences).toEqual([]);
+		expect(people.find((p) => p.did === 'did:plc:w1')!.audiences).toEqual(['waitlist']);
+	});
+});
+
+describe('mergeRecipients', () => {
+	const base = [{ did: 'did:plc:a', email: 'a@example.com', handle: null }];
+	const extras = [
+		{ did: 'did:plc:a', email: 'other@example.com', handle: 'a.test', audiences: [] },
+		{ did: 'did:plc:b', email: 'A@example.com', handle: 'b.test', audiences: [] },
+		{ did: 'did:plc:c', email: '', handle: 'c.test', audiences: [] },
+		{ did: 'did:plc:d', email: 'd@example.com', handle: null, audiences: [] }
+	];
+
+	it('appends extras after the audience; the audience row wins a DID clash and email collapses shared addresses', () => {
+		expect(mergeRecipients(base, extras, 'email')).toEqual([
+			{ did: 'did:plc:a', email: 'a@example.com', handle: null },
+			{ did: 'did:plc:d', email: 'd@example.com', handle: null }
+		]);
+	});
+
+	it('keeps address-less and shared-address extras on the DM channel', () => {
+		expect(mergeRecipients(base, extras, 'dm').map((r) => r.did)).toEqual(['did:plc:a', 'did:plc:b', 'did:plc:c', 'did:plc:d']);
 	});
 });
 
