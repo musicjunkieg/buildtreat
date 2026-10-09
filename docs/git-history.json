@@ -1,5 +1,21 @@
 [
   {
+    "hash": "daf946287834366b404c1d243eb2a934451e6073",
+    "short_hash": "daf9462",
+    "author": "Bryan Guffey",
+    "date": "2026-10-09T15:11:10-07:00",
+    "message": "fix: caption names La Quinta so the photo isn't mistaken for the house\n\nCo-Authored-By: Claude Fable 5 <noreply@anthropic.com>\nClaude-Session: https://claude.ai/code/session_01YS7dro4fFpSEXJ9WtXmaBX",
+    "files_changed": 4
+  },
+  {
+    "hash": "d354cd4480c937ef8399256fdc8a8c0c5bd9fe4d",
+    "short_hash": "d354cd4",
+    "author": "Bryan Guffey",
+    "date": "2026-10-09T15:01:16-07:00",
+    "message": "fix: registration honors late passes after REG_DEADLINE\n\nRegistration closed on Sep 20 with a hard deadline check — an invited\nbuilder who missed it (Chris Shank) had no way in, even though the\norganizer panel already grants per-person late passes for the survey.\nregistrationGate() applies the same pass to sign-ups: the page load\nre-asks the gate for the signed-in user and the register action enforces\nit. The survey's global reopen switch is intentionally not consulted.\n\nCo-Authored-By: Claude Fable 5 <noreply@anthropic.com>\nClaude-Session: https://claude.ai/code/session_01YS7dro4fFpSEXJ9WtXmaBX",
+    "files_changed": 6
+  },
+  {
     "hash": "86a15d560f490449a843111aedbae5dc5cae827a",
     "short_hash": "86a15d5",
     "author": "Bryan Guffey",
@@ -22,14 +38,6 @@
     "date": "2026-10-09T14:16:26-07:00",
     "message": "feat: markdown headings + lists in broadcast emails; named From\n\nThe branded email body only knew paragraphs, soft breaks, bold, italic\nand links, so `## Location` and `- bullet` lines went out as literal\ntext. The body renderer now parses blocks: `#`–`###` lines become\ndisplay-voice h2 / kicker-style h3, blocks opening with `- `, `* `, `• `\nor `1. ` become ul/ol (unmarked lines continue the item as soft breaks),\neverything else stays a paragraph. `##Travel` without a space counts;\n`#1 priority` does not. Markers are stripped from the preheader. The\nplain-text alternative is still the author's text as typed.\n\nFrom header: EMAIL_FROM_NAME (\"Bryan Guffey, Atmospheric Builders'\nRetreat\") is wrapped as a quoted RFC 5322 mailbox around EMAIL_FROM,\nwith quotes/backslashes/CRLF stripped so nothing can break out of the\ndisplay name. Unset → bare address as before.\n\nCompose panel: body label drops \"(plain text)\" and gains a one-line\nmarkup hint.\n\nCo-Authored-By: Claude Fable 5 <noreply@anthropic.com>\nClaude-Session: https://claude.ai/code/session_01YS7dro4fFpSEXJ9WtXmaBX",
     "files_changed": 9
-  },
-  {
-    "hash": "bdd5645e85e1a1f8ba4631739ca4f4f8b5334adc",
-    "short_hash": "bdd5645",
-    "author": "Bryan Guffey",
-    "date": "2026-09-19T17:02:50-07:00",
-    "message": "feat: Bluesky DM channel for organizer broadcasts (#39)\n\nThe broadcast panel can now send to an audience as Bluesky DMs as well\nas email. DMs go out from a dedicated sending account signed in with an\napp password (BSKY_DM_HANDLE + BSKY_DM_APP_PASSWORD secrets) — the\norganizer's own OAuth session is pinned to the `atproto` scope, so chat\ncan't ride on it. Each send is getConvoForMembers → sendMessage through\nthe PDS with the chat-service proxy header; URLs become link facets.\n\n- src/lib/server/bsky-dm.ts: session, handle resolution, sendDm with the\n  same SendResult shape as email so runBroadcast is channel-agnostic.\n  Recipient-side refusals (MessagesDisabled, NotFollowedBySender, blocks,\n  …) mark the row failed; 401/429/5xx/network pause the run for Retry.\n- broadcasts.ts: `channel` on broadcasts, `handle` on recipient rows\n  (migration 0009). Audience resolution is split into audienceMembers\n  (one per DID) and a per-channel recipient list — email still dedupes by\n  address; DM keeps everyone, so people with no or shared emails are\n  reachable. Counts are per channel.\n- Organizer: dmTest / dmBroadcast actions; emailRetry becomes\n  retryBroadcast and branches on the stored channel.\n- EmailPanel: Email / Bluesky DM toggle, subject hidden for DMs, live\n  1000-grapheme counter (shared src/lib/dm-text.ts), test-by-handle,\n  channel-aware counts and history.\n\n\nClaude-Session: https://claude.ai/code/session_01YS7dro4fFpSEXJ9WtXmaBX\n\nCo-authored-by: Claude Fable 5 <noreply@anthropic.com>",
-    "files_changed": 13
   },
   {
     "hash": "b14c725cb7dd8eb5e2799356a574a4ca748b99d3",

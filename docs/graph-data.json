@@ -2067,6 +2067,72 @@
       "created_at": "2026-10-09T14:58:14.257339-07:00",
       "updated_at": "2026-10-09T14:58:14.257339-07:00",
       "metadata_json": "{\"branch\":\"feat/email-venue-photo\",\"confidence\":90}"
+    },
+    {
+      "id": 189,
+      "change_id": "edf45fc3-dd48-4f31-8833-8972b792cc75",
+      "node_type": "goal",
+      "title": "Registration ignores late passes after REG_DEADLINE — invited builder locked out",
+      "description": null,
+      "status": "pending",
+      "created_at": "2026-10-09T15:02:26.370297-07:00",
+      "updated_at": "2026-10-09T15:02:26.370297-07:00",
+      "metadata_json": "{\"branch\":\"fix/registration-late-pass\",\"confidence\":95,\"prompt\":\"Chris shank can't fill out the actual registration. Make it so he can.\"}"
+    },
+    {
+      "id": 190,
+      "change_id": "7cae7a58-777b-4821-bde3-2f21c6e5b884",
+      "node_type": "option",
+      "title": "Push REG_DEADLINE later for everyone",
+      "description": null,
+      "status": "pending",
+      "created_at": "2026-10-09T15:02:57.447768-07:00",
+      "updated_at": "2026-10-09T15:02:57.447768-07:00",
+      "metadata_json": "{\"branch\":\"fix/registration-late-pass\",\"confidence\":40}"
+    },
+    {
+      "id": 191,
+      "change_id": "7a2d4a31-ac31-46e1-840e-552299dd338a",
+      "node_type": "option",
+      "title": "Make registration honor the existing per-person late pass",
+      "description": null,
+      "status": "pending",
+      "created_at": "2026-10-09T15:02:57.460771-07:00",
+      "updated_at": "2026-10-09T15:02:57.460771-07:00",
+      "metadata_json": "{\"branch\":\"fix/registration-late-pass\",\"confidence\":90}"
+    },
+    {
+      "id": 192,
+      "change_id": "5c95b36e-c7fe-4df4-b6a2-a80afa462ede",
+      "node_type": "decision",
+      "title": "Late pass — targeted, reuses the organizer UI, no global reopen",
+      "description": null,
+      "status": "pending",
+      "created_at": "2026-10-09T15:02:57.471854-07:00",
+      "updated_at": "2026-10-09T15:02:57.471854-07:00",
+      "metadata_json": "{\"branch\":\"fix/registration-late-pass\",\"confidence\":90}"
+    },
+    {
+      "id": 193,
+      "change_id": "651ae230-5d1b-43e1-ad0d-b167c05acb7f",
+      "node_type": "action",
+      "title": "registrationGate() + load/action wiring + tests (PR #43)",
+      "description": null,
+      "status": "pending",
+      "created_at": "2026-10-09T15:02:57.485313-07:00",
+      "updated_at": "2026-10-09T15:02:57.485313-07:00",
+      "metadata_json": "{\"branch\":\"fix/registration-late-pass\",\"commit\":\"d354cd4\",\"confidence\":90}"
+    },
+    {
+      "id": 194,
+      "change_id": "f7f4e2d8-2039-4d1c-8715-c3a8aa50c40d",
+      "node_type": "outcome",
+      "title": "105 tests green, PR #43 open; prod late-pass row handed to Bryan",
+      "description": null,
+      "status": "pending",
+      "created_at": "2026-10-09T15:02:57.494692-07:00",
+      "updated_at": "2026-10-09T15:02:57.494692-07:00",
+      "metadata_json": "{\"branch\":\"fix/registration-late-pass\",\"confidence\":90}"
     }
   ],
   "edges": [
@@ -4137,6 +4203,72 @@
       "weight": 1.0,
       "rationale": "Result",
       "created_at": "2026-10-09T14:58:14.264882-07:00"
+    },
+    {
+      "id": 191,
+      "from_node_id": 189,
+      "to_node_id": 190,
+      "from_change_id": "edf45fc3-dd48-4f31-8833-8972b792cc75",
+      "to_change_id": "7cae7a58-777b-4821-bde3-2f21c6e5b884",
+      "edge_type": "leads_to",
+      "weight": 1.0,
+      "rationale": "option",
+      "created_at": "2026-10-09T15:03:14.706599-07:00"
+    },
+    {
+      "id": 192,
+      "from_node_id": 189,
+      "to_node_id": 191,
+      "from_change_id": "edf45fc3-dd48-4f31-8833-8972b792cc75",
+      "to_change_id": "7a2d4a31-ac31-46e1-840e-552299dd338a",
+      "edge_type": "leads_to",
+      "weight": 1.0,
+      "rationale": "option",
+      "created_at": "2026-10-09T15:03:14.716673-07:00"
+    },
+    {
+      "id": 193,
+      "from_node_id": 190,
+      "to_node_id": 192,
+      "from_change_id": "7cae7a58-777b-4821-bde3-2f21c6e5b884",
+      "to_change_id": "5c95b36e-c7fe-4df4-b6a2-a80afa462ede",
+      "edge_type": "leads_to",
+      "weight": 1.0,
+      "rationale": "rejected: global",
+      "created_at": "2026-10-09T15:03:14.725950-07:00"
+    },
+    {
+      "id": 194,
+      "from_node_id": 191,
+      "to_node_id": 192,
+      "from_change_id": "7a2d4a31-ac31-46e1-840e-552299dd338a",
+      "to_change_id": "5c95b36e-c7fe-4df4-b6a2-a80afa462ede",
+      "edge_type": "leads_to",
+      "weight": 1.0,
+      "rationale": "chosen",
+      "created_at": "2026-10-09T15:03:14.733551-07:00"
+    },
+    {
+      "id": 195,
+      "from_node_id": 192,
+      "to_node_id": 193,
+      "from_change_id": "5c95b36e-c7fe-4df4-b6a2-a80afa462ede",
+      "to_change_id": "651ae230-5d1b-43e1-ad0d-b167c05acb7f",
+      "edge_type": "leads_to",
+      "weight": 1.0,
+      "rationale": "implementation",
+      "created_at": "2026-10-09T15:03:14.741231-07:00"
+    },
+    {
+      "id": 196,
+      "from_node_id": 193,
+      "to_node_id": 194,
+      "from_change_id": "651ae230-5d1b-43e1-ad0d-b167c05acb7f",
+      "to_change_id": "f7f4e2d8-2039-4d1c-8715-c3a8aa50c40d",
+      "edge_type": "leads_to",
+      "weight": 1.0,
+      "rationale": "result",
+      "created_at": "2026-10-09T15:03:14.748076-07:00"
     }
   ]
 }

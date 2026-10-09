@@ -9,6 +9,7 @@
 | `loc-joshua-tree.jpg` | Joshua tree at sunset, Joshua Tree NP | Joshua Tree National Park (NPS) | Public domain | [Commons](https://commons.wikimedia.org/wiki/File:Joshua_Tree_at_Sunset_(53712889300).jpg) |
 | `loc-san-diego.jpg` | San Diego skyline at sunset | PhysicalFilter | CC BY-SA 4.0 | [Commons](https://commons.wikimedia.org/wiki/File:San_Diego_Skyline_at_Sunset.png) (converted PNG→JPEG) |
 | `loc-la-metro.jpg` | Century City / LA skyline at sunset from Griffith | Kasper Bertelsen | CC0 | [Commons](https://commons.wikimedia.org/wiki/File:Griffith_Observatory_skyline_at_sunset._(Unsplash).jpg) |
+| `email-loc-bermuda-dunes.jpg` | La Quinta Resort villas at sunrise, Santa Rosa Mountains (email-weight 3:2 crop; stands in for Bermuda Dunes, which has no open-licensed photography) | Digimint | CC BY-SA 3.0 | [Commons](https://commons.wikimedia.org/wiki/File:La_Quinta_Resort_Sunrise_2012.jpg) |
 
 CC BY-SA images require this attribution to ship with the product; keep this
 file deployed or move the credits into a visible colophon before launch.
