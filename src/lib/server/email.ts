@@ -22,9 +22,12 @@ export type SendResult =
 
 /** The slice of Platform env the transport needs (callers pass platform.env). */
 export interface EmailEnv {
+	/**
+	 * Bare address only — comail rejects `Name <addr>` display-name forms
+	 * with INVALID_REQUEST and reserves the From header, so there is no way
+	 * to set a sender name today.
+	 */
 	EMAIL_FROM?: string;
-	/** Display name for the From header; the bare address is used when unset. */
-	EMAIL_FROM_NAME?: string;
 	COMAIL_DID?: string;
 	COMAIL_API_KEY?: string;
 }
@@ -33,16 +36,6 @@ const SEND_URL = 'https://smtp.atmos.email/v1/send';
 
 // comail codes that mean "try again later"; anything else 4xx is a hard no.
 const RETRYABLE_CODES = new Set(['RATE_LIMITED', 'QUEUE_FULL', 'TEMPORARILY_UNAVAILABLE', 'INTERNAL_ERROR']);
-
-/**
- * RFC 5322 mailbox for the From header. The name is quoted so commas and
- * apostrophes survive, and anything that could break out of the quotes or
- * inject a header is dropped.
- */
-export function fromMailbox(env: EmailEnv): string {
-	const name = env.EMAIL_FROM_NAME?.replace(/["\\\r\n]/g, '').trim();
-	return name ? `"${name}" <${env.EMAIL_FROM}>` : (env.EMAIL_FROM ?? '');
-}
 
 export function emailConfigured(env: EmailEnv): boolean {
 	return Boolean(env.EMAIL_FROM && env.COMAIL_DID && env.COMAIL_API_KEY);
@@ -65,7 +58,7 @@ export async function sendEmail(env: EmailEnv, msg: EmailMessage, fetchFn: typeo
 				Authorization: `Bearer ${env.COMAIL_API_KEY}`
 			},
 			body: JSON.stringify({
-				from: fromMailbox(env),
+				from: env.EMAIL_FROM,
 				to: msg.to,
 				subject: msg.subject,
 				text: msg.text,

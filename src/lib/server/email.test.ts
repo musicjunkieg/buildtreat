@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from 'vitest';
-import { emailConfigured, fromMailbox, sendEmail, type EmailEnv } from './email';
+import { emailConfigured, sendEmail, type EmailEnv } from './email';
 
 const ENV: EmailEnv = {
 	EMAIL_FROM: 'hello@buildersretre.at',
@@ -8,23 +8,6 @@ const ENV: EmailEnv = {
 };
 
 const MSG = { to: 'user@example.com', subject: 'Hi', text: 'Hello there' };
-
-describe('fromMailbox', () => {
-	it('is the bare address without a display name', () => {
-		expect(fromMailbox(ENV)).toBe('hello@buildersretre.at');
-		expect(fromMailbox({ ...ENV, EMAIL_FROM_NAME: '  ' })).toBe('hello@buildersretre.at');
-	});
-
-	it('quotes the display name so commas and apostrophes are safe', () => {
-		expect(fromMailbox({ ...ENV, EMAIL_FROM_NAME: "Bryan Guffey, Atmospheric Builders' Retreat" })).toBe(
-			'"Bryan Guffey, Atmospheric Builders\' Retreat" <hello@buildersretre.at>'
-		);
-	});
-
-	it('strips quotes, backslashes, and line breaks from the name', () => {
-		expect(fromMailbox({ ...ENV, EMAIL_FROM_NAME: 'Evil" <x@y>\r\nBcc: z@w' })).toBe('"Evil <x@y>Bcc: z@w" <hello@buildersretre.at>');
-	});
-});
 
 function jsonResponse(status: number, body: unknown): Response {
 	return new Response(JSON.stringify(body), { status, headers: { 'Content-Type': 'application/json' } });

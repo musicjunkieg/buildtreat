@@ -2023,6 +2023,17 @@
       "created_at": "2026-10-09T14:16:57.534465-07:00",
       "updated_at": "2026-10-09T14:16:57.534465-07:00",
       "metadata_json": "{\"branch\":\"feat/email-markdown\",\"commit\":\"8df1335\",\"confidence\":90,\"files\":[\"src/lib/server/email-template.ts\",\"src/lib/server/email.ts\"]}"
+    },
+    {
+      "id": 185,
+      "change_id": "f48f3299-cd93-49d8-a70b-4d00fd989cef",
+      "node_type": "action",
+      "title": "Venue copy: Palm Springs, address only to registrants",
+      "description": null,
+      "status": "pending",
+      "created_at": "2026-10-09T14:34:22.492399-07:00",
+      "updated_at": "2026-10-09T14:34:22.492399-07:00",
+      "metadata_json": "{\"branch\":\"feat/email-markdown\",\"commit\":\"5bb1810\",\"confidence\":90,\"files\":[\"src/lib/content.ts\"]}"
     }
   ],
   "edges": [
@@ -4060,6 +4071,17 @@
       "weight": 1.0,
       "rationale": "Organizer broadcast email fidelity",
       "created_at": "2026-10-09T14:16:57.552815-07:00"
+    },
+    {
+      "id": 188,
+      "from_node_id": 167,
+      "to_node_id": 185,
+      "from_change_id": "d0a4d6ad-53de-46e7-b6a4-b2f522b34550",
+      "to_change_id": "f48f3299-cd93-49d8-a70b-4d00fd989cef",
+      "edge_type": "leads_to",
+      "weight": 1.0,
+      "rationale": "Venue booked Oct 2026; keep exact house private",
+      "created_at": "2026-10-09T14:34:22.502519-07:00"
     }
   ]
 }
