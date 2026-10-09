@@ -2034,6 +2034,39 @@
       "created_at": "2026-10-09T14:34:22.492399-07:00",
       "updated_at": "2026-10-09T14:34:22.492399-07:00",
       "metadata_json": "{\"branch\":\"feat/email-markdown\",\"commit\":\"5bb1810\",\"confidence\":90,\"files\":[\"src/lib/content.ts\"]}"
+    },
+    {
+      "id": 186,
+      "change_id": "a82c996c-57e0-4a7b-a16f-d1bd144f55f8",
+      "node_type": "goal",
+      "title": "Bermuda Dunes photo in email template, drop the two venue contenders",
+      "description": null,
+      "status": "pending",
+      "created_at": "2026-10-09T14:49:38.359052-07:00",
+      "updated_at": "2026-10-09T14:49:38.359052-07:00",
+      "metadata_json": "{\"branch\":\"feat/email-markdown\",\"confidence\":90,\"prompt\":\"Okay, can we get a good photo of Bermuda dunes and swap it into the email template and drop the two options right below it?\"}"
+    },
+    {
+      "id": 187,
+      "change_id": "9eba808b-1ec4-4b98-97e1-de31bed258d9",
+      "node_type": "action",
+      "title": "Swapped email image row to single Bermuda Dunes-labeled La Quinta photo",
+      "description": null,
+      "status": "pending",
+      "created_at": "2026-10-09T14:58:14.234803-07:00",
+      "updated_at": "2026-10-09T14:58:14.234803-07:00",
+      "metadata_json": "{\"branch\":\"feat/email-venue-photo\",\"commit\":\"86a15d5\",\"confidence\":90,\"files\":[\"src/lib/server/email-template.ts\",\"static/media/email-loc-bermuda-dunes.jpg\"]}"
+    },
+    {
+      "id": 188,
+      "change_id": "e3981b7e-35fd-4d34-9abb-8189fd6e7e20",
+      "node_type": "outcome",
+      "title": "Rendered + 74 server tests green; PR opened",
+      "description": null,
+      "status": "pending",
+      "created_at": "2026-10-09T14:58:14.257339-07:00",
+      "updated_at": "2026-10-09T14:58:14.257339-07:00",
+      "metadata_json": "{\"branch\":\"feat/email-venue-photo\",\"confidence\":90}"
     }
   ],
   "edges": [
@@ -4082,6 +4115,28 @@
       "weight": 1.0,
       "rationale": "Venue booked Oct 2026; keep exact house private",
       "created_at": "2026-10-09T14:34:22.502519-07:00"
+    },
+    {
+      "id": 189,
+      "from_node_id": 186,
+      "to_node_id": 187,
+      "from_change_id": "a82c996c-57e0-4a7b-a16f-d1bd144f55f8",
+      "to_change_id": "9eba808b-1ec4-4b98-97e1-de31bed258d9",
+      "edge_type": "leads_to",
+      "weight": 1.0,
+      "rationale": "Implementation",
+      "created_at": "2026-10-09T14:58:14.244746-07:00"
+    },
+    {
+      "id": 190,
+      "from_node_id": 187,
+      "to_node_id": 188,
+      "from_change_id": "9eba808b-1ec4-4b98-97e1-de31bed258d9",
+      "to_change_id": "e3981b7e-35fd-4d34-9abb-8189fd6e7e20",
+      "edge_type": "leads_to",
+      "weight": 1.0,
+      "rationale": "Result",
+      "created_at": "2026-10-09T14:58:14.264882-07:00"
     }
   ]
 }

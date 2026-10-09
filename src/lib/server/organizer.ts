@@ -265,3 +265,21 @@ export async function surveyGate(
 	const latePass = who ? await hasLatePass(db, who).catch(() => false) : false;
 	return { closed: !latePass, deadline: base.deadline, display: base.display, reopened: false, latePass };
 }
+
+/**
+ * Registration's gate: REG_DEADLINE is the base and a late pass lifts it for
+ * one person. The survey's reopen switch is deliberately not consulted — it
+ * reopens the questionnaire, not sign-ups. Same fail-open shape as surveyGate.
+ */
+export async function registrationGate(
+	db: D1Database | undefined,
+	deadlineRaw: string | undefined,
+	who: { did: string; handle: string | null } | null
+): Promise<{ closed: boolean; deadline: string | null; display: string | null; latePass: boolean }> {
+	const base = deadlineStatus(deadlineRaw);
+	if (!base.closed || !db || !who) {
+		return { closed: base.closed, deadline: base.deadline, display: base.display, latePass: false };
+	}
+	const latePass = await hasLatePass(db, who).catch(() => false);
+	return { closed: !latePass, deadline: base.deadline, display: base.display, latePass };
+}
