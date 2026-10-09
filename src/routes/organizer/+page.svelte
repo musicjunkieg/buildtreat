@@ -367,7 +367,7 @@ finish review, the verdict, and DESIGN.md.
 							<input id="pass-handle" type="text" name="handle" placeholder="handle.bsky.social" autocapitalize="none" spellcheck="false" />
 							<button class="chip-add" aria-label="Grant late pass"><Icon name="plus" size={14} /></button>
 						</form>
-						<p class="passes-hint">A late pass lets one person answer after the deadline.</p>
+						<p class="passes-hint">A late pass lets one person answer the survey — or register — after the deadline.</p>
 					</div>
 				{/if}
 			</section>

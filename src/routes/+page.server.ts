@@ -6,7 +6,6 @@ import { actorToDid } from '@svelte-atproto/oauth/helper';
 import { cloudflareKV } from '@svelte-atproto/oauth/server/stores/cloudflare';
 import { codeOfConduct, retreat, waiver, type TravelValue } from '$lib/content';
 import { checkAllowlist, getResponse } from '$lib/server/db';
-import { deadlineStatus } from '$lib/server/deadline';
 import { sendEmail } from '$lib/server/email';
 import { getRegistration, setDeclined, upsertConfirmed, type Registration } from '$lib/server/registration';
 import { confirmationEmail } from '$lib/server/registration-email';
@@ -20,7 +19,7 @@ import {
 } from '$lib/server/waitlist';
 import type { SurveyDraft } from '$lib/survey.svelte';
 import type { KnownUser } from '$lib/types';
-import { surveyGate } from '$lib/server/organizer';
+import { registrationGate, surveyGate } from '$lib/server/organizer';
 
 /** Enough of a DID to correlate log lines without logging the full identifier. */
 const logDid = (did: string) => `${did.slice(0, 14)}…`;
@@ -83,9 +82,11 @@ export const load: PageServerLoad = async ({ locals, platform, url, cookies }) =
 	// A signed-in respondent gets a second look below for a late pass.
 	const { deadline, closed } = await surveyGate(db, platform?.env?.DEADLINE, null);
 
-	// Registration era: its own deadline, same parsing as the survey's.
-	const reg = deadlineStatus(platform?.env?.REG_DEADLINE);
-	const regBase = { regDeadline: reg.deadline, regDeadlineDisplay: reg.display, regClosed: reg.closed };
+	// Registration era: its own deadline, same parsing as the survey's. This
+	// is the anonymous answer; a signed-in visitor gets it re-asked below so a
+	// late pass can lift it for them.
+	const reg = await registrationGate(db, platform?.env?.REG_DEADLINE, null);
+	let regBase = { regDeadline: reg.deadline, regDeadlineDisplay: reg.display, regClosed: reg.closed };
 	// `?survey` reopens the read-only survey feed for people who want to see
 	// what they answered; everything else lands on registration.
 	const wantsSurvey = url.searchParams.has('survey');
@@ -197,6 +198,12 @@ export const load: PageServerLoad = async ({ locals, platform, url, cookies }) =
 	const userGate =
 		closed && db ? await surveyGate(db, platform?.env?.DEADLINE, { did: locals.did, handle: user.handle }) : null;
 	const closedForUser = userGate ? userGate.closed : closed;
+	if (reg.closed && db) {
+		const userReg = await registrationGate(db, platform?.env?.REG_DEADLINE, { did: locals.did, handle: user.handle });
+		// A late pass reopens the form for this person; the "register by" date
+		// is dropped so the hero doesn't advertise a deadline already behind them.
+		if (userReg.latePass) regBase = { regDeadline: reg.deadline, regDeadlineDisplay: null, regClosed: false };
+	}
 
 	// The allowlist gates the whole survey, not just submission: a signed-in
 	// account that isn't invited sees the polite invite-only state and the
@@ -363,7 +370,7 @@ export const actions: Actions = {
 			if (!allowed) return fail(403, { regMessage: 'Registration is for invited builders.' });
 
 			const existing = await getRegistration(db, locals.did);
-			const { closed } = deadlineStatus(platform?.env?.REG_DEADLINE);
+			const { closed } = await registrationGate(db, platform?.env?.REG_DEADLINE, { did: locals.did, handle });
 			if (!canConfirm(closed, existing)) return fail(403, { regClosed: true });
 
 			await upsertConfirmed(db, { did: locals.did, handle }, checked.value, {
