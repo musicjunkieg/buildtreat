@@ -85,6 +85,33 @@ describe('brandedEmail', () => {
 		expect(html).toContain('<a href="https://example.test/a" style="color:#ffffff;text-decoration:underline;">https://example.test/a</a>)');
 	});
 
+	it('renders ## headings, bullet lists, and numbered lists as blocks', () => {
+		const html = brandedEmail({
+			heading: 'h',
+			body: '## Location\n\n- We booked **Chateau Florencia**.\n- Pool, fiber,\nand 17 bathrooms.\n\n##Travel\n- Fly into PSP.\n\n### Fine print\n1. Test daily.\n2) Or mask up.\n\nPlain close.'
+		});
+		expect(html).toMatch(/<h2 [^>]*>Location<\/h2>/);
+		expect(html).toMatch(/<h2 [^>]*>Travel<\/h2>/);
+		expect(html).toMatch(/<h3 [^>]*>Fine print<\/h3>/);
+		expect(html).toMatch(/<ul [^>]*>\n<li [^>]*>We booked <strong [^>]*>Chateau Florencia<\/strong>.<\/li>\n<li [^>]*>Pool, fiber,<br>and 17 bathrooms.<\/li>\n<\/ul>/);
+		expect(html).toMatch(/<ul [^>]*>\n<li [^>]*>Fly into PSP.<\/li>\n<\/ul>/);
+		expect(html).toMatch(/<ol [^>]*>\n<li [^>]*>Test daily.<\/li>\n<li [^>]*>Or mask up.<\/li>\n<\/ol>/);
+		expect(html).toContain('<p style="margin:0 0 16px;font-family:\'Hanken Grotesk\',Helvetica,Arial,sans-serif;font-size:16px;line-height:1.55;color:#b9b8b7;">Plain close.</p>');
+		expect(html).not.toContain('##');
+	});
+
+	it('leaves hashes and dashes that are not block markers literal', () => {
+		const html = brandedEmail({ heading: 'h', body: '#1 priority is a well-rested crew - no excuses.\nSee #2 below' });
+		expect(html).toContain('#1 priority is a well-rested crew - no excuses.<br>See #2 below');
+		expect(html).not.toContain('<h2');
+		expect(html).not.toContain('<ul');
+	});
+
+	it('drops block markers from the preheader', () => {
+		const html = brandedEmail({ heading: 'h', body: '## Location\n\n- We booked it.' });
+		expect(html).toContain('>Location We booked it.</div>');
+	});
+
 	it('puts the opening body text in the hidden preheader', () => {
 		const html = brandedEmail({ heading: 'H', body: 'This is the preview line.\n\nMore below.' });
 		expect(html).toContain('This is the preview line.');

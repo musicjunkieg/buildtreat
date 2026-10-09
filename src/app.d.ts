@@ -19,6 +19,7 @@ declare global {
 				REG_DEADLINE?: string;
 				ORGANIZER_DIDS?: string;
 				EMAIL_FROM?: string;
+				EMAIL_FROM_NAME?: string;
 				COMAIL_DID?: string;
 				COMAIL_API_KEY?: string;
 				BSKY_DM_HANDLE?: string;

@@ -1,5 +1,21 @@
 [
   {
+    "hash": "b14c725cb7dd8eb5e2799356a574a4ca748b99d3",
+    "short_hash": "b14c725",
+    "author": "Bryan Guffey",
+    "date": "2026-09-18T11:49:33-07:00",
+    "message": "feat: Bluesky DM channel for organizer broadcasts\n\nThe broadcast panel can now send to an audience as Bluesky DMs as well\nas email. DMs go out from a dedicated sending account signed in with an\napp password (BSKY_DM_HANDLE + BSKY_DM_APP_PASSWORD secrets) — the\norganizer's own OAuth session is pinned to the `atproto` scope, so chat\ncan't ride on it. Each send is getConvoForMembers → sendMessage through\nthe PDS with the chat-service proxy header; URLs become link facets.\n\n- src/lib/server/bsky-dm.ts: session, handle resolution, sendDm with the\n  same SendResult shape as email so runBroadcast is channel-agnostic.\n  Recipient-side refusals (MessagesDisabled, NotFollowedBySender, blocks,\n  …) mark the row failed; 401/429/5xx/network pause the run for Retry.\n- broadcasts.ts: `channel` on broadcasts, `handle` on recipient rows\n  (migration 0009). Audience resolution is split into audienceMembers\n  (one per DID) and a per-channel recipient list — email still dedupes by\n  address; DM keeps everyone, so people with no or shared emails are\n  reachable. Counts are per channel.\n- Organizer: dmTest / dmBroadcast actions; emailRetry becomes\n  retryBroadcast and branches on the stored channel.\n- EmailPanel: Email / Bluesky DM toggle, subject hidden for DMs, live\n  1000-grapheme counter (shared src/lib/dm-text.ts), test-by-handle,\n  channel-aware counts and history.\n\nCo-Authored-By: Claude Fable 5 <noreply@anthropic.com>\nClaude-Session: https://claude.ai/code/session_01YS7dro4fFpSEXJ9WtXmaBX",
+    "files_changed": 13
+  },
+  {
+    "hash": "931b8b6379c22bc8eaf97e9d03cbca46dc821b9d",
+    "short_hash": "931b8b6",
+    "author": "Bryan Guffey",
+    "date": "2026-09-18T11:32:07-07:00",
+    "message": "feat: 'Registered' + 'not registered' broadcast audiences; Everyone reaches survey-less registrants (#38)\n\nThree new audiences for the compose selector:\n\n- 'Yes, not registered' / 'Maybe, not registered': survey interest with\n  no registration row of any status — the \"you said you're in, please\n  register\" nudges. A decline counts as answered and drops them.\n- 'Registered': confirmed registrations at their registration email.\n\n'Everyone' now also includes confirmed registrants who never took the\nsurvey (currently one person, invited late and sent straight to the\nform). Previously every audience was derived from survey rows, so such\na person was unreachable from the panel entirely.\n\nClaude-Session: https://claude.ai/code/session_01YS7dro4fFpSEXJ9WtXmaBX\n\nCo-authored-by: Claude Fable 5 <noreply@anthropic.com>",
+    "files_changed": 4
+  },
+  {
     "hash": "931b8b6379c22bc8eaf97e9d03cbca46dc821b9d",
     "short_hash": "931b8b6",
     "author": "Bryan Guffey",
@@ -14,14 +30,6 @@
     "date": "2026-09-18T11:26:08-07:00",
     "message": "feat: 'Registered' + 'not registered' broadcast audiences; Everyone reaches survey-less registrants\n\nThree new audiences for the compose selector:\n\n- 'Yes, not registered' / 'Maybe, not registered': survey interest with\n  no registration row of any status — the \"you said you're in, please\n  register\" nudges. A decline counts as answered and drops them.\n- 'Registered': confirmed registrations at their registration email.\n\n'Everyone' now also includes confirmed registrants who never took the\nsurvey (currently one person, invited late and sent straight to the\nform). Previously every audience was derived from survey rows, so such\na person was unreachable from the panel entirely.\n\nClaude-Session: https://claude.ai/code/session_01YS7dro4fFpSEXJ9WtXmaBX\nCo-Authored-By: Claude Fable 5 <noreply@anthropic.com>",
     "files_changed": 4
-  },
-  {
-    "hash": "0825f0e941299238a3cd404d9179af49263ec53c",
-    "short_hash": "0825f0e",
-    "author": "Bryan Guffey",
-    "date": "2026-09-18T10:38:00-07:00",
-    "message": "feat: 'Travel help' broadcast audience for the support-questions nudge (#37)\n\nSurvey respondents who said they could cover only some or none of their\ntravel, minus anyone who has already answered the registration's support\nquestions or declined. Mailed at the registration email when there is\none. Counts show in the compose selector like the other audiences.\n\n\nClaude-Session: https://claude.ai/code/session_01YS7dro4fFpSEXJ9WtXmaBX\n\nCo-authored-by: Claude Fable 5 <noreply@anthropic.com>",
-    "files_changed": 5
   },
   {
     "hash": "0825f0e941299238a3cd404d9179af49263ec53c",

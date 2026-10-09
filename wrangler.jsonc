@@ -28,6 +28,7 @@
 		// Email sending via comail.at (HTTP Send API). The DID is the comail
 		// account identity (Bryan's — already public in ORGANIZER_DIDS).
 		"EMAIL_FROM": "hello@buildersretre.at",
+		"EMAIL_FROM_NAME": "Bryan Guffey, Atmospheric Builders' Retreat",
 		"COMAIL_DID": "did:plc:h3wpawnrlptr4534chevddo6"
 	},
 	"kv_namespaces": [
