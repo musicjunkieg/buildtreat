@@ -127,13 +127,18 @@
 			{/if}
 
 			<div class="body-head">
-				<label class="kicker" for="email-body">{channel === 'email' ? 'Body (plain text)' : 'Message'}</label>
+				<label class="kicker" for="email-body">{channel === 'email' ? 'Body' : 'Message'}</label>
 				{#if channel === 'dm'}
 					<span class="kicker counter" class:over={dmOverflow} aria-live="polite">{bodyLength}/{DM_MAX_GRAPHEMES}</span>
 				{/if}
 			</div>
 			<textarea id="email-body" name="body" bind:value={body} rows="8"></textarea>
-			{#if channel === 'dm'}
+			{#if channel === 'email'}
+				<p class="hint">
+					Light markdown: <code>## Heading</code>, <code>- item</code>, <code>1. item</code>, <code>**bold**</code>,
+					<code>_italic_</code>, <code>[label](https://…)</code>. The plain-text version keeps your markup as typed.
+				</p>
+			{:else}
 				<p class="hint">
 					Links become tappable. Only people who allow DMs from anyone — or who follow the sending account — can be
 					reached; anyone else shows as failed in the history.
@@ -479,7 +484,8 @@
 		font-size: 0.875rem;
 	}
 
-	.warn code {
+	.warn code,
+	.hint code {
 		font-family: var(--font-body);
 		background: var(--ink-12);
 		padding: 0.1em 0.35em;

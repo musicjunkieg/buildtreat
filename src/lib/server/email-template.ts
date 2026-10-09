@@ -23,7 +23,10 @@ export interface EmailImage {
 export interface BrandedEmailOptions {
 	/** Display headline, rendered stacked and uppercase. */
 	heading: string;
-	/** Plain text; blank lines split paragraphs, single newlines become <br>. */
+	/**
+	 * Light markdown: blank lines split paragraphs, single newlines become
+	 * <br>, `##` headings, `- ` / `1. ` lists, `**bold**`, `_italic_`, links.
+	 */
 	body: string;
 	/**
 	 * Dusk photograph behind the kicker + headline, pre-scrimmed so its
@@ -113,15 +116,83 @@ function inlineMarkup(escaped: string): string {
 	return emphasis(withLinks).replace(/\uE000(\d+)\uE000/g, (_, i: string) => held[Number(i)]);
 }
 
+const HEADING_RE = /^(#{1,3})(?:\s+|(?=[A-Za-z]))(.+)$/;
+const BULLET_RE = /^[-*•]\s+/;
+const NUMBER_RE = /^\d+[.)]\s+/;
+
+const P_STYLE = `margin:0 0 16px;font-family:${BODY_STACK};font-size:16px;line-height:1.55;color:${INK_70};`;
+const H2_STYLE = `margin:28px 0 12px;font-family:${DISPLAY_STACK};font-size:26px;font-weight:bold;line-height:1.05;letter-spacing:0.5px;text-transform:uppercase;color:${INK};`;
+const H3_STYLE = `margin:24px 0 10px;font-family:${BODY_STACK};font-size:12px;font-weight:bold;letter-spacing:1.5px;text-transform:uppercase;color:${INK};`;
+
+function inline(text: string): string {
+	return inlineMarkup(escapeHtml(text));
+}
+
+function heading(level: number, text: string): string {
+	return level < 3 ? `<h2 style="${H2_STYLE}">${inline(text)}</h2>` : `<h3 style="${H3_STYLE}">${inline(text)}</h3>`;
+}
+
+function paragraph(lines: string[]): string {
+	return `<p style="${P_STYLE}">${lines.map(inline).join('<br>')}</p>`;
+}
+
+/**
+ * A run of lines whose first line carries a list marker. Marker lines start
+ * items; unmarked lines continue the current item as soft breaks.
+ */
+function list(lines: string[], marker: RegExp, tag: 'ul' | 'ol'): string {
+	const items: string[][] = [];
+	for (const line of lines) {
+		if (marker.test(line)) items.push([line.replace(marker, '')]);
+		else items.at(-1)?.push(line);
+	}
+	const li = items
+		.map((item) => `<li style="margin:0 0 6px;">${item.map(inline).join('<br>')}</li>`)
+		.join('\n');
+	return `<${tag} style="${P_STYLE}padding-left:24px;">\n${li}\n</${tag}>`;
+}
+
+function block(lines: string[]): string {
+	const [first] = lines;
+	if (BULLET_RE.test(first)) return list(lines, BULLET_RE, 'ul');
+	if (NUMBER_RE.test(first)) return list(lines, NUMBER_RE, 'ol');
+	return paragraph(lines);
+}
+
+/**
+ * Block structure for organizer-written bodies: blank lines separate
+ * blocks; a line opening with `#`–`###` is a heading on its own; a block
+ * opening with `- `, `* `, `• ` or `1. ` is a list; anything else is a
+ * paragraph with single newlines as soft breaks.
+ */
 function paragraphs(body: string): string {
+	const out: string[] = [];
+	let run: string[] = [];
+	const flush = () => {
+		if (run.length) out.push(block(run));
+		run = [];
+	};
+	for (const raw of body.split('\n')) {
+		const line = raw.trim();
+		const h = HEADING_RE.exec(line);
+		if (!line) {
+			flush();
+		} else if (h) {
+			flush();
+			out.push(heading(h[1].length, h[2].trim()));
+		} else {
+			run.push(line);
+		}
+	}
+	flush();
+	return out.join('\n');
+}
+
+/** Body text with block markers dropped, for the preheader. */
+export function stripMarkup(body: string): string {
 	return body
-		.split(/\n{2,}/)
-		.map((p) => p.trim())
-		.filter(Boolean)
-		.map(
-			(p) =>
-				`<p style="margin:0 0 16px;font-family:${BODY_STACK};font-size:16px;line-height:1.55;color:${INK_70};">${inlineMarkup(escapeHtml(p)).replaceAll('\n', '<br>')}</p>`
-		)
+		.split('\n')
+		.map((line) => line.trim().replace(HEADING_RE, '$2').replace(BULLET_RE, '').replace(NUMBER_RE, ''))
 		.join('\n');
 }
 
@@ -182,7 +253,7 @@ function header(opts: BrandedEmailOptions): string {
 }
 
 export function brandedEmail(opts: BrandedEmailOptions): string {
-	const preheader = opts.body.replace(/\s+/g, ' ').trim().slice(0, 120);
+	const preheader = stripMarkup(opts.body).replace(/\s+/g, ' ').trim().slice(0, 120);
 	const facts = opts.facts?.length
 		? `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:28px 0 0;border-bottom:${HAIRLINE};">
 ${factRows(opts.facts)}

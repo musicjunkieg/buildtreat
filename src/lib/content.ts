@@ -154,10 +154,9 @@ export const retreatDates = {
 } as const;
 
 export const retreatLocation = {
-	display: 'Palm Springs or Coachella Valley',
-	pending: 'Venue locks with the headcount',
-	explainer:
-		'We book the house once we know how many are coming — Palm Springs or the Coachella Valley, decided by the final count.'
+	display: 'Palm Springs',
+	pending: 'Exact address goes to registered attendees',
+	explainer: 'The house is booked, a short drive from Palm Springs. Registered attendees get the address and itinerary by email.'
 } as const;
 
 export const dietaryOptions = [

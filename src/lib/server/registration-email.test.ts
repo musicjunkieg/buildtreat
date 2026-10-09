@@ -11,11 +11,11 @@ const base: Registration = {
 };
 
 describe('confirmationEmail', () => {
-	it('names the dates, the venue-pending line, and a travel nudge when travel is empty', () => {
+	it('names the dates, the address-by-email line, and a travel nudge when travel is empty', () => {
 		const { subject, text } = confirmationEmail(base);
 		expect(subject).toContain('December 4–7');
-		expect(text).toContain('Palm Springs or Coachella Valley');
-		expect(text).toContain('Venue locks with the headcount');
+		expect(text).toContain('Palm Springs');
+		expect(text).toContain('Exact address goes to registered attendees');
 		expect(text).toMatch(/travel/i);
 		expect(text).toContain('Maren');
 	});

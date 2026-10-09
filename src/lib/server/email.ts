@@ -22,6 +22,11 @@ export type SendResult =
 
 /** The slice of Platform env the transport needs (callers pass platform.env). */
 export interface EmailEnv {
+	/**
+	 * Bare address only — comail rejects `Name <addr>` display-name forms
+	 * with INVALID_REQUEST and reserves the From header, so there is no way
+	 * to set a sender name today.
+	 */
 	EMAIL_FROM?: string;
 	COMAIL_DID?: string;
 	COMAIL_API_KEY?: string;
