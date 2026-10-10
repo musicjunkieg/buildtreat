@@ -1,20 +1,23 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
 	import { SvelteSet } from 'svelte/reactivity';
-	import type { Audience, AudienceCount, BroadcastView, Channel } from '$lib/server/broadcasts';
+	import type { Audience, AudienceCount, BroadcastPerson, BroadcastView, Channel } from '$lib/server/broadcasts';
 	import { DM_MAX_GRAPHEMES, graphemeCount } from '$lib/dm-text';
 
 	let {
 		emailConfigured,
 		dmConfigured,
 		broadcasts,
-		audiences
+		audiences,
+		people = []
 	}: {
 		emailConfigured: boolean;
 		dmConfigured: boolean;
 		broadcasts: BroadcastView[];
 		/** Recipient count per audience and channel, in display order; the first is the default. */
 		audiences: AudienceCount[];
+		/** Everyone addable one at a time on top of the audience. */
+		people?: BroadcastPerson[];
 	} = $props();
 
 	let channel = $state<Channel>('email');
@@ -23,7 +26,38 @@
 	let audience = $state<Audience>('all');
 	const configured = $derived(channel === 'email' ? emailConfigured : dmConfigured);
 	const picked = $derived(audiences.find((a) => a.id === audience) ?? audiences[0]);
-	const recipientCount = $derived(picked?.counts[channel] ?? 0);
+	// Hand-picked extras ride along with the audience. The server does the
+	// real union; here we only need who's still worth offering and how many
+	// of the chosen actually add to the count on this channel — someone the
+	// audience already covers, or with no email on the email channel, is 0.
+	let extras = new SvelteSet<string>();
+	const personByDid = $derived(new Map(people.map((p) => [p.did, p])));
+	const reachable = (p: BroadcastPerson) => channel === 'dm' || p.email.length > 0;
+	const covered = (p: BroadcastPerson) => p.audiences[channel].includes(audience);
+	const chosen = $derived([...extras].map((did) => personByDid.get(did)).filter((p): p is BroadcastPerson => !!p));
+	const addable = $derived(
+		people
+			.filter((p) => !extras.has(p.did) && !covered(p) && reachable(p))
+			.sort((a, b) => personName(a).localeCompare(personName(b)))
+	);
+	// Email collapses shared addresses, so two extras at one address are one send.
+	const extraCount = $derived.by(() => {
+		const adding = chosen.filter((p) => !covered(p) && reachable(p));
+		return channel === 'email' ? new Set(adding.map((p) => p.email.toLowerCase())).size : adding.length;
+	});
+	const recipientCount = $derived((picked?.counts[channel] ?? 0) + extraCount);
+	let pickerValue = $state('');
+
+	function personName(p: BroadcastPerson): string {
+		return p.handle ? `@${p.handle}` : p.email || `${p.did.slice(0, 20)}…`;
+	}
+
+	function addExtra(event: Event) {
+		const did = (event.currentTarget as HTMLSelectElement).value;
+		if (did) extras.add(did);
+		pickerValue = '';
+		armed = false;
+	}
 	const labelFor = (id: Audience) => audiences.find((a) => a.id === id)?.label ?? id;
 	// Two-step arm/confirm instead of a browser confirm() dialog, so the
 	// recipient count is visible at the moment of commitment.
@@ -171,10 +205,44 @@
 				</div>
 			</fieldset>
 
+			<div class="extras">
+				<label class="kicker" for="extra-picker">Also include</label>
+				<select id="extra-picker" class="picker" bind:value={pickerValue} onchange={addExtra} disabled={addable.length === 0}>
+					<option value="">{addable.length ? 'Add a person…' : 'Everyone is already in this audience'}</option>
+					{#each addable as p (p.did)}
+						<option value={p.did}>{personName(p)}{p.handle && p.email && channel === 'email' ? ` · ${p.email}` : ''}</option>
+					{/each}
+				</select>
+				{#if chosen.length}
+					<ul class="chosen">
+						{#each chosen as p (p.did)}
+							<li class="chosen-chip" class:muted={covered(p) || !reachable(p)}>
+								<input type="hidden" name="extra" value={p.did} />
+								<span>{personName(p)}</span>
+								{#if covered(p)}
+									<span class="chip-n">in {picked?.label ?? audience}</span>
+								{:else if !reachable(p)}
+									<span class="chip-n">no email</span>
+								{/if}
+								<button
+									type="button"
+									class="remove"
+									aria-label={`Remove ${personName(p)}`}
+									onclick={() => {
+										extras.delete(p.did);
+										armed = false;
+									}}>×</button
+								>
+							</li>
+						{/each}
+					</ul>
+				{/if}
+			</div>
+
 			<div class="send-row">
 				{#if armed}
 					<button class="pill confirm-pill" formaction={sendAction} disabled={!canSend || sending}>
-						Really {channel === 'email' ? 'send' : 'DM'} {recipientCount} {recipientCount === 1 ? 'person' : 'people'} · {picked?.label ?? ''}
+						Really {channel === 'email' ? 'send' : 'DM'} {recipientCount} {recipientCount === 1 ? 'person' : 'people'} · {picked?.label ?? ''}{extraCount ? ` +${extraCount}` : ''}
 					</button>
 					<button class="btn-ghost" type="button" onclick={() => (armed = false)}>Cancel</button>
 				{:else}
@@ -388,6 +456,75 @@
 	.chip:has(input:focus-visible) {
 		outline: 2px solid var(--ink);
 		outline-offset: 3px;
+	}
+
+	/* The add-on picker: a native select styled like the compose inputs,
+	   then one removable chip per person. Muted chips are still posted —
+	   the server unions and dedupes — but read as not adding to the count. */
+	.extras {
+		display: flex;
+		flex-direction: column;
+		gap: 0.5rem;
+	}
+
+	.extras .kicker {
+		color: var(--ink-70);
+	}
+
+	.picker {
+		align-self: flex-start;
+		max-width: 100%;
+		background: transparent;
+		border: none;
+		border-bottom: 1px solid var(--ink-45);
+		border-radius: 0;
+		padding: 0.45rem 0;
+		font-size: 0.9375rem;
+		color: var(--ink);
+	}
+
+	.picker:disabled {
+		color: var(--ink-45);
+		cursor: default;
+	}
+
+	.picker:focus {
+		outline: none;
+		border-bottom-color: var(--ink);
+	}
+
+	.chosen {
+		list-style: none;
+		margin: 0;
+		padding: 0;
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.5rem;
+	}
+
+	.chosen-chip {
+		display: inline-flex;
+		align-items: baseline;
+		gap: 0.45rem;
+		border: 1px solid var(--ink);
+		border-radius: 999px;
+		padding: 0.4rem 0.6rem 0.4rem 0.85rem;
+		font-size: 0.8125rem;
+		color: var(--ink);
+		font-weight: 600;
+	}
+
+	.chosen-chip.muted {
+		border-color: var(--ink-45);
+		color: var(--ink-70);
+		font-weight: 400;
+	}
+
+	.chosen-chip .remove {
+		font-size: 1rem;
+		line-height: 1;
+		padding: 0 0.15rem;
+		color: inherit;
 	}
 
 	.body-head {

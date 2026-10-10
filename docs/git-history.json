@@ -1,11 +1,19 @@
 [
   {
-    "hash": "daf946287834366b404c1d243eb2a934451e6073",
-    "short_hash": "daf9462",
+    "hash": "72a8133e17041104e88f4a365ed4079c0c31836e",
+    "short_hash": "72a8133",
     "author": "Bryan Guffey",
-    "date": "2026-10-09T15:11:10-07:00",
-    "message": "fix: caption names La Quinta so the photo isn't mistaken for the house\n\nCo-Authored-By: Claude Fable 5 <noreply@anthropic.com>\nClaude-Session: https://claude.ai/code/session_01YS7dro4fFpSEXJ9WtXmaBX",
-    "files_changed": 4
+    "date": "2026-10-09T15:44:57-07:00",
+    "message": "feat(organizer): add individual people to a broadcast beyond the picked audience\n\nAn 'Also include' dropdown on the compose form lists everyone the panel\nknows (survey, registrations of either status, waitlist) who the chosen\naudience doesn't already reach; picks post as repeated 'extra' DIDs. The\nserver resolves them against the same people list, unions them with the\naudience under the channel's dedupe rules (audience row wins a DID clash;\nemail drops blank/shared addresses), and rejects unknown DIDs with a\nreload hint. The audience column is unchanged — extras live in the\nrecipient snapshot.\n\nCo-Authored-By: Claude Fable 5 <noreply@anthropic.com>\nClaude-Session: https://claude.ai/code/session_01YS7dro4fFpSEXJ9WtXmaBX",
+    "files_changed": 7
+  },
+  {
+    "hash": "13aaf79b0dd70e865b31fe9e884eecd1b22e2db3",
+    "short_hash": "13aaf79",
+    "author": "Bryan Guffey",
+    "date": "2026-10-09T15:28:01-07:00",
+    "message": "feat: single venue photo in email templates (#42)\n\n* feat: single venue photo in email templates, replacing the two contender shots\n\nBermuda Dunes has no usable open-licensed photography, so the email\nimage row now carries one full-width shot of the La Quinta Resort a few\nmiles east (Digimint, CC BY-SA 3.0, credited in static/media/CREDITS.md)\nlabeled 'Bermuda Dunes'. Both broadcasts and the registration\nconfirmation pick it up via locationImages(); the public site is\nuntouched and still says Palm Springs.\n\nCo-Authored-By: Claude Fable 5 <noreply@anthropic.com>\nClaude-Session: https://claude.ai/code/session_01YS7dro4fFpSEXJ9WtXmaBX\n\n* fix: caption names La Quinta so the photo isn't mistaken for the house\n\nCo-Authored-By: Claude Fable 5 <noreply@anthropic.com>\nClaude-Session: https://claude.ai/code/session_01YS7dro4fFpSEXJ9WtXmaBX\n\n* cool\n\n---------\n\nCo-authored-by: Claude Fable 5 <noreply@anthropic.com>",
+    "files_changed": 8
   },
   {
     "hash": "d354cd4480c937ef8399256fdc8a8c0c5bd9fe4d",
