@@ -202,14 +202,20 @@ export interface BroadcastPerson {
 	handle: string | null;
 	/** Registration email when there is one, else survey, else waitlist. */
 	email: string;
-	audiences: Audience[];
+	/**
+	 * Per channel, the audiences that actually deliver to this person: on DM
+	 * that's membership; on email it's membership with a usable address, or
+	 * their address already being in the audience's list under another DID.
+	 */
+	audiences: Record<Channel, Audience[]>;
 }
 
 /**
  * Every known person once, in source order (survey, registration,
- * waitlist), tagged with the audiences they fall into. A declined
- * registrant or a promoted waitlister belongs to no audience at all —
- * exactly who the picker exists for.
+ * waitlist), tagged with the audiences that reach them on each channel. A
+ * declined registrant or a promoted waitlister belongs to no audience at
+ * all; someone whose survey email is blank is in `all` on DM but not on
+ * email — exactly who the picker exists for.
  */
 export function broadcastPeople(
 	responses: AudienceResponse[],
@@ -227,23 +233,39 @@ export function broadcastPeople(
 			did: row.did,
 			handle: row.handle ?? reg?.handle ?? null,
 			email: (reg?.email || row.email).trim(),
-			audiences: []
+			audiences: { email: [], dm: [] }
 		});
 	}
 	for (const audience of AUDIENCES) {
-		const members = new Set(audienceMembers(audience, responses, waitlist, registrations).map((m) => m.did));
-		for (const p of people) if (members.has(p.did)) p.audiences.push(audience);
+		const members = audienceMembers(audience, responses, waitlist, registrations);
+		const dmDids = new Set(members.map((m) => m.did));
+		const mailed = dedupeRecipients(members);
+		const emailDids = new Set(mailed.map((m) => m.did));
+		const emailAddrs = new Set(mailed.map((m) => m.email.toLowerCase()));
+		for (const p of people) {
+			if (dmDids.has(p.did)) p.audiences.dm.push(audience);
+			if (emailDids.has(p.did) || (p.email && emailAddrs.has(p.email.toLowerCase()))) p.audiences.email.push(audience);
+		}
 	}
 	return people;
 }
 
 /**
  * Audience recipients plus hand-picked extras, under the channel's rules:
- * the audience row wins when a DID appears in both, then email drops
- * blank and shared addresses while DM keeps every DID.
+ * the audience row wins when a DID appears in both — except that a blank
+ * audience email takes the extra's address, since that's the whole reason
+ * the person was added — then email drops blank and shared addresses while
+ * DM keeps every DID.
  */
 export function mergeRecipients(base: RecipientInput[], extras: BroadcastPerson[], channel: Channel): RecipientInput[] {
-	const merged = dedupeByDid([...base, ...extras.map((p) => ({ did: p.did, email: p.email, handle: p.handle }))]);
+	const extraByDid = new Map(extras.map((p) => [p.did, p]));
+	const inBase = new Set(base.map((r) => r.did));
+	const filled = base.map((r) => {
+		const p = extraByDid.get(r.did);
+		return p && !r.email.trim() && p.email ? { ...r, email: p.email } : r;
+	});
+	const added = extras.filter((p) => !inBase.has(p.did)).map((p) => ({ did: p.did, email: p.email, handle: p.handle }));
+	const merged = dedupeByDid([...filled, ...added]);
 	return channel === 'email' ? dedupeRecipients(merged) : merged;
 }
 

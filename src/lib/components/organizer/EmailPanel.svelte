@@ -33,14 +33,18 @@
 	let extras = new SvelteSet<string>();
 	const personByDid = $derived(new Map(people.map((p) => [p.did, p])));
 	const reachable = (p: BroadcastPerson) => channel === 'dm' || p.email.length > 0;
-	const covered = (p: BroadcastPerson) => p.audiences.includes(audience);
+	const covered = (p: BroadcastPerson) => p.audiences[channel].includes(audience);
 	const chosen = $derived([...extras].map((did) => personByDid.get(did)).filter((p): p is BroadcastPerson => !!p));
 	const addable = $derived(
 		people
 			.filter((p) => !extras.has(p.did) && !covered(p) && reachable(p))
 			.sort((a, b) => personName(a).localeCompare(personName(b)))
 	);
-	const extraCount = $derived(chosen.filter((p) => !covered(p) && reachable(p)).length);
+	// Email collapses shared addresses, so two extras at one address are one send.
+	const extraCount = $derived.by(() => {
+		const adding = chosen.filter((p) => !covered(p) && reachable(p));
+		return channel === 'email' ? new Set(adding.map((p) => p.email.toLowerCase())).size : adding.length;
+	});
 	const recipientCount = $derived((picked?.counts[channel] ?? 0) + extraCount);
 	let pickerValue = $state('');
 

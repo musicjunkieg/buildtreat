@@ -2188,6 +2188,17 @@
       "created_at": "2026-10-09T15:39:48.559451-07:00",
       "updated_at": "2026-10-09T15:39:48.559451-07:00",
       "metadata_json": "{\"branch\":\"feat/broadcast-individual-recipients\",\"confidence\":85,\"files\":[\"src/lib/server/broadcasts.ts\",\"src/lib/components/organizer/EmailPanel.svelte\",\"src/routes/organizer/+page.server.ts\"]}"
+    },
+    {
+      "id": 200,
+      "change_id": "d0a09cbf-ce07-4de8-a800-5831de861857",
+      "node_type": "outcome",
+      "title": "Picker shipped: PR #44 open, 108 tests green, preview walkthrough clean",
+      "description": null,
+      "status": "pending",
+      "created_at": "2026-10-09T15:45:35.289225-07:00",
+      "updated_at": "2026-10-09T15:45:35.289225-07:00",
+      "metadata_json": "{\"branch\":\"feat/broadcast-individual-recipients\",\"commit\":\"72a8133\",\"confidence\":90}"
     }
   ],
   "edges": [
@@ -4379,6 +4390,17 @@
       "weight": 1.0,
       "rationale": "implementation",
       "created_at": "2026-10-09T15:39:55.925141-07:00"
+    },
+    {
+      "id": 202,
+      "from_node_id": 199,
+      "to_node_id": 200,
+      "from_change_id": "ba68ce7d-00a5-44b5-9bf7-6b6f3387e85f",
+      "to_change_id": "d0a09cbf-ce07-4de8-a800-5831de861857",
+      "edge_type": "leads_to",
+      "weight": 1.0,
+      "rationale": "result",
+      "created_at": "2026-10-09T15:45:39.359836-07:00"
     }
   ]
 }

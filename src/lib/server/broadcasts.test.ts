@@ -169,23 +169,40 @@ describe('broadcastPeople', () => {
 			did: 'did:plc:y1',
 			handle: 'y1.test',
 			email: 'y1-new@example.com',
-			audiences: ['all', 'registered', 'yes', 'travel']
+			audiences: { email: ['all', 'registered', 'yes', 'travel'], dm: ['all', 'registered', 'yes', 'travel'] }
 		});
+		// y2 shares y1's survey address: dropped from the email list by DID, but the
+		// address is already being mailed, so the email audiences still cover them.
+		expect(people.find((p) => p.did === 'did:plc:y2')!.audiences).toEqual({
+			email: ['all', 'yes', 'yes_unregistered'],
+			dm: ['all', 'yes', 'yes_unregistered']
+		});
+		// No email at all: reachable by DM audiences, by no email audience.
+		expect(people.find((p) => p.did === 'did:plc:n2')!.audiences).toEqual({ email: [], dm: ['all', 'no', 'travel'] });
 		// A declined registrant is reachable one-by-one even though no audience lists them.
-		expect(people.find((p) => p.did === 'did:plc:d1')!.audiences).toEqual([]);
+		expect(people.find((p) => p.did === 'did:plc:d1')!.audiences).toEqual({ email: [], dm: [] });
 		// A promoted waitlister likewise falls out of every audience but stays pickable.
-		expect(people.find((p) => p.did === 'did:plc:w2')!.audiences).toEqual([]);
-		expect(people.find((p) => p.did === 'did:plc:w1')!.audiences).toEqual(['waitlist']);
+		expect(people.find((p) => p.did === 'did:plc:w2')!.audiences).toEqual({ email: [], dm: [] });
+		expect(people.find((p) => p.did === 'did:plc:w1')!.audiences).toEqual({ email: ['waitlist'], dm: ['waitlist'] });
+	});
+
+	it("a blank survey email with a registration address is in 'all' on DM but not on email", () => {
+		const responses = [{ did: 'did:plc:b1', handle: 'b1.test', email: '', interest: 'yes', travel: null }];
+		const regs = [{ did: 'did:plc:b1', handle: 'b1.test', email: 'b1@example.com', status: 'confirmed' as const, supportNeed: null }];
+		const [b1] = broadcastPeople(responses, [], regs);
+		expect(b1.email).toBe('b1@example.com');
+		expect(b1.audiences).toEqual({ email: ['registered'], dm: ['all', 'registered', 'yes'] });
 	});
 });
 
 describe('mergeRecipients', () => {
 	const base = [{ did: 'did:plc:a', email: 'a@example.com', handle: null }];
+	const none = { email: [], dm: [] };
 	const extras = [
-		{ did: 'did:plc:a', email: 'other@example.com', handle: 'a.test', audiences: [] },
-		{ did: 'did:plc:b', email: 'A@example.com', handle: 'b.test', audiences: [] },
-		{ did: 'did:plc:c', email: '', handle: 'c.test', audiences: [] },
-		{ did: 'did:plc:d', email: 'd@example.com', handle: null, audiences: [] }
+		{ did: 'did:plc:a', email: 'other@example.com', handle: 'a.test', audiences: none },
+		{ did: 'did:plc:b', email: 'A@example.com', handle: 'b.test', audiences: none },
+		{ did: 'did:plc:c', email: '', handle: 'c.test', audiences: none },
+		{ did: 'did:plc:d', email: 'd@example.com', handle: null, audiences: none }
 	];
 
 	it('appends extras after the audience; the audience row wins a DID clash and email collapses shared addresses', () => {
@@ -197,6 +214,13 @@ describe('mergeRecipients', () => {
 
 	it('keeps address-less and shared-address extras on the DM channel', () => {
 		expect(mergeRecipients(base, extras, 'dm').map((r) => r.did)).toEqual(['did:plc:a', 'did:plc:b', 'did:plc:c', 'did:plc:d']);
+	});
+
+	it("fills a blank audience email from the extra instead of dropping the person", () => {
+		const blank = [{ did: 'did:plc:a', email: '', handle: 'a.test' }];
+		const extra = [{ did: 'did:plc:a', email: 'a-reg@example.com', handle: 'a.test', audiences: none }];
+		expect(mergeRecipients(blank, extra, 'email')).toEqual([{ did: 'did:plc:a', email: 'a-reg@example.com', handle: 'a.test' }]);
+		expect(mergeRecipients(blank, extra, 'dm')).toEqual([{ did: 'did:plc:a', email: 'a-reg@example.com', handle: 'a.test' }]);
 	});
 });
 
