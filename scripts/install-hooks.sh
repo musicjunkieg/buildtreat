@@ -32,6 +32,18 @@ if ! _common_gitdir="$(cd "$REPO_ROOT" && git rev-parse --git-common-dir 2>/dev/
 fi
 HOOKS_DIR="$(cd "$REPO_ROOT" && cd "$_common_gitdir" && pwd -P)/hooks"
 
+# If core.hooksPath is set, git ignores $GIT_COMMON_DIR/hooks entirely —
+# everything this script installs would be silently dead. Say so instead
+# of printing a success message for hooks that will never run.
+# Test for the key's PRESENCE via exit code, not for a non-empty value:
+# `core.hooksPath=` (set but empty) still overrides — git resolves it to
+# `./` — while `git config --get` prints an empty string for it.
+if _hooks_path="$(cd "$REPO_ROOT" && git config --get core.hooksPath 2>/dev/null)"; then
+    echo "⚠️  core.hooksPath is set to '${_hooks_path:-(empty)}' — git will NOT read $HOOKS_DIR."
+    echo "    Unset it (git config --unset core.hooksPath) or install these hooks there instead."
+    exit 1
+fi
+
 if [ ! -d "$HOOKS_DIR" ]; then
     echo "❌ $HOOKS_DIR does not exist. Corrupted git repo?"
     exit 1
@@ -282,7 +294,7 @@ if [ -n "$BACKUP_S3_BUCKET" ] && [ -n "$BACKUP_S3_ACCESS_KEY_ID" ] && [ -n "$BAC
         echo "⚠️  Backup configured but aws CLI not found — skipping (run: brew install awscli)"
     else
     echo "☁️  Pre-commit: backing up databases to $BACKUP_S3_BUCKET..."
-    ENDPOINT="--endpoint-url=$BACKUP_S3_ENDPOINT --region=${BACKUP_S3_REGION:-auto}"
+    ENDPOINT=(--endpoint-url "$BACKUP_S3_ENDPOINT" --region "${BACKUP_S3_REGION:-auto}")
 
     export AWS_ACCESS_KEY_ID="$BACKUP_S3_ACCESS_KEY_ID"
     export AWS_SECRET_ACCESS_KEY="$BACKUP_S3_SECRET_ACCESS_KEY"
@@ -291,7 +303,7 @@ if [ -n "$BACKUP_S3_BUCKET" ] && [ -n "$BACKUP_S3_ACCESS_KEY_ID" ] && [ -n "$BAC
     BACKUP_OK=true
 
     if [ -f "$REPO_ROOT/.chainlink/issues.db" ]; then
-        if aws s3 cp "$REPO_ROOT/.chainlink/issues.db" "$S3/issues.db" $ENDPOINT --quiet 2>&1; then
+        if aws s3 cp "$REPO_ROOT/.chainlink/issues.db" "$S3/issues.db" "${ENDPOINT[@]}" --quiet 2>&1; then
             echo "  ✅ issues.db → $BACKUP_S3_BUCKET"
         else
             echo "  ⚠️  issues.db upload failed (non-blocking)"
@@ -300,7 +312,7 @@ if [ -n "$BACKUP_S3_BUCKET" ] && [ -n "$BACKUP_S3_ACCESS_KEY_ID" ] && [ -n "$BAC
     fi
 
     if [ -f "$REPO_ROOT/.deciduous/deciduous.db" ]; then
-        if aws s3 cp "$REPO_ROOT/.deciduous/deciduous.db" "$S3/deciduous.db" $ENDPOINT --quiet 2>&1; then
+        if aws s3 cp "$REPO_ROOT/.deciduous/deciduous.db" "$S3/deciduous.db" "${ENDPOINT[@]}" --quiet 2>&1; then
             echo "  ✅ deciduous.db → $BACKUP_S3_BUCKET"
         else
             echo "  ⚠️  deciduous.db upload failed (non-blocking)"
