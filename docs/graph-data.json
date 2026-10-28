@@ -2199,6 +2199,28 @@
       "created_at": "2026-10-09T15:45:35.289225-07:00",
       "updated_at": "2026-10-09T15:45:35.289225-07:00",
       "metadata_json": "{\"branch\":\"feat/broadcast-individual-recipients\",\"commit\":\"72a8133\",\"confidence\":90}"
+    },
+    {
+      "id": 201,
+      "change_id": "3d694587-316b-4f2e-8279-dfe7b3fe0519",
+      "node_type": "outcome",
+      "title": "CodeRabbit: 2 findings (blank survey email hidden+dropped; shared-address overcount) fixed in 9f3a7ad",
+      "description": null,
+      "status": "pending",
+      "created_at": "2026-10-09T17:11:31.012806-07:00",
+      "updated_at": "2026-10-09T17:11:31.012806-07:00",
+      "metadata_json": "{\"branch\":\"feat/broadcast-individual-recipients\",\"commit\":\"9f3a7ad\",\"confidence\":90}"
+    },
+    {
+      "id": 202,
+      "change_id": "18daa13c-9f39-4a84-9163-5180b0edc872",
+      "node_type": "outcome",
+      "title": "PR #44 approved by CodeRabbit re-review, squash-merged as 3018fca; Workers build 91572cea running",
+      "description": null,
+      "status": "pending",
+      "created_at": "2026-10-10T16:04:15.688333-07:00",
+      "updated_at": "2026-10-10T16:04:15.688333-07:00",
+      "metadata_json": "{\"branch\":\"main\",\"commit\":\"3018fca\",\"confidence\":90}"
     }
   ],
   "edges": [
@@ -4401,6 +4423,28 @@
       "weight": 1.0,
       "rationale": "result",
       "created_at": "2026-10-09T15:45:39.359836-07:00"
+    },
+    {
+      "id": 203,
+      "from_node_id": 199,
+      "to_node_id": 201,
+      "from_change_id": "ba68ce7d-00a5-44b5-9bf7-6b6f3387e85f",
+      "to_change_id": "3d694587-316b-4f2e-8279-dfe7b3fe0519",
+      "edge_type": "leads_to",
+      "weight": 1.0,
+      "rationale": "review loop",
+      "created_at": "2026-10-09T17:11:36.182400-07:00"
+    },
+    {
+      "id": 204,
+      "from_node_id": 201,
+      "to_node_id": 202,
+      "from_change_id": "3d694587-316b-4f2e-8279-dfe7b3fe0519",
+      "to_change_id": "18daa13c-9f39-4a84-9163-5180b0edc872",
+      "edge_type": "leads_to",
+      "weight": 1.0,
+      "rationale": "merged after fixes",
+      "created_at": "2026-10-10T16:04:20.214703-07:00"
     }
   ]
 }
