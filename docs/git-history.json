@@ -8,12 +8,12 @@
     "files_changed": 3
   },
   {
-    "hash": "b3a9bb92b323806b21c275ccac36e78a242b3a9b",
-    "short_hash": "b3a9bb9",
+    "hash": "9e0b290254c8f0b03276df7041ae42923dca4dea",
+    "short_hash": "9e0b290",
     "author": "Bryan Guffey",
-    "date": "2026-10-31T12:31:34-07:00",
-    "message": "refactor(organizer): split EmailPanel into compose, ExtraRecipients, BroadcastHistory\n\n708 -> 420 (+ ExtraRecipients 151, BroadcastHistory 229, recipients.ts).\nNew since #27: EmailPanel grew channels, audiences and per-person extras.\nThe extras set stays owned by EmailPanel (it drives the send count) and\ngoes down as a plain prop + onchange callback — no component bind:, per\nthe SSR <title> finding from #27.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
-    "files_changed": 4
+    "date": "2026-10-31T12:32:21-07:00",
+    "message": "refactor(messaging): split audience resolution out of broadcasts.ts\n\n493 -> 217 (+ audiences.ts 286). New since #27: the audience/channel/\nextras logic is pure and testable on its own; broadcasts.ts keeps D1\nstorage and the send loop, and re-exports audiences so importers and\nbroadcasts.test.ts are unchanged.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+    "files_changed": 3
   },
   {
     "hash": "1b0d7585b121674192d05f59e32fca2c59564c63",
