@@ -1,0 +1,8 @@
+# yaml-language-server: $schema=https://coderabbit.ai/integrations/schema.v2.json
+reviews:
+  # Vendored third-party skills/agents are replaced wholesale on update;
+  # findings there belong upstream, not here.
+  path_filters:
+    - "!.claude/skills/**"
+    - "!.github/skills/**"
+    - "!.github/agents/**"
