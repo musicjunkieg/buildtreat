@@ -2276,6 +2276,17 @@
       "created_at": "2026-10-31T12:26:07.097263-07:00",
       "updated_at": "2026-10-31T12:26:07.097263-07:00",
       "metadata_json": "{\"branch\":\"refactor/modular-layout-v2\",\"commit\":\"db64542\",\"confidence\":90}"
+    },
+    {
+      "id": 208,
+      "change_id": "d87a104a-7018-43d8-832f-a7e657c8a30d",
+      "node_type": "action",
+      "title": "Split DatesItem + SignInSheet (verbatim from #27)",
+      "description": null,
+      "status": "pending",
+      "created_at": "2026-10-31T12:26:44.098397-07:00",
+      "updated_at": "2026-10-31T12:26:44.098397-07:00",
+      "metadata_json": "{\"branch\":\"refactor/modular-layout-v2\",\"commit\":\"a0548e9\",\"confidence\":90}"
     }
   ],
   "edges": [
@@ -4544,6 +4555,17 @@
       "weight": 1.0,
       "rationale": "impl",
       "created_at": "2026-10-31T12:26:07.104988-07:00"
+    },
+    {
+      "id": 209,
+      "from_node_id": 206,
+      "to_node_id": 208,
+      "from_change_id": "bcd356e6-1b07-4280-81f5-71d18a8f749c",
+      "to_change_id": "d87a104a-7018-43d8-832f-a7e657c8a30d",
+      "edge_type": "leads_to",
+      "weight": 1.0,
+      "rationale": "impl",
+      "created_at": "2026-10-31T12:26:44.105037-07:00"
     }
   ]
 }

@@ -1,11 +1,19 @@
 [
   {
-    "hash": "db64542aba45b619a85464624d5d3e9c891475be",
-    "short_hash": "db64542",
+    "hash": "a0548e92fa355430c8254802dce20a6278290049",
+    "short_hash": "a0548e9",
     "author": "Bryan Guffey",
-    "date": "2026-10-31T12:26:02-07:00",
-    "message": "refactor: relocate lib into feature folders (ui, survey, auth, registration, organizer, server/{messaging,organizer})\n\nReplays the #27 move map on current main. Differences from #27:\n- server/email -> server/messaging: it now also holds the Bluesky DM\n  channel (bsky-dm.ts) that broadcasts fan out to.\n- dm-text.ts (client-importable grapheme limit) -> lib/organizer.\n- server/organizer.test.ts follows organizer.ts -> organizer/admin.test.ts.\nImport specifiers rewritten mechanically; check 0/0, tests 110/110.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
-    "files_changed": 96
+    "date": "2026-10-31T12:26:40-07:00",
+    "message": "refactor(auth): split HandleTypeahead out of SignInSheet\n\nTaken verbatim from #27 (99c3dd7): SignInSheet is unchanged on main since.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+    "files_changed": 3
+  },
+  {
+    "hash": "480e94c4b56906a843408fcd8f20e43971e1e942",
+    "short_hash": "480e94c",
+    "author": "Bryan Guffey",
+    "date": "2026-10-31T12:26:36-07:00",
+    "message": "refactor(survey): split DatesItem into grid, range editor, typed form\n\nTaken verbatim from #27 (fa5b0a6): DatesItem is unchanged on main since.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+    "files_changed": 7
   },
   {
     "hash": "db64542aba45b619a85464624d5d3e9c891475be",
