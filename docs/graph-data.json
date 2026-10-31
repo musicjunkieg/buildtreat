@@ -2309,6 +2309,17 @@
       "created_at": "2026-10-31T12:29:13.598004-07:00",
       "updated_at": "2026-10-31T12:29:13.598004-07:00",
       "metadata_json": "{\"branch\":\"refactor/modular-layout-v2\",\"commit\":\"1b0d758\",\"confidence\":88}"
+    },
+    {
+      "id": 211,
+      "change_id": "192b8fff-b0a0-4a4b-9439-b063fe4192fb",
+      "node_type": "action",
+      "title": "New splits: EmailPanel + broadcasts.ts (grew past cap since #27)",
+      "description": null,
+      "status": "pending",
+      "created_at": "2026-10-31T12:32:26.988345-07:00",
+      "updated_at": "2026-10-31T12:32:26.988345-07:00",
+      "metadata_json": "{\"branch\":\"refactor/modular-layout-v2\",\"commit\":\"9e0b290\",\"confidence\":88}"
     }
   ],
   "edges": [
@@ -4610,6 +4621,17 @@
       "weight": 1.0,
       "rationale": "impl",
       "created_at": "2026-10-31T12:29:13.605742-07:00"
+    },
+    {
+      "id": 212,
+      "from_node_id": 206,
+      "to_node_id": 211,
+      "from_change_id": "bcd356e6-1b07-4280-81f5-71d18a8f749c",
+      "to_change_id": "192b8fff-b0a0-4a4b-9439-b063fe4192fb",
+      "edge_type": "leads_to",
+      "weight": 1.0,
+      "rationale": "impl",
+      "created_at": "2026-10-31T12:32:26.997240-07:00"
     }
   ]
 }
