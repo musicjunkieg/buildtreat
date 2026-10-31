@@ -3,6 +3,9 @@
 	import { SvelteSet } from 'svelte/reactivity';
 	import type { Audience, AudienceCount, BroadcastPerson, BroadcastView, Channel } from '$lib/server/messaging/broadcasts';
 	import { DM_MAX_GRAPHEMES, graphemeCount } from '$lib/organizer/dm-text';
+	import { covered, reachable } from '$lib/organizer/recipients';
+	import ExtraRecipients from '$lib/organizer/ExtraRecipients.svelte';
+	import BroadcastHistory from '$lib/organizer/BroadcastHistory.svelte';
 
 	let {
 		emailConfigured,
@@ -27,45 +30,22 @@
 	const configured = $derived(channel === 'email' ? emailConfigured : dmConfigured);
 	const picked = $derived(audiences.find((a) => a.id === audience) ?? audiences[0]);
 	// Hand-picked extras ride along with the audience. The server does the
-	// real union; here we only need who's still worth offering and how many
-	// of the chosen actually add to the count on this channel — someone the
-	// audience already covers, or with no email on the email channel, is 0.
+	// real union; ExtraRecipients offers who's still worth adding, and here we
+	// only count how many of the chosen actually add on this channel — someone
+	// the audience already covers, or with no email on the email channel, is 0.
 	let extras = new SvelteSet<string>();
 	const personByDid = $derived(new Map(people.map((p) => [p.did, p])));
-	const reachable = (p: BroadcastPerson) => channel === 'dm' || p.email.length > 0;
-	const covered = (p: BroadcastPerson) => p.audiences[channel].includes(audience);
 	const chosen = $derived([...extras].map((did) => personByDid.get(did)).filter((p): p is BroadcastPerson => !!p));
-	const addable = $derived(
-		people
-			.filter((p) => !extras.has(p.did) && !covered(p) && reachable(p))
-			.sort((a, b) => personName(a).localeCompare(personName(b)))
-	);
 	// Email collapses shared addresses, so two extras at one address are one send.
 	const extraCount = $derived.by(() => {
-		const adding = chosen.filter((p) => !covered(p) && reachable(p));
+		const adding = chosen.filter((p) => !covered(p, channel, audience) && reachable(p, channel));
 		return channel === 'email' ? new Set(adding.map((p) => p.email.toLowerCase())).size : adding.length;
 	});
 	const recipientCount = $derived((picked?.counts[channel] ?? 0) + extraCount);
-	let pickerValue = $state('');
-
-	function personName(p: BroadcastPerson): string {
-		return p.handle ? `@${p.handle}` : p.email || `${p.did.slice(0, 20)}…`;
-	}
-
-	function addExtra(event: Event) {
-		const did = (event.currentTarget as HTMLSelectElement).value;
-		if (did) extras.add(did);
-		pickerValue = '';
-		armed = false;
-	}
-	const labelFor = (id: Audience) => audiences.find((a) => a.id === id)?.label ?? id;
 	// Two-step arm/confirm instead of a browser confirm() dialog, so the
 	// recipient count is visible at the moment of commitment.
 	let armed = $state(false);
 	let sending = $state(false);
-	// Per-broadcast in-flight guard: prevents a double-click on Retry from
-	// firing two concurrent retryBroadcast actions and double-sending.
-	let retrying = new SvelteSet<number>();
 
 	// The chat service counts graphemes, so the counter does too — a run of
 	// emoji shouldn't read as "over" when it isn't.
@@ -77,38 +57,6 @@
 	const canSend = $derived(draftReady && recipientCount > 0);
 	const testAction = $derived(channel === 'email' ? '?/emailTest' : '?/dmTest');
 	const sendAction = $derived(channel === 'email' ? '?/emailBroadcast' : '?/dmBroadcast');
-
-	function counts(b: BroadcastView): { sent: number; failed: number; pending: number } {
-		let sent = 0,
-			failed = 0,
-			pending = 0;
-		for (const r of b.recipients) {
-			if (r.status === 'sent') sent++;
-			else if (r.status === 'failed') failed++;
-			else pending++;
-		}
-		return { sent, failed, pending };
-	}
-
-	/** DMs have no subject; the history leads with the opening line instead. */
-	function title(b: BroadcastView): string {
-		if (b.subject) return b.subject;
-		const line = b.body.split('\n')[0].trim();
-		return line.length > 72 ? `${line.slice(0, 71)}…` : line;
-	}
-
-	function who(r: BroadcastView['recipients'][number]): string {
-		if (r.email) return r.email;
-		return r.handle ? `@${r.handle}` : `${r.did.slice(0, 20)}…`;
-	}
-
-	function shortDate(iso: string): string {
-		return new Date(iso).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-	}
-
-	function canRetry(b: BroadcastView): boolean {
-		return b.channel === 'dm' ? dmConfigured : emailConfigured;
-	}
 </script>
 
 <section aria-labelledby="email-head">
@@ -205,39 +153,14 @@
 				</div>
 			</fieldset>
 
-			<div class="extras">
-				<label class="kicker" for="extra-picker">Also include</label>
-				<select id="extra-picker" class="picker" bind:value={pickerValue} onchange={addExtra} disabled={addable.length === 0}>
-					<option value="">{addable.length ? 'Add a person…' : 'Everyone is already in this audience'}</option>
-					{#each addable as p (p.did)}
-						<option value={p.did}>{personName(p)}{p.handle && p.email && channel === 'email' ? ` · ${p.email}` : ''}</option>
-					{/each}
-				</select>
-				{#if chosen.length}
-					<ul class="chosen">
-						{#each chosen as p (p.did)}
-							<li class="chosen-chip" class:muted={covered(p) || !reachable(p)}>
-								<input type="hidden" name="extra" value={p.did} />
-								<span>{personName(p)}</span>
-								{#if covered(p)}
-									<span class="chip-n">in {picked?.label ?? audience}</span>
-								{:else if !reachable(p)}
-									<span class="chip-n">no email</span>
-								{/if}
-								<button
-									type="button"
-									class="remove"
-									aria-label={`Remove ${personName(p)}`}
-									onclick={() => {
-										extras.delete(p.did);
-										armed = false;
-									}}>×</button
-								>
-							</li>
-						{/each}
-					</ul>
-				{/if}
-			</div>
+			<ExtraRecipients
+				{people}
+				{extras}
+				{channel}
+				{audience}
+				audienceLabel={picked?.label ?? audience}
+				onchange={() => (armed = false)}
+			/>
 
 			<div class="send-row">
 				{#if armed}
@@ -255,53 +178,7 @@
 	{/if}
 
 	{#if broadcasts.length > 0}
-		<div class="history-block">
-			<h3 class="kicker history-head">Past broadcasts</h3>
-			<ul class="history">
-				{#each broadcasts as b (b.id)}
-					{@const c = counts(b)}
-					<li>
-						<details>
-							<summary>
-								<span class="hist-subject">
-									{#if b.channel === 'dm'}<span class="tag">DM</span>{/if}
-									{title(b)}
-								</span>
-								<span class="section-sub hist-meta">
-									{shortDate(b.createdAt)} · {labelFor(b.audience)} · {c.sent} sent{c.failed ? ` · ${c.failed} failed` : ''}{c.pending
-										? ` · ${c.pending} pending`
-										: ''}
-								</span>
-							</summary>
-							<p class="body-preview">{b.body}</p>
-							<ul class="recipients">
-								{#each b.recipients as r (r.did)}
-									<li data-status={r.status}>
-										{who(r)} — {r.status}{r.errorCode ? ` (${r.errorCode})` : ''}
-									</li>
-								{/each}
-							</ul>
-							{#if canRetry(b) && c.failed + c.pending > 0}
-								<form
-									method="POST"
-									action="?/retryBroadcast"
-									use:enhance={() => {
-										retrying.add(b.id);
-										return async ({ update }) => {
-											retrying.delete(b.id);
-											await update({ reset: false });
-										};
-									}}
-								>
-									<input type="hidden" name="id" value={b.id} />
-									<button class="btn-ghost" disabled={retrying.has(b.id)}>Retry {c.failed + c.pending} unsent</button>
-								</form>
-							{/if}
-						</details>
-					</li>
-				{/each}
-			</ul>
-		</div>
+		<BroadcastHistory {broadcasts} {audiences} {emailConfigured} {dmConfigured} />
 	{:else if configured}
 		<p class="section-empty">No broadcasts sent yet.</p>
 	{/if}
@@ -322,12 +199,6 @@
 		/* The documented `place` ramp — section heads sit below the rail title. */
 		font-size: clamp(1.35rem, 4.2vw, 1.9rem);
 		font-weight: 650;
-	}
-
-	.section-sub {
-		margin-top: 0.35rem;
-		font-size: 0.8125rem;
-		color: var(--ink-70);
 	}
 
 	.section-empty {
@@ -458,75 +329,6 @@
 		outline-offset: 3px;
 	}
 
-	/* The add-on picker: a native select styled like the compose inputs,
-	   then one removable chip per person. Muted chips are still posted —
-	   the server unions and dedupes — but read as not adding to the count. */
-	.extras {
-		display: flex;
-		flex-direction: column;
-		gap: 0.5rem;
-	}
-
-	.extras .kicker {
-		color: var(--ink-70);
-	}
-
-	.picker {
-		align-self: flex-start;
-		max-width: 100%;
-		background: transparent;
-		border: none;
-		border-bottom: 1px solid var(--ink-45);
-		border-radius: 0;
-		padding: 0.45rem 0;
-		font-size: 0.9375rem;
-		color: var(--ink);
-	}
-
-	.picker:disabled {
-		color: var(--ink-45);
-		cursor: default;
-	}
-
-	.picker:focus {
-		outline: none;
-		border-bottom-color: var(--ink);
-	}
-
-	.chosen {
-		list-style: none;
-		margin: 0;
-		padding: 0;
-		display: flex;
-		flex-wrap: wrap;
-		gap: 0.5rem;
-	}
-
-	.chosen-chip {
-		display: inline-flex;
-		align-items: baseline;
-		gap: 0.45rem;
-		border: 1px solid var(--ink);
-		border-radius: 999px;
-		padding: 0.4rem 0.6rem 0.4rem 0.85rem;
-		font-size: 0.8125rem;
-		color: var(--ink);
-		font-weight: 600;
-	}
-
-	.chosen-chip.muted {
-		border-color: var(--ink-45);
-		color: var(--ink-70);
-		font-weight: 400;
-	}
-
-	.chosen-chip .remove {
-		font-size: 1rem;
-		line-height: 1;
-		padding: 0 0.15rem;
-		color: inherit;
-	}
-
 	.body-head {
 		display: flex;
 		align-items: baseline;
@@ -550,20 +352,6 @@
 		line-height: 1.5;
 		color: var(--ink-70);
 		max-width: 62ch;
-	}
-
-	.tag {
-		display: inline-block;
-		border: 1px solid var(--ink-45);
-		border-radius: 999px;
-		padding: 0.05rem 0.5rem;
-		margin-right: 0.35rem;
-		font-size: 0.6875rem;
-		font-weight: 600;
-		letter-spacing: 0.04em;
-		text-transform: uppercase;
-		color: var(--ink-70);
-		vertical-align: 0.1em;
 	}
 
 	.send-row {
@@ -628,81 +416,5 @@
 		padding: 0.1em 0.35em;
 		border-radius: 6px;
 		font-size: 0.9em;
-	}
-
-	.history-block {
-		display: flex;
-		flex-direction: column;
-		gap: var(--space-2);
-	}
-
-	.history-head {
-		color: var(--ink-70);
-	}
-
-	.history {
-		list-style: none;
-		display: flex;
-		flex-direction: column;
-	}
-
-	.history li {
-		border-top: var(--hairline);
-	}
-
-	.history li:last-child {
-		border-bottom: var(--hairline);
-	}
-
-	.history summary {
-		display: flex;
-		align-items: baseline;
-		justify-content: space-between;
-		gap: var(--space-3);
-		flex-wrap: wrap;
-		padding: 0.65rem 0;
-		cursor: pointer;
-		font-size: 0.9375rem;
-	}
-
-	.hist-subject {
-		font-weight: 550;
-	}
-
-	.hist-meta {
-		margin-top: 0;
-		white-space: nowrap;
-	}
-
-	.body-preview {
-		white-space: pre-wrap;
-		font-size: 0.9375rem;
-		line-height: 1.5;
-		color: var(--ink-70);
-		padding-bottom: var(--space-2);
-	}
-
-	.recipients {
-		list-style: none;
-		display: flex;
-		flex-direction: column;
-		gap: 0.2rem;
-		font-size: 0.8125rem;
-		padding-bottom: var(--space-2);
-	}
-
-	.recipients li {
-		color: var(--ink-70);
-	}
-
-	/* Failed rows carry the eye without a second color — full ink weight
-	   is the only emphasis this world allows. */
-	.recipients li[data-status='failed'] {
-		color: var(--ink);
-		font-weight: 600;
-	}
-
-	.recipients li[data-status='pending'] {
-		color: var(--ink-45);
 	}
 </style>
