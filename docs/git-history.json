@@ -1,19 +1,27 @@
 [
   {
+    "hash": "1b0d7585b121674192d05f59e32fca2c59564c63",
+    "short_hash": "1b0d758",
+    "author": "Bryan Guffey",
+    "date": "2026-10-31T12:29:09-07:00",
+    "message": "refactor(organizer): split the console page into section components\n\nTakes #27's split (fff875a) with its <title> fix folded in (b499dad: the\nall/yes filter goes down as prop + onfilter callback, not bind:, which\nwraps SSR in a $settled copy that drops the page title). Re-applies\nmain's two changes since: the late-pass hint copy (now in OrganizerRail)\nand EmailPanel's channel/audience props.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+    "files_changed": 8
+  },
+  {
+    "hash": "1b0d7585b121674192d05f59e32fca2c59564c63",
+    "short_hash": "1b0d758",
+    "author": "Bryan Guffey",
+    "date": "2026-10-31T12:29:09-07:00",
+    "message": "refactor(organizer): split the console page into section components\n\nTakes #27's split (fff875a) with its <title> fix folded in (b499dad: the\nall/yes filter goes down as prop + onfilter callback, not bind:, which\nwraps SSR in a $settled copy that drops the page title). Re-applies\nmain's two changes since: the late-pass hint copy (now in OrganizerRail)\nand EmailPanel's channel/audience props.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+    "files_changed": 8
+  },
+  {
     "hash": "9ad652a769bfac7e89f30373622550638de533b0",
     "short_hash": "9ad652a",
     "author": "Bryan Guffey",
     "date": "2026-10-31T12:28:35-07:00",
     "message": "refactor(organizer): split page.server into page-data, preview, broadcast-actions\n\n737 -> 238 lines. page-data + preview follow #27 (d95fd89). New since\n#27: the email/DM broadcast actions main grew (audiences, extras, DM\ntest/send, channel-aware retry) move to broadcast-actions.ts, spread\ninto the route's actions. Bodies are line-for-line unchanged; drops an\nunused surveyGate import.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
     "files_changed": 6
-  },
-  {
-    "hash": "a0548e92fa355430c8254802dce20a6278290049",
-    "short_hash": "a0548e9",
-    "author": "Bryan Guffey",
-    "date": "2026-10-31T12:26:40-07:00",
-    "message": "refactor(auth): split HandleTypeahead out of SignInSheet\n\nTaken verbatim from #27 (99c3dd7): SignInSheet is unchanged on main since.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
-    "files_changed": 3
   },
   {
     "hash": "a0548e92fa355430c8254802dce20a6278290049",
