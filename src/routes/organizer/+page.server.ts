@@ -20,7 +20,7 @@ import {
 	type AllowlistEntry,
 	type LatePass,
 	type OrganizerResponse
-} from '$lib/server/organizer';
+} from '$lib/server/organizer/admin';
 import { listWaitlist, promoteFromWaitlist, type WaitlistEntry } from '$lib/server/waitlist';
 import {
 	isRegistered,
@@ -32,9 +32,9 @@ import {
 	type RegistrationCounts,
 	type TravelStatus
 } from '$lib/server/registration';
-import { emailConfigured, sendEmail } from '$lib/server/email';
-import { broadcastHtml } from '$lib/server/email-template';
-import { DM_MAX_GRAPHEMES, createDmSession, dmConfigured, graphemeCount, resolveHandle, sendDm } from '$lib/server/bsky-dm';
+import { emailConfigured, sendEmail } from '$lib/server/messaging/email';
+import { broadcastHtml } from '$lib/server/messaging/email-template';
+import { DM_MAX_GRAPHEMES, createDmSession, dmConfigured, graphemeCount, resolveHandle, sendDm } from '$lib/server/messaging/bsky-dm';
 import {
 	audienceCounts,
 	audienceRecipients,
@@ -50,7 +50,7 @@ import {
 	type AudienceCount,
 	type BroadcastPerson,
 	type BroadcastView
-} from '$lib/server/broadcasts';
+} from '$lib/server/messaging/broadcasts';
 import { EMAIL_RE } from '$lib/server/db';
 
 /**

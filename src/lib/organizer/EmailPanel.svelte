@@ -1,8 +1,8 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
 	import { SvelteSet } from 'svelte/reactivity';
-	import type { Audience, AudienceCount, BroadcastPerson, BroadcastView, Channel } from '$lib/server/broadcasts';
-	import { DM_MAX_GRAPHEMES, graphemeCount } from '$lib/dm-text';
+	import type { Audience, AudienceCount, BroadcastPerson, BroadcastView, Channel } from '$lib/server/messaging/broadcasts';
+	import { DM_MAX_GRAPHEMES, graphemeCount } from '$lib/organizer/dm-text';
 
 	let {
 		emailConfigured,

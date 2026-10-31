@@ -7,7 +7,7 @@ import {
 	type SupportNeed,
 	type TravelMode,
 	type TravelValue
-} from './content';
+} from '../content';
 
 /**
  * Registration form model shared by the server action and the UI. Pure:

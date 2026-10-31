@@ -1,5 +1,5 @@
 import type { SendResult } from './email';
-export { DM_MAX_GRAPHEMES, graphemeCount } from '$lib/dm-text';
+export { DM_MAX_GRAPHEMES, graphemeCount } from '$lib/organizer/dm-text';
 
 /**
  * Bluesky DM transport for organizer broadcasts. Signs in to the sending

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import QuestionScaffold from '$lib/components/QuestionScaffold.svelte';
+	import QuestionScaffold from '$lib/ui/QuestionScaffold.svelte';
 
 	let {
 		titleId,

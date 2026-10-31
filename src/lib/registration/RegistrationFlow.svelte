@@ -1,11 +1,11 @@
 <script lang="ts">
-	import FeedItem from '$lib/components/FeedItem.svelte';
-	import AnnouncementItem from '$lib/components/registration/AnnouncementItem.svelte';
-	import RegistrationForm from '$lib/components/registration/RegistrationForm.svelte';
-	import RegisteredSummary from '$lib/components/registration/RegisteredSummary.svelte';
+	import FeedItem from '$lib/ui/FeedItem.svelte';
+	import AnnouncementItem from '$lib/registration/AnnouncementItem.svelte';
+	import RegistrationForm from '$lib/registration/RegistrationForm.svelte';
+	import RegisteredSummary from '$lib/registration/RegisteredSummary.svelte';
 	import { registration as copy } from '$lib/content';
-	import { asksSupport } from '$lib/registration';
-	import type { PageData, ActionData } from '../../../routes/$types';
+	import { asksSupport } from '$lib/registration/registration';
+	import type { PageData, ActionData } from '../../routes/$types';
 
 	let { data, form }: { data: PageData; form: ActionData } = $props();
 

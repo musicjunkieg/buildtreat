@@ -1,7 +1,7 @@
-import { retreatDates, retreatLocation, travelModes } from '../content';
-import { needsSupport } from '../registration';
+import { retreatDates, retreatLocation, travelModes } from '../../content';
+import { needsSupport } from '../../registration/registration';
 import { brandedEmail, heroImage, locationImages, retreatFacts } from './email-template';
-import type { Registration } from './registration';
+import type { Registration } from '../registration';
 
 /** Confirmation (text + branded html), sent best-effort after a completed registration. */
 export function confirmationEmail(reg: Registration): { subject: string; text: string; html: string } {

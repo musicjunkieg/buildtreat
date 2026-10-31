@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
 	import { dietaryOptions, registration as copy, retreat, retreatDates, retreatLocation, supportNeeds, travelModes } from '$lib/content';
-	import { needsSupport } from '$lib/registration';
+	import { needsSupport } from '$lib/registration/registration';
 	import type { Registration } from '$lib/server/registration';
 
 	let {

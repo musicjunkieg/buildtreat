@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { dietaryOptions, travelModes } from '$lib/content';
-	import { needsSupport } from '$lib/registration';
+	import { needsSupport } from '$lib/registration/registration';
 	// Type-only: $lib/server/registration is a server module, and SvelteKit's
 	// illegal-import guard blocks any RUNTIME import from it reaching the
 	// browser bundle — `import type` is erased entirely by the compiler, so
@@ -9,7 +9,7 @@
 	// live server-side in +page.server.ts instead; this component only
 	// receives their already-computed results as props.
 	import type { Registration, RegistrationCounts, TravelStatus } from '$lib/server/registration';
-	import type { AllowlistEntry } from '$lib/server/organizer';
+	import type { AllowlistEntry } from '$lib/server/organizer/admin';
 
 	type RegistrationView = Registration & { travel: TravelStatus; registered: boolean };
 

@@ -2,7 +2,7 @@ import { error, json } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
 import { loadHandle } from '@svelte-atproto/oauth/helper';
 import { checkAllowlist, upsertResponse, validateDraft, ValidationError } from '$lib/server/db';
-import { surveyGate } from '$lib/server/organizer';
+import { surveyGate } from '$lib/server/organizer/admin';
 import { retreat } from '$lib/content';
 
 export const PUT: RequestHandler = async ({ request, locals, platform }) => {

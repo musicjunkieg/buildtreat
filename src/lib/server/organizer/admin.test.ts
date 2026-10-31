@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import type { D1Database } from '@cloudflare/workers-types';
-import { registrationGate } from './organizer';
+import { registrationGate } from './admin';
 
 const PAST = '2026-09-21T06:59:59Z';
 const FUTURE = '2099-01-01T00:00:00Z';

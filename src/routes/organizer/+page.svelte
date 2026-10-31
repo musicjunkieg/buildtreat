@@ -3,11 +3,11 @@
 	import { expoOut } from 'svelte/easing';
 	import { deserialize, enhance } from '$app/forms';
 	import { login } from '@svelte-atproto/oauth/client';
-	import Icon from '$lib/components/Icon.svelte';
-	import EmailPanel from '$lib/components/organizer/EmailPanel.svelte';
-	import Heatmap from '$lib/components/organizer/Heatmap.svelte';
-	import RegistrationsPanel from '$lib/components/organizer/RegistrationsPanel.svelte';
-	import ResponsesTable from '$lib/components/organizer/ResponsesTable.svelte';
+	import Icon from '$lib/ui/Icon.svelte';
+	import EmailPanel from '$lib/organizer/EmailPanel.svelte';
+	import Heatmap from '$lib/organizer/Heatmap.svelte';
+	import RegistrationsPanel from '$lib/organizer/RegistrationsPanel.svelte';
+	import ResponsesTable from '$lib/organizer/ResponsesTable.svelte';
 	import {
 		bestWindows,
 		dayLoads,

@@ -1,6 +1,6 @@
 <script lang="ts">
-	import Icon from '$lib/components/Icon.svelte';
-	import NextChip from '$lib/components/NextChip.svelte';
+	import Icon from '$lib/ui/Icon.svelte';
+	import NextChip from '$lib/ui/NextChip.svelte';
 	import type { Snippet } from 'svelte';
 
 	let {

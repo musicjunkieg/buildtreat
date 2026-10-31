@@ -1,9 +1,9 @@
 <script lang="ts">
 	import { logout } from '@svelte-atproto/oauth/client';
-	import Icon from '$lib/components/Icon.svelte';
+	import Icon from '$lib/ui/Icon.svelte';
 	import { interestQuestion, itemTitles, locations, retreat, travelQuestion, type FeedItemId } from '$lib/content';
 	import { formatRange, portionLabel } from '$lib/dates';
-	import type { SurveyState } from '$lib/survey.svelte';
+	import type { SurveyState } from '$lib/survey/survey.svelte';
 
 	let {
 		survey,

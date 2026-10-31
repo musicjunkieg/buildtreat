@@ -1,8 +1,8 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
 	import { dietaryOptions, registration as copy, supportNeeds, travelModes } from '$lib/content';
-	import type { RegistrationErrors, RegistrationInput } from '$lib/registration';
-	import { needsSupport } from '$lib/registration';
+	import type { RegistrationErrors, RegistrationInput } from '$lib/registration/registration';
+	import { needsSupport } from '$lib/registration/registration';
 	import type { ActionData, PageData } from './$types';
 
 	let { data, form }: { data: PageData; form: ActionData } = $props();

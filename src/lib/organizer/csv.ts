@@ -1,5 +1,5 @@
 import { NO_PREFERENCE } from '../content';
-import type { OrganizerResponse } from '../server/organizer';
+import type { OrganizerResponse } from '../server/organizer/admin';
 import { isRegistered, type Registration } from '../server/registration';
 
 /**

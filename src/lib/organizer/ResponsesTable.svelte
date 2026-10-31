@@ -1,8 +1,8 @@
 <script lang="ts">
-	import Icon from '$lib/components/Icon.svelte';
+	import Icon from '$lib/ui/Icon.svelte';
 	import { locations, NO_PREFERENCE, type TravelValue } from '$lib/content';
 	import { formatRange, portionLabel } from '$lib/dates';
-	import type { OrganizerResponse } from '$lib/server/organizer';
+	import type { OrganizerResponse } from '$lib/server/organizer/admin';
 
 	let {
 		responses,
