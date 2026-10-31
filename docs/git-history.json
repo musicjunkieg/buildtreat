@@ -1,11 +1,11 @@
 [
   {
-    "hash": "1b0d7585b121674192d05f59e32fca2c59564c63",
-    "short_hash": "1b0d758",
+    "hash": "a197a9a06d619c70d5fe4f831ca961461856ada7",
+    "short_hash": "a197a9a",
     "author": "Bryan Guffey",
-    "date": "2026-10-31T12:29:09-07:00",
-    "message": "refactor(organizer): split the console page into section components\n\nTakes #27's split (fff875a) with its <title> fix folded in (b499dad: the\nall/yes filter goes down as prop + onfilter callback, not bind:, which\nwraps SSR in a $settled copy that drops the page title). Re-applies\nmain's two changes since: the late-pass hint copy (now in OrganizerRail)\nand EmailPanel's channel/audience props.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
-    "files_changed": 8
+    "date": "2026-10-31T12:29:37-07:00",
+    "message": "refactor(organizer): move csv module under lib/server/organizer\n\nAs in #27 (4c523a5): csv.ts imports server modules, so lib/organizer\nstays purely client-importable.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+    "files_changed": 9
   },
   {
     "hash": "1b0d7585b121674192d05f59e32fca2c59564c63",
