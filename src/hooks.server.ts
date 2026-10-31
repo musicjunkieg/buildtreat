@@ -1,7 +1,7 @@
 import { redirect, type Handle } from '@sveltejs/kit';
 import { sequence } from '@sveltejs/kit/hooks';
 import { dev } from '$app/environment';
-import { atproto } from '$lib/atproto';
+import { atproto } from '$lib/auth/atproto';
 
 /**
  * The worker still answers on its workers.dev hostname; canonicalize to the

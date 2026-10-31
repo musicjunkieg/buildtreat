@@ -2221,6 +2221,116 @@
       "created_at": "2026-10-10T16:04:15.688333-07:00",
       "updated_at": "2026-10-10T16:04:15.688333-07:00",
       "metadata_json": "{\"branch\":\"main\",\"commit\":\"3018fca\",\"confidence\":90}"
+    },
+    {
+      "id": 203,
+      "change_id": "e038b91d-fcc1-4cb4-82bc-406bab331348",
+      "node_type": "goal",
+      "title": "Redo modular-layout refactor fresh on current main",
+      "description": null,
+      "status": "pending",
+      "created_at": "2026-10-31T12:24:05.904561-07:00",
+      "updated_at": "2026-10-31T12:24:05.904561-07:00",
+      "metadata_json": "{\"branch\":\"main\",\"confidence\":85,\"prompt\":\"do it fresh on main\"}"
+    },
+    {
+      "id": 204,
+      "change_id": "9a20dde5-19c3-4167-ad8e-c75e720b20a9",
+      "node_type": "option",
+      "title": "Replay #27 move map onto main, re-split files main changed",
+      "description": null,
+      "status": "pending",
+      "created_at": "2026-10-31T12:24:05.928527-07:00",
+      "updated_at": "2026-10-31T12:24:05.928527-07:00",
+      "metadata_json": "{\"branch\":\"main\",\"confidence\":85}"
+    },
+    {
+      "id": 205,
+      "change_id": "3b603c2a-0e65-47fb-8a26-bd2190dca51d",
+      "node_type": "option",
+      "title": "Rebase #27 (blocked by hook; heavy conflicts)",
+      "description": null,
+      "status": "pending",
+      "created_at": "2026-10-31T12:24:05.949558-07:00",
+      "updated_at": "2026-10-31T12:24:05.949558-07:00",
+      "metadata_json": "{\"branch\":\"main\",\"confidence\":30}"
+    },
+    {
+      "id": 206,
+      "change_id": "bcd356e6-1b07-4280-81f5-71d18a8f749c",
+      "node_type": "decision",
+      "title": "Fresh replay on branch from main; close #27 after",
+      "description": null,
+      "status": "pending",
+      "created_at": "2026-10-31T12:24:05.984481-07:00",
+      "updated_at": "2026-10-31T12:24:05.984481-07:00",
+      "metadata_json": "{\"branch\":\"main\",\"confidence\":85}"
+    },
+    {
+      "id": 207,
+      "change_id": "f231624e-8986-4b4c-a337-8a4d010dfceb",
+      "node_type": "action",
+      "title": "Relocate lib into feature folders",
+      "description": null,
+      "status": "pending",
+      "created_at": "2026-10-31T12:26:07.097263-07:00",
+      "updated_at": "2026-10-31T12:26:07.097263-07:00",
+      "metadata_json": "{\"branch\":\"refactor/modular-layout-v2\",\"commit\":\"db64542\",\"confidence\":90}"
+    },
+    {
+      "id": 208,
+      "change_id": "d87a104a-7018-43d8-832f-a7e657c8a30d",
+      "node_type": "action",
+      "title": "Split DatesItem + SignInSheet (verbatim from #27)",
+      "description": null,
+      "status": "pending",
+      "created_at": "2026-10-31T12:26:44.098397-07:00",
+      "updated_at": "2026-10-31T12:26:44.098397-07:00",
+      "metadata_json": "{\"branch\":\"refactor/modular-layout-v2\",\"commit\":\"a0548e9\",\"confidence\":90}"
+    },
+    {
+      "id": 209,
+      "change_id": "54221c7a-1132-46f4-9b6b-6febb35ff77b",
+      "node_type": "action",
+      "title": "Split organizer page.server (+ broadcast-actions)",
+      "description": null,
+      "status": "pending",
+      "created_at": "2026-10-31T12:28:38.983823-07:00",
+      "updated_at": "2026-10-31T12:28:38.983823-07:00",
+      "metadata_json": "{\"branch\":\"refactor/modular-layout-v2\",\"commit\":\"9ad652a\",\"confidence\":90}"
+    },
+    {
+      "id": 210,
+      "change_id": "85a2369b-dad3-41c1-b731-d367de0f6eed",
+      "node_type": "action",
+      "title": "Split organizer +page.svelte into sections (from #27 + main deltas)",
+      "description": null,
+      "status": "pending",
+      "created_at": "2026-10-31T12:29:13.598004-07:00",
+      "updated_at": "2026-10-31T12:29:13.598004-07:00",
+      "metadata_json": "{\"branch\":\"refactor/modular-layout-v2\",\"commit\":\"1b0d758\",\"confidence\":88}"
+    },
+    {
+      "id": 211,
+      "change_id": "192b8fff-b0a0-4a4b-9439-b063fe4192fb",
+      "node_type": "action",
+      "title": "New splits: EmailPanel + broadcasts.ts (grew past cap since #27)",
+      "description": null,
+      "status": "pending",
+      "created_at": "2026-10-31T12:32:26.988345-07:00",
+      "updated_at": "2026-10-31T12:32:26.988345-07:00",
+      "metadata_json": "{\"branch\":\"refactor/modular-layout-v2\",\"commit\":\"9e0b290\",\"confidence\":88}"
+    },
+    {
+      "id": 212,
+      "change_id": "e62f7f83-57d3-49e8-8faf-a71226738368",
+      "node_type": "outcome",
+      "title": "PR #48 opened: modular layout v2 — SSR/pixel/interaction parity with main",
+      "description": null,
+      "status": "pending",
+      "created_at": "2026-10-31T12:40:26.398237-07:00",
+      "updated_at": "2026-10-31T12:40:26.398237-07:00",
+      "metadata_json": "{\"branch\":\"refactor/modular-layout-v2\",\"commit\":\"f4a9d4c\",\"confidence\":92}"
     }
   ],
   "edges": [
@@ -4445,6 +4555,105 @@
       "weight": 1.0,
       "rationale": "merged after fixes",
       "created_at": "2026-10-10T16:04:20.214703-07:00"
+    },
+    {
+      "id": 205,
+      "from_node_id": 19,
+      "to_node_id": 204,
+      "from_change_id": "2cfa26c5-ec33-4300-b4e2-34ab3801c6c9",
+      "to_change_id": "9a20dde5-19c3-4167-ad8e-c75e720b20a9",
+      "edge_type": "leads_to",
+      "weight": 1.0,
+      "rationale": "option",
+      "created_at": "2026-10-31T12:24:05.957258-07:00"
+    },
+    {
+      "id": 206,
+      "from_node_id": 19,
+      "to_node_id": 205,
+      "from_change_id": "2cfa26c5-ec33-4300-b4e2-34ab3801c6c9",
+      "to_change_id": "3b603c2a-0e65-47fb-8a26-bd2190dca51d",
+      "edge_type": "leads_to",
+      "weight": 1.0,
+      "rationale": "option",
+      "created_at": "2026-10-31T12:24:05.964693-07:00"
+    },
+    {
+      "id": 207,
+      "from_node_id": 204,
+      "to_node_id": 206,
+      "from_change_id": "9a20dde5-19c3-4167-ad8e-c75e720b20a9",
+      "to_change_id": "bcd356e6-1b07-4280-81f5-71d18a8f749c",
+      "edge_type": "leads_to",
+      "weight": 1.0,
+      "rationale": "chosen",
+      "created_at": "2026-10-31T12:24:05.992013-07:00"
+    },
+    {
+      "id": 208,
+      "from_node_id": 206,
+      "to_node_id": 207,
+      "from_change_id": "bcd356e6-1b07-4280-81f5-71d18a8f749c",
+      "to_change_id": "f231624e-8986-4b4c-a337-8a4d010dfceb",
+      "edge_type": "leads_to",
+      "weight": 1.0,
+      "rationale": "impl",
+      "created_at": "2026-10-31T12:26:07.104988-07:00"
+    },
+    {
+      "id": 209,
+      "from_node_id": 206,
+      "to_node_id": 208,
+      "from_change_id": "bcd356e6-1b07-4280-81f5-71d18a8f749c",
+      "to_change_id": "d87a104a-7018-43d8-832f-a7e657c8a30d",
+      "edge_type": "leads_to",
+      "weight": 1.0,
+      "rationale": "impl",
+      "created_at": "2026-10-31T12:26:44.105037-07:00"
+    },
+    {
+      "id": 210,
+      "from_node_id": 206,
+      "to_node_id": 209,
+      "from_change_id": "bcd356e6-1b07-4280-81f5-71d18a8f749c",
+      "to_change_id": "54221c7a-1132-46f4-9b6b-6febb35ff77b",
+      "edge_type": "leads_to",
+      "weight": 1.0,
+      "rationale": "impl",
+      "created_at": "2026-10-31T12:28:38.990413-07:00"
+    },
+    {
+      "id": 211,
+      "from_node_id": 206,
+      "to_node_id": 210,
+      "from_change_id": "bcd356e6-1b07-4280-81f5-71d18a8f749c",
+      "to_change_id": "85a2369b-dad3-41c1-b731-d367de0f6eed",
+      "edge_type": "leads_to",
+      "weight": 1.0,
+      "rationale": "impl",
+      "created_at": "2026-10-31T12:29:13.605742-07:00"
+    },
+    {
+      "id": 212,
+      "from_node_id": 206,
+      "to_node_id": 211,
+      "from_change_id": "bcd356e6-1b07-4280-81f5-71d18a8f749c",
+      "to_change_id": "192b8fff-b0a0-4a4b-9439-b063fe4192fb",
+      "edge_type": "leads_to",
+      "weight": 1.0,
+      "rationale": "impl",
+      "created_at": "2026-10-31T12:32:26.997240-07:00"
+    },
+    {
+      "id": 213,
+      "from_node_id": 206,
+      "to_node_id": 212,
+      "from_change_id": "bcd356e6-1b07-4280-81f5-71d18a8f749c",
+      "to_change_id": "e62f7f83-57d3-49e8-8faf-a71226738368",
+      "edge_type": "leads_to",
+      "weight": 1.0,
+      "rationale": "result",
+      "created_at": "2026-10-31T12:40:26.406007-07:00"
     }
   ]
 }

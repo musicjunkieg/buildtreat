@@ -1,8 +1,8 @@
 import { error, fail, redirect } from '@sveltejs/kit';
 import type { Actions, PageServerLoad } from './$types';
-import { isOrganizer } from '$lib/server/organizer';
+import { isOrganizer } from '$lib/server/organizer/admin';
 import { getRegistration, updateRegistrationFields, type Registration } from '$lib/server/registration';
-import { parseRegistrationForm, validateRegistration } from '$lib/registration';
+import { parseRegistrationForm, validateRegistration } from '$lib/registration/registration';
 
 /**
  * /organizer/registrations/[did] — the organizer edits one attendee's

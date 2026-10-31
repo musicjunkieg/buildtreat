@@ -6,10 +6,10 @@ import { actorToDid } from '@svelte-atproto/oauth/helper';
 import { cloudflareKV } from '@svelte-atproto/oauth/server/stores/cloudflare';
 import { codeOfConduct, retreat, waiver, type TravelValue } from '$lib/content';
 import { checkAllowlist, getResponse } from '$lib/server/db';
-import { sendEmail } from '$lib/server/email';
+import { sendEmail } from '$lib/server/messaging/email';
 import { getRegistration, setDeclined, upsertConfirmed, type Registration } from '$lib/server/registration';
-import { confirmationEmail } from '$lib/server/registration-email';
-import { asksSupport, canConfirm, parseRegistrationForm, validateRegistration } from '$lib/registration';
+import { confirmationEmail } from '$lib/server/messaging/registration-email';
+import { asksSupport, canConfirm, parseRegistrationForm, validateRegistration } from '$lib/registration/registration';
 import {
 	backfillWaitlistHandle,
 	getWaitlistEntry,
@@ -17,9 +17,9 @@ import {
 	joinWaitlist,
 	type WaitlistState
 } from '$lib/server/waitlist';
-import type { SurveyDraft } from '$lib/survey.svelte';
+import type { SurveyDraft } from '$lib/survey/survey.svelte';
 import type { KnownUser } from '$lib/types';
-import { registrationGate, surveyGate } from '$lib/server/organizer';
+import { registrationGate, surveyGate } from '$lib/server/organizer/admin';
 
 /** Enough of a DID to correlate log lines without logging the full identifier. */
 const logDid = (did: string) => `${did.slice(0, 14)}…`;

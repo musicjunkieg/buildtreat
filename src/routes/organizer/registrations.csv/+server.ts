@@ -1,8 +1,8 @@
 import { error } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
-import { isOrganizer } from '$lib/server/organizer';
+import { isOrganizer } from '$lib/server/organizer/admin';
 import { listRegistrations } from '$lib/server/registration';
-import { registrationsCsv } from '$lib/organizer/csv';
+import { registrationsCsv } from '$lib/server/organizer/csv';
 
 export const GET: RequestHandler = async ({ locals, platform }) => {
 	if (!locals.did || !isOrganizer(platform?.env?.ORGANIZER_DIDS, locals.did)) {
