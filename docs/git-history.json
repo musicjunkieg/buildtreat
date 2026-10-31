@@ -8,12 +8,12 @@
     "files_changed": 96
   },
   {
-    "hash": "3d249688301f6fbdaa57a2fcdd748687dd3067ad",
-    "short_hash": "3d24968",
+    "hash": "db64542aba45b619a85464624d5d3e9c891475be",
+    "short_hash": "db64542",
     "author": "Bryan Guffey",
-    "date": "2026-10-31T12:21:47-07:00",
-    "message": "chore(deps): vitest 4.1.10 → 5.0.5 (#47)\n\nSupersedes dependabot #30, whose lockfile predates the current pnpm\noverrides and fails a frozen install (would break Workers Builds).\n110/110 tests, svelte-check 0/0, build green.\n\nCo-authored-by: Claude Opus 5.5 <noreply@anthropic.com>",
-    "files_changed": 3
+    "date": "2026-10-31T12:26:02-07:00",
+    "message": "refactor: relocate lib into feature folders (ui, survey, auth, registration, organizer, server/{messaging,organizer})\n\nReplays the #27 move map on current main. Differences from #27:\n- server/email -> server/messaging: it now also holds the Bluesky DM\n  channel (bsky-dm.ts) that broadcasts fan out to.\n- dm-text.ts (client-importable grapheme limit) -> lib/organizer.\n- server/organizer.test.ts follows organizer.ts -> organizer/admin.test.ts.\nImport specifiers rewritten mechanically; check 0/0, tests 110/110.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+    "files_changed": 96
   },
   {
     "hash": "3018fca4df86f9738b02c627328cdac3d62afffd",
