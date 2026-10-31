@@ -29,7 +29,10 @@ src/
 ```
 
 Each folder's `AGENTS.md` says what lives there, the boundaries that matter,
-and what to run before you call a change done.
+and what to run before you call a change done. The `CLAUDE.md` beside it is
+a one-line `@AGENTS.md` import so Claude Code loads the guide on demand —
+keep the content in `AGENTS.md` (Codex and other agents read that name), and
+give any new folder both files.
 
 ## Conventions that hold everywhere
 

@@ -95,7 +95,11 @@ the visual system is `DESIGN.md`.
 
 Start at `src/AGENTS.md` — it maps the folders, and every feature folder
 under `src/` carries its own `AGENTS.md` with the boundaries that matter
-there. Files are kept under a soft cap of 400–500 lines; split by
+there. Next to each sits a one-line `CLAUDE.md` (`@AGENTS.md`), so Claude
+Code loads a folder's guide automatically the first time it touches a file
+there (with a root CLAUDE.md present, Claude Code otherwise ignores
+AGENTS.md). Edit the `AGENTS.md`, never the shim; a new feature folder gets
+both. Files are kept under a soft cap of 400–500 lines; split by
 responsibility when one approaches it.
 
 ## How to work on this
