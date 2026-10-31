@@ -2265,6 +2265,17 @@
       "created_at": "2026-10-31T12:24:05.984481-07:00",
       "updated_at": "2026-10-31T12:24:05.984481-07:00",
       "metadata_json": "{\"branch\":\"main\",\"confidence\":85}"
+    },
+    {
+      "id": 207,
+      "change_id": "f231624e-8986-4b4c-a337-8a4d010dfceb",
+      "node_type": "action",
+      "title": "Relocate lib into feature folders",
+      "description": null,
+      "status": "pending",
+      "created_at": "2026-10-31T12:26:07.097263-07:00",
+      "updated_at": "2026-10-31T12:26:07.097263-07:00",
+      "metadata_json": "{\"branch\":\"refactor/modular-layout-v2\",\"commit\":\"db64542\",\"confidence\":90}"
     }
   ],
   "edges": [
@@ -4522,6 +4533,17 @@
       "weight": 1.0,
       "rationale": "chosen",
       "created_at": "2026-10-31T12:24:05.992013-07:00"
+    },
+    {
+      "id": 208,
+      "from_node_id": 206,
+      "to_node_id": 207,
+      "from_change_id": "bcd356e6-1b07-4280-81f5-71d18a8f749c",
+      "to_change_id": "f231624e-8986-4b4c-a337-8a4d010dfceb",
+      "edge_type": "leads_to",
+      "weight": 1.0,
+      "rationale": "impl",
+      "created_at": "2026-10-31T12:26:07.104988-07:00"
     }
   ]
 }
